@@ -42,47 +42,168 @@ enum
     kHangCount,
 };
 
+enum
+{
+    kTouchTurn = 1,
+    kTouchHit = 2,
+};
+
+enum
+{
+    kFallHang = 0,
+    kFallRun = 1,
+    kFallSide = 2,
+    kFallByHit = 3,     //can't set by rand
+    kFallSpFront = 0,
+    kFallSpSide = 1,
+};
+
 enum SpriteState
 {
-    kStateNormal1 = 1,
-    kStateRun1 = 7,     //8, break
+    kStateInit = 0,
+    kStateNormalIntro = 1,
+    kStateNormalGForceIntro = 2,
+    kStateGForceVFallIntro = 3,
+    kStateSpRunIntro = 4,
+    kStateSpRunning = 5,
+    kStateToLongAni = 6,
+    kStateRunIntro = 7,     //8, break
+    kStateRunning = 8,
     //8: 8/jump/hit
-    kStateJump1 = 9,    // >10
+    kStateJumpIntro = 9,    // >10
     kStateJumping = 10,
     //10: 10/run
-    kStateWalk1 = 11,
-    kStateHandstand1 = 13,
-    kStateSex1 = 15,
+    kStateWalkIntro = 11,
+    kStateWalking = 12,
+    kStateHandstandIntro = 13,
+    kStateHandstanding = 14,
+    kStateSexIntro = 15,
     kStateSexing = 16,
-    kStateSleep1 = 17,
-    kStateWink1 = 20,
-    kStateTurn1 = 24,
-    kStateHit1 = 30,
-    kStatePiss1 = 35,
-    kStateYawn1 = 43,
+    kStateSleepIntro = 17,
+    kStateSleepWink = 18,
+    kStateSleeping = 19,
+    kStateWinkIntro = 20,
+    kStateWinkOpenPre = 21,
+    kStateWinking = 22,
+    kStateWinkOpenPost = 23,
+    kStateTurnIntro = 24,
+    kStateTurning = 25,
+    kStateTurnEnd = 26,
+    kStateHitFallIntro = 27,
+    kStateHitting = 28,
+    kStateHitEnd = 29,
+    kStateHitIntro = 30,
+    kStateHitObsIntro = 31,
+    kStateHitLayIntro = 32,
+    kStateHitLaying = 33,
+    kStateHitRolling = 34,
+    kStatePissIntro = 35,
+    kStatePissTurnPre = 37,
+    kStatePissPre = 38,
+    kStatePissing = 39,
+    kStatePissPost = 40,
+    kStatePissTurnPost = 41,
+    kStateToNormal = 42,
+    kStateYawnIntro = 43,
     kStateYawning = 44,
-    kStateBaa1 = 45,
+    kStateBaaIntro = 45,
     kStateBaaing = 46,
-    kStateSneeze1 = 47,
-    kStateAmazed1 = 49,
-    kStateScary1 = 51,
+    kStateSneezeIntro = 47,
+    kStateSneezing = 48,
+    kStateAmazedIntro = 49,
+    kStateAmazing = 50,
+    kStateScaryIntro = 51,
     kStateScarying = 52,
-    kStateEat1 = 53,
-    kStateFeed1 = 56,
-    kStateSit1 = 58,
-    kStateBlush1 = 62,
+    kStateEatIntro = 53,
+    kStateEating = 54,
+    kStateEatObsIntro = 55,
+    kStateFeedIntro = 56,
+    kStateFeeding = 57,
+    kStateSitIntro = 58,
+    kStateSitTurn = 59,
+    kStateSitting = 60,
+    kStateSitEnd = 61,
+    kStateBlushIntro = 62,
     kStateBlushing = 63,
-    kStateRoll1 = 65,
-    kStateSpin1 = 69,
-    kStateSlip1 = 75,
-    kStateFall1 = 96,
-    kStateMerry11 = 116,
-    kStateMerry21 = 121,
-    kStateMerry31 = 126,
-    kStateUFO11 = 128,
-    kStateUFO21 = 135,
-    kStateUFO31 = 142,
-    kStateBurn1 = 147,  // >148
+    kStateRollIntro = 65,
+    kStateRollTurn = 66,
+    kStateRolling = 67,
+    kStateRollEnd = 68,
+    kStateSpinIntro = 69,
+    kStateSpining = 70,
+    kStateSpinStun = 71,
+    kStateSpinFall = 72,
+    kStateRollSideIntro = 73,
+    kStateRollingSide = 74,
+    kStateSlipIntro = 75,
+    kStateSlipTurn = 76,
+    kStateSlipClimb = 77,
+    kStateSliping = 78,
+    kStateSlipStun = 79,
+    kStateSlipEnd = 80,
+    kStateInfRunIntro = 81,
+    kStateInfRunning = 82,
+    kStateWndRunIntro = 85,
+    kStateScrRunning = 86,
+    kStateWndPtRunIntro = 87,
+    kStateWndPtRunning = 88,
+    kStateWndPtClimb = 89,
+    kStateWndPtTurn = 90,
+    kStateWndPtEnd = 91,
+    kStateFreeFallIntro = 92,
+    kStateFreeFallLand = 93,
+    kStateHRunFallIntro = 94,
+    kStateHSlowRunHsaIntro = 95,
+    kStateFallIntro = 96,
+    kStateVRunFallIntro = 97,
+    kStateSideFallIntro = 98,
+    kStateFalling = 99,
+    kStateFallBounce = 100,
+    kStateSideFallEnd = 101,
+    kStateInsituFallIntro = 102,
+    kStateInsituFallPre = 103,
+    kStateFrontSpFallIntro = 104,
+    kStateSideSpFallIntro = 105,
+    kStateSpFallWatch = 106,
+    kStateSpFallWink = 107,
+    kStateSpFallGaze = 108,
+    kStateSpFallJump = 109,
+    kStateSpFallObsJump = 110,
+    kStateSpFallPre = 111,
+    kStateSpFalling = 112,
+    kStateInfSleepIntro = 113,
+    kStateInfSleepWink = 114,
+    kStateInfSleeping = 115,
+    kStateMryPassIntro = 116,    ///top
+    kStateMryPassRun = 117,
+    kStateMryPassSub = 118,
+    kStateMryPassing = 119,
+    kStateMryPassBack = 120,
+    kStateMryMeetIntro = 121,    ///meet
+    kStateMryMeetRun = 122,
+    kStateMryMeetBlush = 123,
+    kStateMryMeetFade = 124,
+    kStateMryMeetEnd = 125,
+    kStateMryMateIntro = 126,    ///follow
+    kStateMryMateRun = 127,
+    kStateUFOTakeIntro = 128,
+    kStateUFOTakeRun = 129,
+    kStateUFOTakeSub = 130,
+    kStateUFOTakeFly = 131,
+    kStateUFOTakeBeam = 132,
+    kStateUFOTaking = 133,
+    kStateUFOTakeLeave = 134,
+    kStateUFOEtIntro = 135,
+    kStateUFOEtFly = 136,
+    kStateUFOEtBeam = 137,
+    kStateUFOEtAppear = 138,
+    kStateUFOEtLeave = 139,
+    kStateUFOEtFade = 140,
+    kStateUFOEnterIntro = 142,
+    kStateUFOEnterFly = 143,
+    kStateUFOEnterRun = 144,
+    kStateUFOEnterLeave = 145,
+    kStateBurnIntro = 147,  // >148
     kStateBurning = 148,
     kStateBurnBath = 149,
     kStateBurnBathOut = 150,
@@ -194,7 +315,7 @@ typedef struct WindowInfo {
     BYTE padding[66]; /* Unused. */
 } WindowInfo;
 
-int word_9CF0 = 245; /* Palette search maximum index (unused). */
+int maxPalIndex_ = 245; /* Palette search maximum index (unused). */
 ResourseInfo originalRes_[16] = { /* Resource list. */
     {IDB_SPRITE1, 1, {{NULL, NULL}, 0, 0, 0, 0}},
     {IDB_SPRITE2, 1, {{NULL, NULL}, 0, 0, 0, 0}},
@@ -211,52 +332,52 @@ ResourseInfo originalRes_[16] = { /* Resource list. */
 
 ResourseInfo hFlipRes_[16] = {0}; /* Resource list storing flipped images. */
 WORD nextStateNormal1_[80] = { /* Normal action table (option "Gravity always on" disabled). */
-    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
-    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
-    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
-    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
-    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
-    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
-    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
-    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
-    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
-    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
-    kStateWalk1, kStateRun1, kStateSleep1, kStateWink1,
-    kStateWalk1, kStateRun1, kStateSleep1, kStateWink1,
-    kStateWalk1, kStateRun1, kStateSleep1, kStateWink1,
-    kStateWalk1, kStateRun1, kStateSleep1, kStateWink1,
-    kStateWalk1, kStateRun1, kStateSleep1, kStateWink1,
-    kStateWalk1, kStateRun1, kStateSleep1, kStateWink1,
-    kStateWalk1, kStateRun1, kStateSleep1, kStateWink1,
-    kStateHandstand1, kStateSit1, kStateSex1, kStateBaa1,
-    kStatePiss1, kStateEat1, kStateYawn1, kStateSneeze1,
-    kStateBaa1, kStateSneeze1, kStateAmazed1, kStateScary1
+    kStateWalkIntro, kStateWalkIntro, kStateRunIntro, kStateRunIntro,
+    kStateWalkIntro, kStateWalkIntro, kStateRunIntro, kStateRunIntro,
+    kStateWalkIntro, kStateWalkIntro, kStateRunIntro, kStateRunIntro,
+    kStateWalkIntro, kStateWalkIntro, kStateRunIntro, kStateRunIntro,
+    kStateWalkIntro, kStateWalkIntro, kStateRunIntro, kStateRunIntro,
+    kStateWalkIntro, kStateWalkIntro, kStateRunIntro, kStateRunIntro,
+    kStateWalkIntro, kStateWalkIntro, kStateRunIntro, kStateRunIntro,
+    kStateWalkIntro, kStateWalkIntro, kStateRunIntro, kStateRunIntro,
+    kStateWalkIntro, kStateWalkIntro, kStateRunIntro, kStateRunIntro,
+    kStateWalkIntro, kStateWalkIntro, kStateRunIntro, kStateRunIntro,
+    kStateWalkIntro, kStateRunIntro, kStateSleepIntro, kStateWinkIntro,
+    kStateWalkIntro, kStateRunIntro, kStateSleepIntro, kStateWinkIntro,
+    kStateWalkIntro, kStateRunIntro, kStateSleepIntro, kStateWinkIntro,
+    kStateWalkIntro, kStateRunIntro, kStateSleepIntro, kStateWinkIntro,
+    kStateWalkIntro, kStateRunIntro, kStateSleepIntro, kStateWinkIntro,
+    kStateWalkIntro, kStateRunIntro, kStateSleepIntro, kStateWinkIntro,
+    kStateWalkIntro, kStateRunIntro, kStateSleepIntro, kStateWinkIntro,
+    kStateHandstandIntro, kStateSitIntro, kStateSexIntro, kStateBaaIntro,
+    kStatePissIntro, kStateEatIntro, kStateYawnIntro, kStateSneezeIntro,
+    kStateBaaIntro, kStateSneezeIntro, kStateAmazedIntro, kStateScaryIntro
 };
-WORD nextStateNormal2_[80] = { /* Normal action table (option "Gravity always on" enabled). */
-    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
-    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
-    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
-    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
-    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
-    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
-    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
-    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
-    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
-    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
-    kStateWalk1, kStateRun1, kStateSleep1, kStateWink1,
-    kStateWalk1, kStateRun1, kStateSleep1, kStateWink1,
-    kStateWalk1, kStateRun1, kStateSleep1, kStateWink1,
-    kStateWalk1, kStateRun1, kStateSleep1, kStateWink1,
-    kStateWalk1, kStateRun1, kStateSleep1, kStateWink1,
-    kStateWalk1, kStateRun1, kStateSleep1, kStateWink1,
-    kStateWalk1, kStateRun1, kStateSleep1, kStateWink1,
-    kStateHandstand1, kStateSit1, kStateSex1, kStateRoll1,
-    kStatePiss1, kStateEat1, kStateYawn1, kStateSlip1,
-    kStateBaa1, kStateSneeze1, kStateAmazed1, kStateScary1
+WORD nextStateNormalGForce_[80] = { /* Normal action table (option "Gravity always on" enabled). */
+    kStateWalkIntro, kStateWalkIntro, kStateRunIntro, kStateRunIntro,
+    kStateWalkIntro, kStateWalkIntro, kStateRunIntro, kStateRunIntro,
+    kStateWalkIntro, kStateWalkIntro, kStateRunIntro, kStateRunIntro,
+    kStateWalkIntro, kStateWalkIntro, kStateRunIntro, kStateRunIntro,
+    kStateWalkIntro, kStateWalkIntro, kStateRunIntro, kStateRunIntro,
+    kStateWalkIntro, kStateWalkIntro, kStateRunIntro, kStateRunIntro,
+    kStateWalkIntro, kStateWalkIntro, kStateRunIntro, kStateRunIntro,
+    kStateWalkIntro, kStateWalkIntro, kStateRunIntro, kStateRunIntro,
+    kStateWalkIntro, kStateWalkIntro, kStateRunIntro, kStateRunIntro,
+    kStateWalkIntro, kStateWalkIntro, kStateRunIntro, kStateRunIntro,
+    kStateWalkIntro, kStateRunIntro, kStateSleepIntro, kStateWinkIntro,
+    kStateWalkIntro, kStateRunIntro, kStateSleepIntro, kStateWinkIntro,
+    kStateWalkIntro, kStateRunIntro, kStateSleepIntro, kStateWinkIntro,
+    kStateWalkIntro, kStateRunIntro, kStateSleepIntro, kStateWinkIntro,
+    kStateWalkIntro, kStateRunIntro, kStateSleepIntro, kStateWinkIntro,
+    kStateWalkIntro, kStateRunIntro, kStateSleepIntro, kStateWinkIntro,
+    kStateWalkIntro, kStateRunIntro, kStateSleepIntro, kStateWinkIntro,
+    kStateHandstandIntro, kStateSitIntro, kStateSexIntro, kStateRollIntro,
+    kStatePissIntro, kStateEatIntro, kStateYawnIntro, kStateSlipIntro,
+    kStateBaaIntro, kStateSneezeIntro, kStateAmazedIntro, kStateScaryIntro
 };
-WORD nextStateNormal6_[8] = { /* Special action table. */
-    kStateMerry11, kStateMerry21, kStateMerry31, kStateBurn1,
-    kStateUFO11, kStateUFO21, kStateUFO31, kStateBurn1
+WORD nextStateToLongAni_[8] = { /* Special action table. */
+    kStateMryPassIntro, kStateMryMeetIntro, kStateMryMateIntro, kStateBurnIntro,
+    kStateUFOTakeIntro, kStateUFOEtIntro, kStateUFOEnterIntro, kStateBurnIntro
 };
 int xDirection_ = 1; /* Facing direction. 1 = left, -1 = right */
 int xDirectionSub_ = 1; /* Facing direction (sub). 1 = left, -1 = right */
@@ -364,7 +485,7 @@ int lastPaintBmpW_ = 0; /* Sprite width for previous frame. */
 int lastPaintBmpH_ = 0; /* Sprite height for previous frame. */
 WORD word_A7FA = 0; /* Current frame rectangle and previous frame rectangle have no intersecion? (unused) */
 WORD bool_A7FC = 0; /* Is gravity enabled? */
-WORD word_A7FE = 0; /* Is collision with visible window enabled? */
+WORD canHit_ = 0; /* Is collision with visible window enabled? */
 int xPoo_ = 0; /* Current X-coordinate. */
 int yPoo_ = 0; /* Current Y-coordinate. */
 int iSprite_ = 0; /* Sprite index. */
@@ -375,24 +496,24 @@ int xSubPoo_ = 0; /* Current X-coordinate (sub). */
 int ySubPoo_ = 0; /* Current Y-coordinate (sub). */
 int iSubSprite_ = 0; /* Sprite index (sub). */
 HWND hWnd_A81C = NULL; /* Active window or window to land on. */
-RECT stru_A81E = {0L, 0L, 0L, 0L}; /* Rectangle of active window or window to land on. */
+RECT rect_A81E = {0L, 0L, 0L, 0L}; /* Rectangle of active window or window to land on. */
 int iAniFrames_ = 0; /* Animation frame counter. */
-int word_A828 = 0; /* Random duration period counter. */
-int rand_A82A = 0; /* Random case number for action. */
-WORD word_A82C = 0; /* Unused. */
+int frameCount_ = 0; /* Random duration period counter. */
+int randAct_ = 0; /* Random case number for action. */
+WORD needWalk_ = 0; /* Unused. */
 HGLOBAL hPlaySoundData_ = NULL; /* Global handle for holding WAVE resource in memory. */
 int lastClockHour_ = 0; /* Current time hour. */
 int chimeCount_ = 0; /* Remaining times for chime. */
 DWORD lastChimeTick_ = 0; /* Tick count. */
 int chimeCheckCounter_ = 0; /* Time check period counter. */
 int counter_A83A = 0; /* Frame period counter. */
-int word_A83C = 0; /* Target X-coordinate for window edge attachment. */
-int word_A83E = 0; /* Target Y-coordinate for window edge attachment. */
-WORD word_A840 = 0; /* Bounce when falling? */
-int fallt_A842 = 0; /* Case number for fall action. */
-int dy_A844 = 0; /* Collision vertical speed (unused). */
+int targetX_ = 0; /* Target X-coordinate for window edge attachment. */
+int targetY_ = 0; /* Target Y-coordinate for window edge attachment. */
+WORD hasBounce_ = 0; /* Bounce when falling? */
+int fallType_ = 0; /* Case number for fall action. */
+int dyHitObs_ = 0; /* Collision vertical speed (unused). */
 int word_A846 = 0; /* Collision spin frame counter (unused). */
-WORD index_A848 = 0; /* Collision animation frame index. */
+WORD iAniHitFrame_ = 0; /* Collision animation frame index. */
 int word_A84A = 0; /* Known instance list update period counter. */
 HBITMAP paintSubBmpBuf_[2] = {NULL, NULL}; /* Double buffer (sub). */
 HBITMAP bmp_A854 = NULL; /* Sprite render target (sub). */
@@ -425,11 +546,11 @@ int lastSubSpriteY_ = 0; /* Screen Y-coordinate for previous frame (sub). */
 int lastSubSpriteBmpW_ = 0; /* Sprite width for previous frame (sub). */
 int lastSubSpriteBmpH_ = 0; /* Sprite height for previous frame (sub). */
 WORD word_A898 = 0; /* Current frame rectangle and previous frame rectangle have no intersecion? (sub) (unused) */
-WORD pooState_ = 0; /* State. */
+WORD pooState_ = kStateInit; /* State. */
 SpriteInfo sprites_[512] = {{{NULL, NULL}, 0, 0, 0, 0}}; /* Sprite list. First 256 for left-facing sprites, last 256 for right-facing sprites. */
 int word_C0A4 = 0; /* No mouse action consecutive period counter. */
 UINT confChime_ = 0U; /* Configuration: Chime */
-WORD word_C0AE = 0; /* Screen Mate window on top of subwindow? (unused) */
+WORD bool_C0AE = 0; /* Screen Mate window on top of subwindow? (unused) */
 HWND hPooWnd_ = NULL; /* Self instance window handle. */
 HBITMAP word_C0B2 = NULL; /* UFO beam render target. */
 HBRUSH word_C0B4 = NULL; /* UFO beam paint colour brush. */
@@ -442,23 +563,23 @@ WORD confTopMost__ = 0; /* Always on top? (unused) */
 int otherPooCount_ = 0; /* Known instance count. */
 UINT confGForce_ = 0U; /* Configuration: Gravity always on */
 HBRUSH word_CA44 = NULL; /* UFO beam mask colour brush. */
-int word_CA46 = 0; /* Fade out frame counter. */
+int subPooFade_ = 0; /* Fade out frame counter. */
 int otherPooCount2_ = 0; /* Unused. */
 HPALETTE hPalette_ = NULL; /* Palette being used by window. */
 int word_CA4C = 0; /* Unused. */
 int word_CA4E = 0; /* Unused. */
 int screenWidth_ = 0; /* Screen width. */
 int screenHeight_ = 0; /* Screen height. */
-WORD word_CA54 = 0; /* Temporarily holds sleep timeout action. */
+WORD pooSleepState_ = 0; /* Temporarily holds sleep timeout action. */
 WORD keepSubPoo_ = 0; /* Not to clear subwindow? */
 HINSTANCE hSelfInst_ = NULL; /* Current instance. */
 UINT confSound_ = 0U; /* Configuration: Cry */
 int height_CA5C = 0; /* UFO beam height (sub). */
 WORD word_CA5E = 0; /* Unused. */
 HWND hOtherPooWnd_[kMaxPooCount+1] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}; /* Known instance list. When no other instance exists, [8] is used to store subwindow handle. */
-int height_CA72 = 0; /* UFO beam height. */
+int ufoBeamHeight_ = 0; /* UFO beam height. */
 int otherVWndCount_ = 0; /* Number of currently visible windows. */
-WORD word_CA76 = 0; /* Sleeping after timeout? */
+WORD needSleepAfterChime_ = 0; /* Sleeping after timeout? */
 WORD word_CA78 = 0; /* Unused. */
 #ifdef _WIN32
 HWND hOwnerWnd_ = NULL;
@@ -471,8 +592,8 @@ void PASCAL sub_230(void FAR *, void FAR *);
 WORD readBmpPaletteSize(void FAR *);
 WORD readBmpColorCount(void FAR *);
 HPALETTE createPaletteFromBmp(HDC hdc, void FAR *bmpData);
-HPALETTE sub_1791(HDC, BYTE, BYTE, BYTE);
-void sub_17FD(HDC, HPALETTE, HPALETTE, int);
+HPALETTE createPaletteFromRgb(HDC, BYTE, BYTE, BYTE);
+void palNearestCopy(HDC, HPALETTE, HPALETTE, int);
 WORD getBmpColorOfFirstPixel(void FAR *bmpData);
 void FAR * getBmpPixelBegin(void FAR *data);
 void bmpFlipCopy(void FAR *, void FAR *, UINT flags);
@@ -485,7 +606,7 @@ BOOL CALLBACK debugDlgProc(HWND, UINT, WPARAM, LPARAM);
 void showSubPoo(void);
 void destroySubPooWnd(void);
 void putWndToTop(HWND hWnd);
-void sub_2B01(HWND, HWND);
+void setWndOnto(HWND, HWND);
 BOOL loadSprite(HDC, SpriteInfo *, int resId, int);
 void releaseSprite(SpriteInfo *sprite);
 void readConfig(void);
@@ -499,16 +620,16 @@ void paint_3284(HWND hWnd);
 void paint_3717(HWND hWnd);
 void sub_399D(HWND, int, int, int, int);
 BOOL sub_39D6(HWND);
-int calcPooCollisionX(int, int, int, int);
+int calcPooHitX(int, int, int, int);
 void checkOtherPoo_3B4C(HWND hWnd);
 BOOL checkOtherPoo(HWND);
 void sub_3D12(HWND);
 void sub_3D5F(HWND);
 void sub_3DA7(HWND hWnd);
 void updateVWnds(void);
-int sub_3E7C(HWND *, int, int, int, int);
-int sub_408C(HWND *, int, int, int, int);
-int sub_419E(HWND, int, int, int, int);
+int getVWndHitXInfo(HWND *, int, int, int, int);
+int getLandInfo(HWND *, int, int, int, int);
+int getWndLandY(HWND, int, int, int, int);
 void playSoundRes(int, UINT, WORD);
 void stopPlaySound(void);
 void asyncPlaySound(LPCSTR path);
@@ -517,7 +638,7 @@ BOOL initResources(HDC hdc);
 void releaseResources(void);
 void checkPooTurn(void);
 void checkPooHit(BOOL);
-void aniFrameDown42(void);
+void aniFrameDownToNormal(void);
 void processChime(void);
 void setSprite(int, int, int);
 void setSubSprite(int, int, int);
@@ -526,7 +647,7 @@ void getWndRectSp(HWND, LPRECT);
 void land_496F(int);
 void sub_4B3B(void);
 void procPooTouchX(int, int, int);
-int getPooCollisionX(int, int);
+int getPooHitX(int, int);
 void resetState(void);
 void sub_4CF8(void);
 void event_8FD7(int);
@@ -1042,63 +1163,63 @@ HPALETTE createPaletteFromBmp(HDC hdc, void FAR * bmpData)
 }
 
 /* Create mask palette based on given RGB values. */
-HPALETTE sub_1791(HDC arg_0, BYTE arg_2, BYTE arg_3, BYTE arg_4)
+HPALETTE createPaletteFromRgb(HDC hdc, BYTE r, BYTE g, BYTE b)
 {
-    const BYTE FAR * var_4;
-    HPALETTE var_6;
-    LOGPALETTE * var_8;
-    var_8 = (LOGPALETTE *)LocalAlloc(LPTR, 12U);
-    var_8->palVersion = 0x0300;
-    var_8->palNumEntries = 1;
-    var_8->palPalEntry[0].peRed = arg_2;
-    var_8->palPalEntry[0].peGreen = arg_3;
-    var_8->palPalEntry[0].peBlue = arg_4;
-    var_8->palPalEntry[0].peFlags = 0;
-    var_4/* += 4 */;
-    var_6 = CreatePalette(var_8);
-    LocalFree(var_8);
-    return var_6;
+    const BYTE FAR * ptr;
+    HPALETTE hPalette;
+    LOGPALETTE * logPalette;
+    logPalette = (LOGPALETTE *)LocalAlloc(LPTR, 12U);
+    logPalette->palVersion = 0x0300;
+    logPalette->palNumEntries = 1;
+    logPalette->palPalEntry[0].peRed = r;
+    logPalette->palPalEntry[0].peGreen = g;
+    logPalette->palPalEntry[0].peBlue = b;
+    logPalette->palPalEntry[0].peFlags = 0;
+    ptr/* += 4 */;
+    hPalette = CreatePalette(logPalette);
+    LocalFree(logPalette);
+    return hPalette;
 }
 
 /* Set palette entries based on another palette with nearest colours (unused). */
-void sub_17FD(HDC arg_0, HPALETTE arg_2, HPALETTE arg_4, int arg_6)
+void palNearestCopy(HDC hdc, HPALETTE hDestPal, HPALETTE hSrcPal, int size)
 {
-    PALETTEENTRY * var_2;
-    PALETTEENTRY * var_4;
-    int var_6;
-    int var_8;
-    COLORREF var_C;
-    COLORREF var_10;
-    int var_12;
-    if ((GetDeviceCaps(arg_0, RASTERCAPS) & RC_PALETTE) == 0) {
+    PALETTEENTRY * pSrcEntry;
+    PALETTEENTRY * pDestEntry;
+    int devPalSize;
+    int i;
+    COLORREF srcColor;
+    COLORREF destColor;
+    int iNearest;
+    if ((GetDeviceCaps(hdc, RASTERCAPS) & RC_PALETTE) == 0) {
         return;
     }
-    var_6 = GetDeviceCaps(arg_0, SIZEPALETTE);
-    if (var_6 == 0) {
-        var_6 = 256;
+    devPalSize = GetDeviceCaps(hdc, SIZEPALETTE);
+    if (devPalSize == 0) {
+        devPalSize = 256;
     }
-    var_2 = (PALETTEENTRY *)LocalAlloc(LPTR, arg_6 * sizeof(PALETTEENTRY));
-    var_4 = (PALETTEENTRY *)LocalAlloc(LPTR, var_6 * sizeof(PALETTEENTRY));
-    GetPaletteEntries(arg_4, 0U, arg_6, var_2);
-    GetPaletteEntries(arg_2, 0U, var_6, var_4);
-    for (var_8 = 0; var_8 < arg_6; var_8 += 1) {
-        var_C = *(COLORREF *)&var_2[var_8];
-        var_12 = GetNearestPaletteIndex(arg_2, var_C);
-        var_10 = *(COLORREF *)&var_4[var_12];
-        if (var_10 != var_C) {
-            if (var_12 < 10 || var_12 > word_9CF0) {
-                if (word_9CF0 < 10) {
+    pSrcEntry = (PALETTEENTRY *)LocalAlloc(LPTR, size * sizeof(PALETTEENTRY));
+    pDestEntry = (PALETTEENTRY *)LocalAlloc(LPTR, devPalSize * sizeof(PALETTEENTRY));
+    GetPaletteEntries(hSrcPal, 0U, size, pSrcEntry);
+    GetPaletteEntries(hDestPal, 0U, devPalSize, pDestEntry);
+    for (i = 0; i < size; i += 1) {
+        srcColor = *(COLORREF *)&pSrcEntry[i];
+        iNearest = GetNearestPaletteIndex(hDestPal, srcColor);
+        destColor = *(COLORREF *)&pDestEntry[iNearest];
+        if (destColor != srcColor) {
+            if (iNearest < 10 || iNearest > maxPalIndex_) {
+                if (maxPalIndex_ < 10) {
                     break;
                 } else {
-                    var_12 = word_9CF0--;
+                    iNearest = maxPalIndex_--;
                 }
             }
-            *(COLORREF *)&var_4[var_12] = var_C;
+            *(COLORREF *)&pDestEntry[iNearest] = srcColor;
         }
     }
-    SetPaletteEntries(arg_2, 0U, var_6, var_4);
-    LocalFree(var_4);
-    LocalFree(var_2);
+    SetPaletteEntries(hDestPal, 0U, devPalSize, pDestEntry);
+    LocalFree(pDestEntry);
+    LocalFree(pSrcEntry);
 }
 
 /* Get colour index of first pixel. */
@@ -1372,7 +1493,7 @@ LRESULT CALLBACK pooWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         switch (lParam) {
         case 0x202:
         case 0x205:
-            if (word_C0AE != 0) {
+            if (bool_C0AE) {
                 if (hOtherPooWnd_[kISubPooHwnd] != NULL) {
                     putWndToTop(hOtherPooWnd_[kISubPooHwnd]);
                 }
@@ -1417,9 +1538,9 @@ LRESULT CALLBACK pooWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 point_A7B0.y = cursorPos.y;
                 word_A798 = 1;
             }
-            if (word_CA76 != 0) {
+            if (needSleepAfterChime_) {
                 if (word_A798 != 0) {
-                    word_CA76 = 0;
+                    needSleepAfterChime_ = 0;
                     word_C0A4 = 0;
                     event_8FD7(0);
                 }
@@ -1752,10 +1873,10 @@ void putWndToTop(HWND hWnd)
 }
 
 /* Place a window on top of another. */
-void sub_2B01(HWND arg_0, HWND arg_2)
+void setWndOnto(HWND hWnd, HWND hPeerWnd)
 {
     if (confTopMost__ == 0) {
-        SetWindowPos(arg_0, arg_2, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
+        SetWindowPos(hWnd, hPeerWnd, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
     }
 }
 
@@ -2009,7 +2130,7 @@ void paint_3284(HWND hWnd)
     }
     if (lastPaintX_ == curSpriteX_ && lastPaintY_ == curSpriteY_ &&
         lastPaintBmp_ == curSpriteBmp0_ && lastPaintBmpX_ == curSpriteBmpX_ &&
-        height_CA72 == 0) {
+        ufoBeamHeight_ == 0) {
         return;
     }
     iPaintBmp_ ^= 1;
@@ -2079,7 +2200,7 @@ void paint_3284(HWND hWnd)
         }
         bool_A7D2 = 1;
         word_CA5E = 1;
-        MoveWindow(hWnd, paintRectX_, paintRectY_, paintRectW_, paintRectH_ + height_CA72, TRUE);
+        MoveWindow(hWnd, paintRectX_, paintRectY_, paintRectW_, paintRectH_ + ufoBeamHeight_, TRUE);
         word_CA5E = 0;
     }
     DeleteDC(hdc_4);
@@ -2119,7 +2240,7 @@ void paint_3717(HWND hWnd)
     SelectPalette(hdc_4, hPalette_, FALSE);
     SelectObject(hdc_4, bmp_A7BA);
     BitBlt(hdc_2, 0, 0, paintRectW_, paintRectH_, hdc_4, 0, 0, SRCCOPY);
-    if (height_CA72 != 0) {
+    if (ufoBeamHeight_ != 0) {
         if (word_C0B8 == NULL) {
             word_C0B8 = CreateCompatibleBitmap(hdc_2, 40, screenHeight_ * 4 / 5);
             if (word_C0B8 == NULL) {
@@ -2143,7 +2264,7 @@ void paint_3717(HWND hWnd)
 #ifdef _WIN32
         /* Screen contents with height of only 40 pixels can be captured from window device context on Windows 10. Capture directly from screen instead. */
         screen = GetDC(NULL);
-        BitBlt(hdc_E, 0, 0, 40, height_CA72, screen, paintRectX_, paintRectY_ + 40, SRCCOPY);
+        BitBlt(hdc_E, 0, 0, 40, ufoBeamHeight_, screen, paintRectX_, paintRectY_ + 40, SRCCOPY);
         ReleaseDC(NULL, screen);
 #else
         BitBlt(var_E, 0, 0, 40, word_CA72, var_2, 0, 40, SRCCOPY);
@@ -2151,13 +2272,13 @@ void paint_3717(HWND hWnd)
         var_C.left = 0;
         var_C.top = 0;
         var_C.right = 40;
-        var_C.bottom = height_CA72;
+        var_C.bottom = ufoBeamHeight_;
         SelectObject(hdc_4, word_C0B8);
         FillRect(hdc_4, &var_C, word_CA44);
-        BitBlt(hdc_E, 0, 0, 40, height_CA72, hdc_4, 0, 0, SRCAND);
+        BitBlt(hdc_E, 0, 0, 40, ufoBeamHeight_, hdc_4, 0, 0, SRCAND);
         FillRect(hdc_4, &var_C, word_C0B4);
-        BitBlt(hdc_E, 0, 0, 40, height_CA72, hdc_4, 0, 0, SRCPAINT);
-        BitBlt(hdc_2, 0, 40, 40, height_CA72, hdc_E, 0, 0, SRCCOPY);
+        BitBlt(hdc_E, 0, 0, 40, ufoBeamHeight_, hdc_4, 0, 0, SRCPAINT);
+        BitBlt(hdc_2, 0, 40, 40, ufoBeamHeight_, hdc_E, 0, 0, SRCCOPY);
         DeleteDC(hdc_E);
         DeleteDC(hdc_4);
     } else {
@@ -2208,7 +2329,7 @@ BOOL sub_39D6(HWND hWnd)
 }
 
 /* Find X-coordinate of possible collision with other instances. Return zero when no collision detected. */
-int calcPooCollisionX(int head, int tail, int top, int bot)
+int calcPooHitX(int head, int tail, int top, int bot)
 {
     int i;
     int peerLeft;
@@ -2371,18 +2492,18 @@ void updateVWnds(void)
 }
 
 /* Find X-coordinate of possible collision with which visible window. */
-int sub_3E7C(HWND * pHwnd, int posy_2, int posy_4, int posx_6, int posx_8)
+int getVWndHitXInfo(HWND * pHwnd, int top, int bot, int nextHead, int curHead)
 {
     int i;
     int j;
     RECT rect;
     for (i = 0; i < otherVWndCount_; i += 1) {
-        if (posx_8 > posx_6) {
-            if (otherVWnds_[i].rect.right >= posx_6 && otherVWnds_[i].rect.right < posx_8 &&
-                    otherVWnds_[i].rect.top < posy_2 && otherVWnds_[i].rect.bottom > posy_4) {
+        if (curHead > nextHead) {
+            if (otherVWnds_[i].rect.right >= nextHead && otherVWnds_[i].rect.right < curHead &&
+                    otherVWnds_[i].rect.top < top && otherVWnds_[i].rect.bottom > bot) {
                 for (j = 0; j < i; j += 1) {
-                    if (otherVWnds_[j].rect.top <= posy_2 && otherVWnds_[j].rect.bottom >= posy_4 &&
-                            otherVWnds_[j].rect.left <= posx_6 && otherVWnds_[j].rect.right >= posx_8) {
+                    if (otherVWnds_[j].rect.top <= top && otherVWnds_[j].rect.bottom >= bot &&
+                            otherVWnds_[j].rect.left <= nextHead && otherVWnds_[j].rect.right >= curHead) {
                         break;
                     }
                 }
@@ -2397,11 +2518,11 @@ int sub_3E7C(HWND * pHwnd, int posy_2, int posy_4, int posx_6, int posx_8)
                 }
             }
         } else {
-            if (otherVWnds_[i].rect.left <= posx_6 && otherVWnds_[i].rect.left > posx_8 &&
-                    otherVWnds_[i].rect.top < posy_2 && otherVWnds_[i].rect.bottom > posy_4) {
+            if (otherVWnds_[i].rect.left <= nextHead && otherVWnds_[i].rect.left > curHead &&
+                    otherVWnds_[i].rect.top < top && otherVWnds_[i].rect.bottom > bot) {
                 for (j = 0; j < i; j += 1) {
-                    if (otherVWnds_[j].rect.top <= posy_2 && otherVWnds_[j].rect.bottom >= posy_4 &&
-                            otherVWnds_[j].rect.left <= posx_6 && otherVWnds_[j].rect.right >= posx_8) {
+                    if (otherVWnds_[j].rect.top <= top && otherVWnds_[j].rect.bottom >= bot &&
+                            otherVWnds_[j].rect.left <= nextHead && otherVWnds_[j].rect.right >= curHead) {
                         break;
                     }
                 }
@@ -2421,7 +2542,7 @@ int sub_3E7C(HWND * pHwnd, int posy_2, int posy_4, int posx_6, int posx_8)
 }
 
 /* Find Y-coordinate of possible landing top edge of which visible window. */
-int sub_408C(HWND * pHwnd, int posy_2, int posy_4, int posx_6, int posx_8)
+int getLandInfo(HWND * pHwnd, int posy_2, int posy_4, int posx_6, int posx_8)
 {
     int i;
     int j;
@@ -2449,16 +2570,17 @@ int sub_408C(HWND * pHwnd, int posy_2, int posy_4, int posx_6, int posx_8)
 }
 
 /* Get window top Y-coordinate if it is possible to land on the window. */
-int sub_419E(HWND arg_0, int arg_2, int arg_4, int arg_6, int arg_8)
+int getWndLandY(HWND hWnd, int nextY, int curY, int left, int right)
 {
-    RECT var_8;
-    if (IsWindow(arg_0)) {
-        GetWindowRect(arg_0, &var_8);
-        if (var_8.top <= arg_2 && var_8.top > arg_4 && var_8.left < arg_8 && var_8.right > arg_6) {
-            return var_8.top;
+    RECT rect;
+    if (IsWindow(hWnd)) {
+        GetWindowRect(hWnd, &rect);
+        if (rect.top <= nextY && rect.top > curY &&
+                rect.left < right && rect.right > left) {
+            return rect.top;
         }
     }
-    if (arg_2 > screenHeight_) {
+    if (nextY > screenHeight_) {
         return -1;
     }
     return 0;
@@ -2552,16 +2674,16 @@ void releaseResources(void)
 void checkPooTurn(void)
 {
     if (xDirection_ > 0 && xPoo_ < 0) {
-        pooState_ = kStateTurn1;
+        pooState_ = kStateTurnIntro;
     }
     if (xDirection_ < 0 && screenWidth_ - sprites_[iSprite_].width < xPoo_) {
-        pooState_ = kStateTurn1;
+        pooState_ = kStateTurnIntro;
     }
     if (xDirection_ > 0 && screenWidth_ - sprites_[iSprite_].width > xPoo_ && rand() % 20 == 0) {
-        pooState_ = kStateTurn1;
+        pooState_ = kStateTurnIntro;
     }
     if (xDirection_ < 0 && xPoo_ > 0 && rand() % 20 == 0) {
-        pooState_ = kStateTurn1;
+        pooState_ = kStateTurnIntro;
     }
 }
 
@@ -2570,27 +2692,27 @@ void checkPooHit(BOOL turnCheck)
 {
     if (bool_A7FC == 0) {
         if (xDirection_ > 0 && xPoo_ < 0) {
-            pooState_ = kStateHit1;
+            pooState_ = kStateHitIntro;
         }
         if (xDirection_ < 0 && screenWidth_ - sprites_[iSprite_].width < xPoo_) {
-            pooState_ = kStateHit1;
+            pooState_ = kStateHitIntro;
         }
     }
     if (turnCheck) {
         if (xDirection_ > 0 && screenWidth_ - 80 > xPoo_ && rand() % 20 == 0) {
-            pooState_ = kStateTurn1;
+            pooState_ = kStateTurnIntro;
         }
         if (xDirection_ < 0 && xPoo_ > 40 && rand() % 20 == 0) {
-            pooState_ = kStateTurn1;
+            pooState_ = kStateTurnIntro;
         }
     }
 }
 
 /* Switch to standing sprite after certain frames. */
-void aniFrameDown42(void)
+void aniFrameDownToNormal(void)
 {
     if (iAniFrames_-- <= 0) {
-        pooState_ = 42;
+        pooState_ = kStateToNormal;
     }
 }
 
@@ -2608,10 +2730,10 @@ void processChime(void)
             chimeCount_ -= 1;
             if (chimeCount_ != 0) {
                 playSoundRes(IDW_BAA, 0U, 0);
-            } else if (word_CA76 != 0) {
-                pooState_ = 113;
+            } else if (needSleepAfterChime_) {
+                pooState_ = kStateInfSleepIntro;
             } else {
-                pooState_ = kStateNormal1;
+                pooState_ = kStateNormalIntro;
             }
         }
     } else {
@@ -2630,7 +2752,7 @@ void processChime(void)
             lastChimeTick_ = 0;
             lastClockHour_ = clockHour;
             chimeCount_ = lastClockHour_ + 1;
-            pooState_ = 81;
+            pooState_ = kStateInfRunIntro;
         }
     }
 }
@@ -2689,61 +2811,61 @@ void getWndRectSp(HWND hWnd, LPRECT pRect)
 void land_496F(int arg_0)
 {
     RECT rect;
-    if (bool_A7FC == 0) {
+    if (!bool_A7FC) {
         return;
     }
     if (hWnd_A81C != NULL) {
         if (!isLandableWnd(hWnd_A81C)) {
             if (arg_0 == 2) {
-                pooState_ = 94;
+                pooState_ = kStateHRunFallIntro;
             } else {
-                pooState_ = 102;
+                pooState_ = kStateInsituFallIntro;
             }
             return;
         }
         getWndRectSp(hWnd_A81C, &rect);
-        if (rect.top > stru_A81E.top || xPoo_ + 40 < rect.left || rect.right < xPoo_) {
+        if (rect.top > rect_A81E.top || xPoo_ + 40 < rect.left || rect.right < xPoo_) {
             if (arg_0 == 2) {
-                pooState_ = 94;
+                pooState_ = kStateHRunFallIntro;
             } else {
-                pooState_ = 102;
+                pooState_ = kStateInsituFallIntro;
             }
             return;
         }
-        if (rect.top < stru_A81E.top) {
+        if (rect.top < rect_A81E.top) {
             yPoo_ = rect.top - sprites_[iSprite_].height;
-            stru_A81E.top = rect.top;
-            stru_A81E.bottom = rect.bottom;
-            stru_A81E.left = rect.left;
-            stru_A81E.right = rect.right;
+            rect_A81E.top = rect.top;
+            rect_A81E.bottom = rect.bottom;
+            rect_A81E.left = rect.left;
+            rect_A81E.right = rect.right;
             setSprite(xPoo_, yPoo_, iSprite_);
             return;
         }
         if (arg_0 == 1) {
             if (xPoo_ + 8 < rect.left && xDirection_ > 0) {
-                pooState_ = 105;
+                pooState_ = kStateSideSpFallIntro;
                 xPoo_ = rect.left - 10;
                 return;
             }
             if (xPoo_ + 32 >= rect.right && xDirection_ < 0) {
-                pooState_ = 105;
+                pooState_ = kStateSideSpFallIntro;
                 xPoo_ = rect.right - 30;
                 return;
             }
             if (rand() % 20 - 1 == 0 && screenHeight_ - yPoo_ > 100) {
-                pooState_ = 104;
+                pooState_ = kStateFrontSpFallIntro;
                 return;
             }
         }
         if (arg_0 == 2) {
             if (xPoo_ + 32 < rect.left || xPoo_ + 8 > rect.right) {
-                pooState_ = 94;
+                pooState_ = kStateHRunFallIntro;
                 return;
             }
         }
     }
     if (sprites_[iSprite_].width + xPoo_ < 0 || xPoo_ > screenWidth_) {
-        pooState_ = 0;
+        pooState_ = kStateInit;
         return;
     }
 }
@@ -2757,22 +2879,22 @@ void sub_4B3B(void)
     }
     if (hWnd_A81C != NULL) {
         if (!isLandableWnd(hWnd_A81C)) {
-            pooState_ = 102;
+            pooState_ = kStateInsituFallIntro;
             return;
         }
         getWndRectSp(hWnd_A81C, &var_8);
-        if (var_8.right < stru_A81E.right && xDirection_ > 0 || var_8.left > stru_A81E.left && xDirection_ < 0) {
-            pooState_ = 102;
+        if (var_8.right < rect_A81E.right && xDirection_ > 0 || var_8.left > rect_A81E.left && xDirection_ < 0) {
+            pooState_ = kStateInsituFallIntro;
             return;
         }
-        if (var_8.right > stru_A81E.right && xDirection_ > 0 || var_8.left < stru_A81E.left && xDirection_ < 0) {
+        if (var_8.right > rect_A81E.right && xDirection_ > 0 || var_8.left < rect_A81E.left && xDirection_ < 0) {
             if (xDirection_ > 0) {
                 xPoo_ = var_8.right + 10;
             } else {
                 xPoo_ = var_8.left - 50;
             }
             setSprite(xPoo_, yPoo_, iSprite_);
-            pooState_ = 102;
+            pooState_ = kStateInsituFallIntro;
             return;
         }
     }
@@ -2788,18 +2910,18 @@ void procPooTouchX(int nextX, int prevX, int action)
         prevX = nextX + 80;
     }
     /// TODO: replace with getPooCollisionX
-    if (calcPooCollisionX(nextX, prevX, yPoo_, yPoo_ + 40) != 0) {
-        if (action == 1) {
-            pooState_ = kStateTurn1;
+    if (calcPooHitX(nextX, prevX, yPoo_, yPoo_ + 40) != 0) {
+        if (action == kTouchTurn) {
+            pooState_ = kStateTurnIntro;
         }
-        if (action == 2) {
-            pooState_ = kStateHit1;
+        if (action == kTouchHit) {
+            pooState_ = kStateHitIntro;
         }
     }
 }
 
 /* Detect collision with other instances and find X-coordinate. */
-int getPooCollisionX(int nextX, int prevX)
+int getPooHitX(int nextX, int prevX)
 {
     if (prevX < nextX) {
         nextX += 40;
@@ -2807,24 +2929,24 @@ int getPooCollisionX(int nextX, int prevX)
     } else {
         prevX = nextX + 80;
     }
-    return calcPooCollisionX(nextX, prevX, yPoo_, yPoo_ + 40);
+    return calcPooHitX(nextX, prevX, yPoo_, yPoo_ + 40);
 }
 
 /* Reinitialize state. */
 void resetState(void)
 {
-    pooState_ = 0;
+    pooState_ = kStateInit;
 }
 
 /* Process state change on each timer expiration. */
 void sub_4CF8(void)
 {
-    int posx_2;
-    int var_4;
-    HWND var_6;
-    HWND var_8;
-    RECT var_10;
-    POINT var_14;
+    int wndHitX;
+    int landY;
+    HWND hHitWnd;
+    HWND hWndv_8;
+    RECT rect_10;
+    POINT point_14;
     if (word_A84A++ > 100) {
         checkOtherPoo_3B4C(hPooWnd_);
         word_A84A = 0;
@@ -2834,31 +2956,31 @@ void sub_4CF8(void)
     }
 fallThrough:
     switch (pooState_) {
-    case 0:
+    case kStateInit:
         bool_A7FC = 0;
         srand((unsigned int)GetTickCount());
         xPoo_ = -80;
         yPoo_ = -80;
-        pooState_ = kStateNormal1;
-    case kStateNormal1:
-        dy_A844 = 0;
+        pooState_ = kStateNormalIntro;
+    case kStateNormalIntro:
+        dyHitObs_ = 0;
         if (confGForce_) {
-            pooState_ = 2;
+            pooState_ = kStateNormalGForceIntro;
             goto fallThrough;
         }
-        height_CA72 = 0;
+        ufoBeamHeight_ = 0;
         destroySubPooWnd();
-        if (word_CA54 != 0) {
-            pooState_ = word_CA54;
-            word_CA54 = 0;
+        if (pooSleepState_) {
+            pooState_ = pooSleepState_;
+            pooSleepState_ = 0;
             break;
         }
         if (rand() % 20 == 5 && bool_A7FC == 0) {
-            pooState_ = 85;
+            pooState_ = kStateWndRunIntro;
             break;
         }
         if (rand() % 40 == 5 && bool_A7FC == 0 && hasOtherPoo_ == 0) {
-            pooState_ = 4;
+            pooState_ = kStateSpRunIntro;
             break;
         }
         pooState_ = nextStateNormal1_[rand() % 80];
@@ -2872,66 +2994,66 @@ fallThrough:
                 xPoo_ = -40;
                 yPoo_ = rand() % (screenHeight_ - 64) + word_CA4E;
             }
-            pooState_ = kStateWalk1;
+            pooState_ = kStateWalkIntro;
         }
         break;
-    case 2:
+    case kStateNormalGForceIntro:
         bool_A7FC = 1;
-        height_CA72 = 0;
+        ufoBeamHeight_ = 0;
         destroySubPooWnd();
-        if (word_CA54 != 0) {
-            pooState_ = word_CA54;
-            word_CA54 = 0;
+        if (pooSleepState_) {
+            pooState_ = pooSleepState_;
+            pooSleepState_ = 0;
             break;
         }
-        pooState_ = nextStateNormal2_[rand() % 80];
+        pooState_ = nextStateNormalGForce_[rand() % 80];
         if (xPoo_ > screenWidth_ || xPoo_ < -40 || yPoo_ < -40 || yPoo_ > screenHeight_) {
             if (rand() % 10 == 0 && hasOtherPoo_ == 0) {
-                pooState_ = 6;
+                pooState_ = kStateToLongAni;
                 break;
             }
             hWnd_A81C = GetActiveWindow();
             if (hWnd_A81C == hPooWnd_ || hWnd_A81C == hOtherPooWnd_[kISubPooHwnd] ||
                 hWnd_A81C == NULL || sub_39D6(hWnd_A81C)) {
-                pooState_ = 3;
+                pooState_ = kStateGForceVFallIntro;
                 goto fallThrough;
             }
-            getWndRectSp(hWnd_A81C, &stru_A81E);
-            if (stru_A81E.top < 10) {
-                pooState_ = 3;
+            getWndRectSp(hWnd_A81C, &rect_A81E);
+            if (rect_A81E.top < 10) {
+                pooState_ = kStateGForceVFallIntro;
                 goto fallThrough;
             }
-            xPoo_ = (rand() % stru_A81E.right - stru_A81E.left) / 3 + (stru_A81E.right - stru_A81E.left) / 2 + stru_A81E.left - 20;
+            xPoo_ = (rand() % rect_A81E.right - rect_A81E.left) / 3 + (rect_A81E.right - rect_A81E.left) / 2 + rect_A81E.left - 20;
             yPoo_ = -40;
-            word_A840 = 0;
+            hasBounce_ = 0;
             dyPoo_ = 0;
             dxPoo_ = 0;
-            fallt_A842 = rand() % 2;
-            pooState_ = 92;
+            fallType_ = rand() % 2;
+            pooState_ = kStateFreeFallIntro;
             if (rand() % 3 == 0) {
-                pooState_ = 3;
+                pooState_ = kStateGForceVFallIntro;
                 goto fallThrough;
             }
         }
         break;
-    case 3:
+    case kStateGForceVFallIntro:
         bool_A7FC = 1;
         xPoo_ = rand() % (screenWidth_ - 40);
         yPoo_ = -(rand() % 20 - (-40));
-        word_A840 = 0;
+        hasBounce_ = 0;
         dyPoo_ = 0;
         dxPoo_ = 0;
-        fallt_A842 = rand() % 2;
+        fallType_ = rand() % 2;
         if (rand() % 3 == 0) {
             putWndToTop(hPooWnd_);
         }
-        pooState_ = 97;
+        pooState_ = kStateVRunFallIntro;
         break;
     case 153:
         break;
     case 154:
         break;
-    case 4:
+    case kStateSpRunIntro:
         if (screenWidth_ / 2 - 20 > xPoo_) {
             xDirection_ = 1;
         } else {
@@ -2939,9 +3061,9 @@ fallThrough:
         }
         iSprite_ = kSprRun1;
         setSprite(xPoo_, yPoo_, iSprite_);
-        pooState_ = 5;
+        pooState_ = kStateSpRunning;
         break;
-    case 5:
+    case kStateSpRunning:
         if (counter_A83A++ < 1) {
             break;
         }
@@ -2950,61 +3072,61 @@ fallThrough:
         iSprite_ = iSprite_ == kSprRun1 ? kSprRun2 : kSprRun1;
         setSprite(xPoo_, yPoo_, iSprite_);
         if (xPoo_ < -40 || xPoo_ > screenWidth_) {
-            pooState_ = 6;
+            pooState_ = kStateToLongAni;
         }
         break;
-    case 6:
-        pooState_ = nextStateNormal6_[rand() % 8];
+    case kStateToLongAni:
+        pooState_ = nextStateToLongAni_[rand() % 8];
         break;
-    case kStateRun1:
-        word_A7FE = 0;
+    case kStateRunIntro:
+        canHit_ = 0;
         if ((rand() & 1) == 0) {
-            word_A7FE = 1;
+            canHit_ = 1;
         }
-        if (word_A7FE != 0) {
+        if (canHit_ != 0) {
             updateVWnds();
         }
         iSprite_ = kSprRun1;
         setSprite(xPoo_, yPoo_, iSprite_);
         iAniFrames_ = rand() % 10 + 10;
-        pooState_ = 8;
+        pooState_ = kStateRunning;
         break;
-    case 8:
+    case kStateRunning:
         if (counter_A83A++ < 1) {
             break;
         }
         counter_A83A = 0;
-        if (word_A7FE != 0) {
+        if (canHit_) {
             if (xDirection_ > 0) {
-                posx_2 = sub_3E7C(&var_6, yPoo_, yPoo_ + 40, -(xDirection_ * 16 - xPoo_), xPoo_);
+                wndHitX = getVWndHitXInfo(&hHitWnd, yPoo_, yPoo_ + 40, -(xDirection_ * 16 - xPoo_), xPoo_);
             } else {
-                posx_2 = sub_3E7C(&var_6, yPoo_, yPoo_ + 40, -(xDirection_ * 16 - xPoo_) + 40, xPoo_ + 40);
+                wndHitX = getVWndHitXInfo(&hHitWnd, yPoo_, yPoo_ + 40, -(xDirection_ * 16 - xPoo_) + 40, xPoo_ + 40);
             }
-            if (posx_2 != 0) {
+            if (wndHitX != 0) {
                 if (xDirection_ > 0) {
-                    xPoo_ = posx_2;
+                    xPoo_ = wndHitX;
                 } else {
-                    xPoo_ = posx_2 - 40;
+                    xPoo_ = wndHitX - 40;
                 }
                 setSprite(xPoo_, yPoo_, iSprite_);
-                pooState_ = kStateHit1;
+                pooState_ = kStateHitIntro;
                 break;
             }
         }
-        if (word_A82C == 0) {
+        if (needWalk_ == 0) {
             xPoo_ -= xDirection_ * 16;
         }
         iSprite_ = iSprite_ == kSprRun1 ? kSprRun2 : kSprRun1;
         setSprite(xPoo_, yPoo_, iSprite_);
         if (rand() % 50 == 0 && bool_A7FC != 0) {
-            pooState_ = kStateJump1;
+            pooState_ = kStateJumpIntro;
         }
         checkPooHit(TRUE);
-        aniFrameDown42();
+        aniFrameDownToNormal();
         land_496F(2);
-        procPooTouchX(-(xDirection_ * 16 - xPoo_), xDirection_ * 16 + xPoo_, 2);
+        procPooTouchX(-(xDirection_ * 16 - xPoo_), xDirection_ * 16 + xPoo_, kTouchHit);
         break;
-    case kStateJump1:
+    case kStateJumpIntro:
         dyPoo_ = -11;
         dxPoo_ = -(xDirection_ * 8);
         yPooStored_ = yPoo_;
@@ -3022,99 +3144,99 @@ fallThrough:
         }
         if (yPooStored_ <= yPoo_) {
             yPoo_ = yPooStored_;
-            pooState_ = kStateRun1;
+            pooState_ = kStateRunIntro;
         }
         setSprite(xPoo_, yPoo_, iSprite_);
         checkPooHit(FALSE);
-        procPooTouchX(dxPoo_ + xPoo_, xPoo_ - dxPoo_, 2);
-        if (pooState_ == kStateHit1 && yPooStored_ != yPoo_) {
-            dy_A844 = yPoo_ - yPooStored_;
+        procPooTouchX(dxPoo_ + xPoo_, xPoo_ - dxPoo_, kTouchHit);
+        if (pooState_ == kStateHitIntro && yPooStored_ != yPoo_) {
+            dyHitObs_ = yPoo_ - yPooStored_;
         }
         break;
-    case kStateWalk1:
-        word_A7FE = 0;
+    case kStateWalkIntro:
+        canHit_ = 0;
         if ((bool_A7FC & !(rand() & 1)) != 0) {
-            word_A7FE = 1;
+            canHit_ = 1;
         }
-        if (word_A7FE != 0) {
+        if (canHit_) {
             updateVWnds();
         }
         iAniFrames_ = rand() % 10 + 10;
         iSprite_ = kSprWalk1;
         setSprite(xPoo_, yPoo_, iSprite_);
-        pooState_ = 12;
+        pooState_ = kStateWalking;
         break;
-    case 12:
+    case kStateWalking:
         if (counter_A83A++ < 1) {
             break;
         }
         counter_A83A = 0;
-        if (word_A7FE != 0) {
+        if (canHit_ != 0) {
             if (xDirection_ > 0) {
-                posx_2 = sub_3E7C(&var_6, yPoo_, yPoo_ + 40, -(xDirection_ * 6 - xPoo_), xPoo_);
+                wndHitX = getVWndHitXInfo(&hHitWnd, yPoo_, yPoo_ + 40, -(xDirection_ * 6 - xPoo_), xPoo_);
             } else {
-                posx_2 = sub_3E7C(&var_6, yPoo_, yPoo_ + 40, -(xDirection_ * 6 - xPoo_) + 40, xPoo_ + 40);
+                wndHitX = getVWndHitXInfo(&hHitWnd, yPoo_, yPoo_ + 40, -(xDirection_ * 6 - xPoo_) + 40, xPoo_ + 40);
             }
-            if (posx_2 != 0) {
+            if (wndHitX != 0) {
                 if (xDirection_ > 0) {
-                    xPoo_ = posx_2;
+                    xPoo_ = wndHitX;
                 } else {
-                    xPoo_ = posx_2 - 40;
+                    xPoo_ = wndHitX - 40;
                 }
-                hWnd_A81C = var_6;
-                getWndRectSp(hWnd_A81C, &stru_A81E);
-                word_A83E = stru_A81E.top - 12;
+                hWnd_A81C = hHitWnd;
+                getWndRectSp(hWnd_A81C, &rect_A81E);
+                targetY_ = rect_A81E.top - 12;
                 bool_A7FC = 1;
-                word_A83C = xPoo_;
+                targetX_ = xPoo_;
                 iSprite_ = kSprJumpUp;
-                sub_2B01(hPooWnd_, hWnd_A81C);
-                pooState_ = 89;
+                setWndOnto(hPooWnd_, hWnd_A81C);
+                pooState_ = kStateWndPtClimb;
                 break;
             }
         }
-        if (word_A82C == 0) {
+        if (needWalk_ == 0) {
             xPoo_ -= xDirection_ * 6;
         }
         iSprite_ = iSprite_ == kSprWalk1 ? kSprWalk0 : kSprWalk1;
         setSprite(xPoo_, yPoo_, iSprite_);
         checkPooTurn();
-        aniFrameDown42();
+        aniFrameDownToNormal();
         land_496F(1);
-        procPooTouchX(-(xDirection_ * 6 - xPoo_), xDirection_ * 6 + xPoo_, 1);
+        procPooTouchX(-(xDirection_ * 6 - xPoo_), xDirection_ * 6 + xPoo_, kTouchTurn);
         break;
-    case kStateHandstand1:
-        rand_A82A = rand() % 2;
+    case kStateHandstandIntro:
+        randAct_ = rand() % 2;
         iAniFrames_ = rand() % 4 + 4;
-        if (rand_A82A != 0) {
+        if (randAct_ != 0) {
             iSprite_ = kSprHandstFront1;
         } else {
             iSprite_ = kSprHandst1;
         }
         setSprite(xPoo_, yPoo_, iSprite_);
-        pooState_ = 14;
+        pooState_ = kStateHandstanding;
         break;
-    case 14:
+    case kStateHandstanding:
         if (counter_A83A++ < 3) {
             break;
         }
         counter_A83A = 0;
-        if (word_A82C == 0) {
+        if (needWalk_ == 0) {
             xPoo_ -= xDirection_ * 6;
         }
-        if (rand_A82A != 0) {
+        if (randAct_ != 0) {
             iSprite_ = iSprite_ == kSprHandstFront1 ? kSprHandstFront2 : kSprHandstFront1;
         } else {
             iSprite_ = iSprite_ == kSprHandst1 ? kSprHandst2 : kSprHandst1;
         }
         setSprite(xPoo_, yPoo_, iSprite_);
         checkPooTurn();
-        aniFrameDown42();
+        aniFrameDownToNormal();
         land_496F(1);
         break;
-    case kStateSex1:
-        rand_A82A = rand() % 2;
+    case kStateSexIntro:
+        randAct_ = rand() % 2;
         iAniFrames_ = rand() % 3 + 3;
-        if (rand_A82A != 0) {
+        if (randAct_ != 0) {
             iSprite_ = kSprSexFront1;
         } else {
             iSprite_ = kSprSexSide1;
@@ -3127,22 +3249,22 @@ fallThrough:
             break;
         }
         counter_A83A = 0;
-        if (rand_A82A != 0) {
+        if (randAct_ != 0) {
             iSprite_ = iSprite_ == kSprSexFront1 ? kSprSexFront2 : kSprSexFront1;
         } else {
             iSprite_ = iSprite_ == kSprSexSide1 ? kSprSexSide2 : kSprSexSide1;
         }
         setSprite(xPoo_, yPoo_, iSprite_);
         checkPooTurn();
-        aniFrameDown42();
+        aniFrameDownToNormal();
         land_496F(0);
         break;
-    case kStateSleep1:
+    case kStateSleepIntro:
         iSprite_ = kSprWinkOpen;
         setSprite(xPoo_, yPoo_, iSprite_);
-        pooState_ = 18;
+        pooState_ = kStateSleepWink;
         break;
-    case 18:
+    case kStateSleepWink:
         if (counter_A83A++ < 1) {
             break;
         }
@@ -3151,61 +3273,61 @@ fallThrough:
         setSprite(xPoo_, yPoo_, iSprite_);
         if (iSprite_ == kSprWinkClosed) {
             iSprite_ = kSprSleep1;
-            pooState_ = 19;
+            pooState_ = kStateSleeping;
             iAniFrames_ = rand() % 8 + 8;
         }
         land_496F(0);
         break;
-    case 19:
+    case kStateSleeping:
         if (counter_A83A++ < 4) {
             break;
         }
         counter_A83A = 0;
         iSprite_ = iSprite_ == kSprSleep1 ? kSprSleep2 : kSprSleep1;
         setSprite(xPoo_, yPoo_, iSprite_);
-        aniFrameDown42();
+        aniFrameDownToNormal();
         land_496F(0);
         break;
-    case kStateWink1:
-        rand_A82A = rand() % 3;
-        if (rand_A82A == 0) {
+    case kStateWinkIntro:
+        randAct_ = rand() % 3;
+        if (randAct_ == 0) {
             iSprite_ = kSprWinkOpen;
-        } else if (rand_A82A == 1) {
+        } else if (randAct_ == 1) {
             iSprite_ = kSprSit1;
         } else {
             iSprite_ = kSprLookUp1;
         }
         setSprite(xPoo_, yPoo_, iSprite_);
-        pooState_ = 21;
+        pooState_ = kStateWinkOpenPre;
         counter_A83A = rand() % 15 + rand() % 15;
         land_496F(0);
         break;
-    case 21:
+    case kStateWinkOpenPre:
         land_496F(0);
         if (counter_A83A-- > 0) {
             break;
         }
-        pooState_ = 22;
+        pooState_ = kStateWinking;
         iAniFrames_ = 0;
         break;
-    case 22:
-        iSprite_ = aniWinks_[rand_A82A][iAniFrames_];
+    case kStateWinking:
+        iSprite_ = aniWinks_[randAct_][iAniFrames_];
         setSprite(xPoo_, yPoo_, iSprite_);
         iAniFrames_ += 1;
         if (iAniFrames_ > 7) {
-            pooState_ = 23;
+            pooState_ = kStateWinkOpenPost;
             counter_A83A = rand() % 15 + rand() % 15;
         }
         land_496F(0);
         break;
-    case 23:
+    case kStateWinkOpenPost:
         land_496F(0);
         if (counter_A83A-- > 0) {
             break;
         }
-        pooState_ = kStateNormal1;
+        pooState_ = kStateNormalIntro;
         break;
-    case kStateTurn1:
+    case kStateTurnIntro:
         if (counter_A83A++ < 1) {
             break;
         }
@@ -3213,19 +3335,19 @@ fallThrough:
         iSprite_ = kSprWalk0;
         setSprite(xPoo_, yPoo_, iSprite_);
         if ((rand() & 1) != 0) {
-            rand_A82A = 0;
+            randAct_ = 0;
         } else {
-            rand_A82A = 1;
+            randAct_ = 1;
         }
-        pooState_ = 25;
+        pooState_ = kStateTurning;
         iAniFrames_ = 0;
         break;
-    case 25:
+    case kStateTurning:
         if (counter_A83A++ < 1) {
             break;
         }
         counter_A83A = 0;
-        if (rand_A82A != 0) {
+        if (randAct_ != 0) {
             if (xDirection_ > 0) {
                 iSprite_ = kSprFrontL + iAniFrames_;
             } else {
@@ -3242,100 +3364,100 @@ fallThrough:
         iAniFrames_ += 1;
         if (iAniFrames_ > 2) {
             xDirection_ = -xDirection_;
-            pooState_ = 26;
+            pooState_ = kStateTurnEnd;
         }
         land_496F(0);
         break;
-    case 26:
+    case kStateTurnEnd:
         if (counter_A83A++ < 1) {
             break;
         }
         counter_A83A = 0;
         iSprite_ = kSprWalk0;
         setSprite(xPoo_, yPoo_, iSprite_);
-        pooState_ = kStateNormal1;
+        pooState_ = kStateNormalIntro;
         land_496F(0);
         break;
-    case 27:
+    case kStateHitFallIntro:
         dyPoo_ = -10;
         dxPoo_ = xDirection_ * 8;
         yPooStored_ = yPoo_;
-        index_A848 = 0;
-        pooState_ = 28;
-    case 28:
+        iAniHitFrame_ = 0;
+        pooState_ = kStateHitting;
+    case kStateHitting:
         xPoo_ += dxPoo_;
         yPoo_ += dyPoo_;
         dyPoo_ += 2;
-        iSprite_ = aniHit_[index_A848];
-        index_A848 += 1;
+        iSprite_ = aniHit_[iAniHitFrame_];
+        iAniHitFrame_ += 1;
         setSprite(xPoo_, yPoo_, iSprite_);
         if (iSprite_ == kSprHitRollFirst + 1) {
-            fallt_A842 = 3;
-            pooState_ = 99;
+            fallType_ = kFallByHit;
+            pooState_ = kStateFalling;
             break;
         }
         break;
-    case 29:
+    case kStateHitEnd:
         counter_A83A = 0;
         iAniFrames_ = 0;
-        rand_A82A = 0;
+        randAct_ = 0;
         if ((rand() & 7) == 0) {
-            rand_A82A = 1;
+            randAct_ = 1;
         }
         if (rand() % 5 == 0) {
-            rand_A82A = 2;
+            randAct_ = 2;
         }
-        pooState_ = 32;
-        if (rand_A82A != 0) {
-            pooState_ = 34;
+        pooState_ = kStateHitLayIntro;
+        if (randAct_ != 0) {
+            pooState_ = kStateHitRolling;
         }
         goto fallThrough;
-    case kStateHit1:
-        if (bool_A7FC != 0) {
-            pooState_ = 27;
+    case kStateHitIntro:
+        if (bool_A7FC) {
+            pooState_ = kStateHitFallIntro;
             goto fallThrough;
         } else {
-            pooState_ = kStateTurn1;
+            pooState_ = kStateTurnIntro;
             goto fallThrough;
         }
         counter_A83A = 0;
         iAniFrames_ = 0;
-        rand_A82A = 0;
+        randAct_ = 0;
         if ((rand() & 7) == 0) {
-            rand_A82A = 1;
+            randAct_ = 1;
         }
         if (rand() % 5 == 0) {
-            rand_A82A = 2;
+            randAct_ = 2;
         }
-        pooState_ = 31;
-    case 31:
-        procPooTouchX(xDirection_ * 10 + xPoo_, xPoo_, 2);
-        if (pooState_ == kStateHit1) {
+        pooState_ = kStateHitObsIntro;
+    case kStateHitObsIntro:
+        procPooTouchX(xDirection_ * 10 + xPoo_, xPoo_, kTouchHit);
+        if (pooState_ == kStateHitIntro) {
             if (iAniFrames_ != 0) {
-                dy_A844 -= aniHit_[iAniFrames_ + 9];
+                dyHitObs_ -= aniHit_[iAniFrames_ + 9];
             }
             break;
         }
         iSprite_ = aniHit_[iAniFrames_];
         setSprite(xPoo_, yPoo_ - aniHit_[iAniFrames_ + 10], iSprite_);
         iAniFrames_ += 1;
-        if (rand_A82A != 0 && iSprite_ == kSprHitFallen) {
-            if (dy_A844 != 0) {
-                yPoo_ -= dy_A844;
+        if (randAct_ != 0 && iSprite_ == kSprHitFallen) {
+            if (dyHitObs_ != 0) {
+                yPoo_ -= dyHitObs_;
                 xPoo_ += xDirection_ * 10;
                 setSprite(xPoo_, yPoo_, iSprite_);
             }
             word_A846 = 3;
-            pooState_ = 34;
+            pooState_ = kStateHitRolling;
             break;
         }
         if (iAniFrames_ > 8) {
-            pooState_ = 32;
+            pooState_ = kStateHitLayIntro;
             break;
         }
         xPoo_ += xDirection_ * 10;
         break;
-    case 32:
+    case kStateHitLayIntro:
         land_496F(0);
         if (counter_A83A++ < 8) {
             break;
@@ -3344,17 +3466,17 @@ fallThrough:
         xDirection_ = -xDirection_;
         iSprite_ = kSprLaySide;
         setSprite(xPoo_, yPoo_, iSprite_);
-        pooState_ = 33;
+        pooState_ = kStateHitLaying;
         break;
-    case 33:
+    case kStateHitLaying:
         land_496F(0);
         if (counter_A83A++ < 15) {
             break;
         }
         counter_A83A = 0;
-        pooState_ = kStateNormal1;
+        pooState_ = kStateNormalIntro;
         break;
-    case 34:
+    case kStateHitRolling:
         xPoo_ += xDirection_ * 8;
         if (iSprite_ == kSprHitRollLast) {
             iSprite_ = kSprHitRollFirst;
@@ -3362,37 +3484,37 @@ fallThrough:
             iSprite_ += 1;
         }
         setSprite(xPoo_, yPoo_, iSprite_);
-        if (rand_A82A == 2 && iSprite_ == kSprHitRollLast) {
-            pooState_ = kStateSpin1;
+        if (randAct_ == 2 && iSprite_ == kSprHitRollLast) {
+            pooState_ = kStateSpinIntro;
             break;
         }
         if (xPoo_ > screenWidth_ || xPoo_ < -40) {
-            pooState_ = kStateNormal1;
+            pooState_ = kStateNormalIntro;
         }
-        procPooTouchX(xDirection_ * 8 + xPoo_, -(xDirection_ * 8 - xPoo_), 2);
-        if (pooState_ == kStateHit1) {
+        procPooTouchX(xDirection_ * 8 + xPoo_, -(xDirection_ * 8 - xPoo_), kTouchHit);
+        if (pooState_ == kStateHitIntro) {
             if (word_A846-- > 0) {
                 xDirection_ = -xDirection_;
-                pooState_ = 34;
+                pooState_ = kStateHitRolling;
             } else {
-                pooState_ = 34;
+                pooState_ = kStateHitRolling;
             }
         }
         land_496F(2);
         break;
-    case kStatePiss1:
+    case kStatePissIntro:
         if (counter_A83A++ < 1) {
             break;
         }
         counter_A83A = 0;
         iSprite_ = kSprWalk0;
         setSprite(xPoo_, yPoo_, iSprite_);
-        pooState_ = 37;
+        pooState_ = kStatePissTurnPre;
         iAniFrames_ = 0;
         break;
     case 36:
         break;
-    case 37:
+    case kStatePissTurnPre:
         if (counter_A83A++ < 1) {
             break;
         }
@@ -3406,11 +3528,11 @@ fallThrough:
         iAniFrames_ += 1;
         if (iAniFrames_ > 1) {
             iSprite_ = kSprPissPre;
-            pooState_ = 38;
+            pooState_ = kStatePissPre;
         }
         land_496F(0);
         break;
-    case 38:
+    case kStatePissPre:
         if (counter_A83A++ < 1) {
             break;
         }
@@ -3419,12 +3541,12 @@ fallThrough:
         iSprite_ += 1;
         if (iSprite_ > kSprPissReady) {
             iAniFrames_ = 0;
-            pooState_ = 39;
+            pooState_ = kStatePissing;
             break;
         }
         land_496F(0);
         break;
-    case 39:
+    case kStatePissing:
         if (iAniFrames_ == 0) {
             if (counter_A83A++ < 10) {
                 break;
@@ -3436,32 +3558,32 @@ fallThrough:
             }
             counter_A83A = 0;
         }
-        if (iAniFrames_ <= 8 || iAniFrames_ >= 12 && iAniFrames_ <= 12) {
+        if (iAniFrames_ <= 8 || iAniFrames_ == 12) {
             iSprite_ = iSprite_ == kSprPiss1 ? kSprPiss2 : kSprPiss1;
         } else {
             iSprite_ = kSprPissReady;
         }
         setSprite(xPoo_, yPoo_, iSprite_);
         if (iAniFrames_++ > 15) {
-            pooState_ = 40;
+            pooState_ = kStatePissPost;
             iSprite_ = kSprPissReady;
         }
         land_496F(0);
         break;
-    case 40:
+    case kStatePissPost:
         if (counter_A83A++ < 1) {
             break;
         }
         counter_A83A = 0;
         setSprite(xPoo_, yPoo_, iSprite_);
-        if (--iSprite_ < 103) {
+        if (--iSprite_ < kSprPissPre) {
             iAniFrames_ = 0;
-            pooState_ = 41;
+            pooState_ = kStatePissTurnPost;
             break;
         }
         land_496F(0);
         break;
-    case 41:
+    case kStatePissTurnPost:
         if (counter_A83A++ < 1) {
             break;
         }
@@ -3474,11 +3596,11 @@ fallThrough:
         setSprite(xPoo_, yPoo_, iSprite_);
         iAniFrames_ += 1;
         if (iAniFrames_ > 1) {
-            pooState_ = 42;
+            pooState_ = kStateToNormal;
         }
         land_496F(0);
         break;
-    case 42:
+    case kStateToNormal:
         land_496F(0);
         if (counter_A83A++ < 1) {
             break;
@@ -3486,10 +3608,10 @@ fallThrough:
         counter_A83A = 0;
         iSprite_ = kSprWalk0;
         setSprite(xPoo_, yPoo_, iSprite_);
-        pooState_ = kStateNormal1;
+        pooState_ = kStateNormalIntro;
         iAniFrames_ = 0;
         break;
-    case kStateYawn1:
+    case kStateYawnIntro:
         pooSound(IDW_YAWN, 0U, 0);
         iAniFrames_ = 0;
         pooState_ = kStateYawning;
@@ -3501,16 +3623,16 @@ fallThrough:
         iSprite_ = aniYawn_[iAniFrames_];
         iAniFrames_ += 1;
         if (iSprite_ == kAniEnd) {
-            pooState_ = kStateNormal1;
+            pooState_ = kStateNormalIntro;
             break;
         }
         setSprite(xPoo_, yPoo_, iSprite_);
         land_496F(0);
         break;
-    case kStateBaa1:
+    case kStateBaaIntro:
         pooSound(IDW_BAA, 0U, 0);
         iAniFrames_ = 0;
-        pooState_ = 46;
+        pooState_ = kStateBaaing;
     case kStateBaaing:
         if (counter_A83A++ < 0) {
             break;
@@ -3519,16 +3641,16 @@ fallThrough:
         iSprite_ = aniBaa_[iAniFrames_];
         iAniFrames_ += 1;
         if (iSprite_ == kAniEnd) {
-            pooState_ = kStateNormal1;
+            pooState_ = kStateNormalIntro;
             break;
         }
         setSprite(xPoo_, yPoo_, iSprite_);
         land_496F(0);
         break;
-    case kStateSneeze1:
+    case kStateSneezeIntro:
         iAniFrames_ = 0;
-        pooState_ = 48;
-    case 48:
+        pooState_ = kStateSneezing;
+    case kStateSneezing:
         if (counter_A83A++ < 0) {
             break;
         }
@@ -3539,16 +3661,16 @@ fallThrough:
         iSprite_ = aniSneeze_[iAniFrames_];
         iAniFrames_ += 1;
         if (iSprite_ == kAniEnd) {
-            pooState_ = kStateNormal1;
+            pooState_ = kStateNormalIntro;
             break;
         }
         setSprite(xPoo_, yPoo_, iSprite_);
         land_496F(0);
         break;
-    case kStateAmazed1:
+    case kStateAmazedIntro:
         iAniFrames_ = 0;
-        pooState_ = 50;
-    case 50:
+        pooState_ = kStateAmazing;
+    case kStateAmazing:
         if (counter_A83A++ < 1) {
             break;
         }
@@ -3556,13 +3678,13 @@ fallThrough:
         iSprite_ = aniAmazed_[iAniFrames_];
         iAniFrames_ += 1;
         if (iSprite_ == kAniEnd) {
-            pooState_ = kStateNormal1;
+            pooState_ = kStateNormalIntro;
             break;
         }
         setSprite(xPoo_, yPoo_, iSprite_);
         land_496F(0);
         break;
-    case kStateScary1:
+    case kStateScaryIntro:
         iAniFrames_ = 0;
         pooState_ = kStateScarying;
     case kStateScarying:
@@ -3573,14 +3695,14 @@ fallThrough:
         iSprite_ = iSprite_ == kSprScary1 ? kSprScary2 : kSprScary1;
         if (iAniFrames_++ > 30) {
             iSprite_ = kSprWalk0;
-            pooState_ = kStateNormal1;
+            pooState_ = kStateNormalIntro;
         }
         setSprite(xPoo_, yPoo_, iSprite_);
         land_496F(0);
         break;
-    case kStateEat1:
+    case kStateEatIntro:
         iAniFrames_ = 0;
-        pooState_ = 54;
+        pooState_ = kStateEating;
         showSubPoo();
         xDirectionSub_ = xDirection_;
         ySubPoo_ = yPoo_;
@@ -3591,10 +3713,10 @@ fallThrough:
             xSubPoo_ = xPoo_ + 40;
         }
         setSubSprite(xSubPoo_, ySubPoo_, iSubSprite_);
-        word_C0AE = 1;
-        sub_2B01(hOtherPooWnd_[kISubPooHwnd], hPooWnd_);
+        bool_C0AE = 1;
+        setWndOnto(hOtherPooWnd_[kISubPooHwnd], hPooWnd_);
         break;
-    case 54:
+    case kStateEating:
         if (counter_A83A++ < 2) {
             break;
         }
@@ -3617,12 +3739,12 @@ fallThrough:
         }
         if (iSprite_ == kAniEnd) {
             destroySubPooWnd();
-            pooState_ = kStateNormal1;
+            pooState_ = kStateNormalIntro;
             break;
         }
         setSprite(xPoo_, yPoo_, iSprite_);
         break;
-    case 55:
+    case kStateEatObsIntro:
         break;
         if (counter_A83A++ < 1) {
             break;
@@ -3632,15 +3754,15 @@ fallThrough:
         iSprite_ = kSprWalk1;
         setSprite(xPoo_, yPoo_, iSprite_);
         checkPooTurn();
-        aniFrameDown42();
+        aniFrameDownToNormal();
         land_496F(1);
-        procPooTouchX(-(xDirection_ * 6 - xPoo_), xDirection_ * 6 + xPoo_, 1);
-        pooState_ = 54;
+        procPooTouchX(-(xDirection_ * 6 - xPoo_), xDirection_ * 6 + xPoo_, kTouchTurn);
+        pooState_ = kStateEating;
         break;
-    case kStateFeed1:
+    case kStateFeedIntro:
         iAniFrames_ = 0;
-        pooState_ = 57;
-    case 57:
+        pooState_ = kStateFeeding;
+    case kStateFeeding:
         if (counter_A83A++ < 2) {
             break;
         }
@@ -3652,23 +3774,23 @@ fallThrough:
             iAniFrames_ += 1;
         }
         if (iAniFrames_ >= 16) {
-            pooState_ = 42;
+            pooState_ = kStateToNormal;
             break;
         }
         setSprite(xPoo_, yPoo_, iSprite_);
         land_496F(0);
         break;
-    case kStateSit1:
+    case kStateSitIntro:
         if (counter_A83A++ < 1) {
             break;
         }
         counter_A83A = 0;
         iSprite_ = kSprWalk0;
         setSprite(xPoo_, yPoo_, iSprite_);
-        pooState_ = 59;
+        pooState_ = kStateSitTurn;
         iAniFrames_ = 0;
         break;
-    case 59:
+    case kStateSitTurn:
         if (counter_A83A++ < 1) {
             break;
         }
@@ -3682,13 +3804,13 @@ fallThrough:
         if (iAniFrames_ > 2) {
             iSprite_ = kSprSitFront1;
             counter_A83A = -10;
-            pooState_ = 60;
+            pooState_ = kStateSitting;
             iAniFrames_ = 0;
         }
         setSprite(xPoo_, yPoo_, iSprite_);
         land_496F(0);
         break;
-    case 60:
+    case kStateSitting:
         if (counter_A83A++ < 0) {
             break;
         }
@@ -3698,12 +3820,12 @@ fallThrough:
         iAniFrames_ += 1;
         if (iAniFrames_ > 7) {
             iAniFrames_ = 0;
-            pooState_ = 61;
+            pooState_ = kStateSitEnd;
             counter_A83A = -5;
         }
         land_496F(0);
         break;
-    case 61:
+    case kStateSitEnd:
         if (counter_A83A++ < 1) {
             break;
         }
@@ -3716,19 +3838,19 @@ fallThrough:
         setSprite(xPoo_, yPoo_, iSprite_);
         iAniFrames_ += 1;
         if (iAniFrames_ > 1) {
-            pooState_ = 42;
+            pooState_ = kStateToNormal;
         }
         land_496F(0);
         break;
     case 64:
         break;
-    case kStateRoll1:
+    case kStateRollIntro:
         iSprite_ = kSprWalk0;
         setSprite(xPoo_, yPoo_, iSprite_);
         iAniFrames_ = 0;
-        pooState_ = 66;
+        pooState_ = kStateRollTurn;
         break;
-    case 66:
+    case kStateRollTurn:
         if (counter_A83A++ < 1) {
             break;
         }
@@ -3744,14 +3866,14 @@ fallThrough:
         }
         setSprite(xPoo_, yPoo_, iSprite_);
         if (iAniFrames_++ > 0) {
-            pooState_ = 67;
-            word_A828 = (rand() % 4 + 4) * 8;
+            pooState_ = kStateRolling;
+            frameCount_ = (rand() % 4 + 4) * 8;
             iAniFrames_ = 0;
             break;
         }
         land_496F(0);
         break;
-    case 67:
+    case kStateRolling:
         if (--iAniFrames_ < 0) {
             iAniFrames_ = 79;
         }
@@ -3759,19 +3881,19 @@ fallThrough:
         iSprite_ = aniRoll_[iAniFrames_ % 8];
         setSprite(xPoo_, yPoo_, iSprite_);
         if (xDirection_ > 0 && xPoo_ < 0) {
-            pooState_ = kStateHit1;
+            pooState_ = kStateHitIntro;
         }
         if (xDirection_ < 0 && screenWidth_ - sprites_[iSprite_].width < xPoo_) {
-            pooState_ = kStateHit1;
+            pooState_ = kStateHitIntro;
         }
-        if (--word_A828 <= 0) {
-            pooState_ = 68;
+        if (--frameCount_ <= 0) {
+            pooState_ = kStateRollEnd;
             iAniFrames_ = 0;
         }
         land_496F(2);
-        procPooTouchX(-(xDirection_ * 8 - xPoo_), xDirection_ * 8 + xPoo_, 2);
+        procPooTouchX(-(xDirection_ * 8 - xPoo_), xDirection_ * 8 + xPoo_, kTouchHit);
         break;
-    case 68:
+    case kStateRollEnd:
         if (counter_A83A++ < 1) {
             break;
         }
@@ -3789,12 +3911,12 @@ fallThrough:
         }
         setSprite(xPoo_, yPoo_, iSprite_);
         if (iAniFrames_++ > 1) {
-            pooState_ = kStateNormal1;
+            pooState_ = kStateNormalIntro;
             break;
         }
         land_496F(0);
         break;
-    case kStateBlush1:
+    case kStateBlushIntro:
         pooState_ = kStateBlushing;
         iAniFrames_ = 0;
         break;
@@ -3805,16 +3927,16 @@ fallThrough:
         counter_A83A = 0;
         iSprite_ = aniBlush_[iAniFrames_];
         if (iSprite_ == kAniEnd) {
-            pooState_ = kStateNormal1;
+            pooState_ = kStateNormalIntro;
             break;
         }
         setSprite(xPoo_, yPoo_, iSprite_);
         iAniFrames_ += 1;
         land_496F(0);
         break;
-    case kStateSlip1:
+    case kStateSlipIntro:
         iAniFrames_ = rand() % 8 + 8;
-        word_A828 = iAniFrames_;
+        frameCount_ = iAniFrames_;
         iSprite_ = kSprClimb1;
         if (xDirection_ > 0) {
             iSprite_ = kSprBackL;
@@ -3822,18 +3944,18 @@ fallThrough:
             iSprite_ = kSprBackR;
         }
         setSprite(xPoo_, yPoo_, iSprite_);
-        pooState_ = 76;
+        pooState_ = kStateSlipTurn;
         break;
-    case 76:
+    case kStateSlipTurn:
         if (counter_A83A++ < 1) {
             break;
         }
         counter_A83A = 0;
         iSprite_ = kSprBack;
         setSprite(xPoo_, yPoo_, iSprite_);
-        pooState_ = 77;
+        pooState_ = kStateSlipClimb;
         break;
-    case 77:
+    case kStateSlipClimb:
         if (counter_A83A++ < 2) {
             break;
         }
@@ -3842,27 +3964,27 @@ fallThrough:
         yPoo_ -= 8;
         setSprite(xPoo_, yPoo_, iSprite_);
         if (iAniFrames_-- <= 0) {
-            iAniFrames_ = word_A828;
-            pooState_ = 78;
+            iAniFrames_ = frameCount_;
+            pooState_ = kStateSliping;
         }
         break;
-    case 78:
+    case kStateSliping:
         iSprite_ = kSprClimbSlip;
         yPoo_ += 8;
         setSprite(xPoo_, yPoo_, iSprite_);
         if (iAniFrames_-- <= 0) {
-            pooState_ = 79;
+            pooState_ = kStateSlipStun;
         }
         break;
-    case 79:
+    case kStateSlipStun:
         if (counter_A83A++ < 10) {
             break;
         }
         counter_A83A = 0;
-        pooState_ = 80;
+        pooState_ = kStateSlipEnd;
         iAniFrames_ = 3;
         break;
-    case 80:
+    case kStateSlipEnd:
         if (counter_A83A++ < 1) {
             break;
         }
@@ -3875,16 +3997,16 @@ fallThrough:
             iAniFrames_ += 1;
         }
         if (iSprite_ == kAniEnd) {
-            pooState_ = kStateNormal1;
+            pooState_ = kStateNormalIntro;
             break;
         }
         setSprite(xPoo_, yPoo_, iSprite_);
         break;
-    case kStateSpin1:
+    case kStateSpinIntro:
         counter_A83A = 0;
         iAniFrames_ = 0;
-        pooState_ = 70;
-    case 70:
+        pooState_ = kStateSpining;
+    case kStateSpining:
         if (xDirection_ > 0) {
             iSprite_ = aniSpin_[iAniFrames_ % 8];
         } else {
@@ -3913,11 +4035,11 @@ fallThrough:
         if (iAniFrames_++ >= 16) {
             iSprite_ = kSprSpinStun;
             setSprite(xPoo_, yPoo_, iSprite_);
-            pooState_ = 71;
+            pooState_ = kStateSpinStun;
         }
         land_496F(0);
         break;
-    case 71:
+    case kStateSpinStun:
         land_496F(0);
         if (counter_A83A++ < 14) {
             break;
@@ -3925,9 +4047,9 @@ fallThrough:
         counter_A83A = 0;
         iSprite_ = kSprSpinFall;
         setSprite(xPoo_, yPoo_, iSprite_);
-        pooState_ = 72;
+        pooState_ = kStateSpinFall;
         break;
-    case 72:
+    case kStateSpinFall:
         land_496F(0);
         if (counter_A83A++ < 30) {
             break;
@@ -3935,12 +4057,12 @@ fallThrough:
         counter_A83A = 0;
         iSprite_ = kSprWalk0;
         setSprite(xPoo_, yPoo_, iSprite_);
-        pooState_ = kStateNormal1;
+        pooState_ = kStateNormalIntro;
         break;
-    case 73:
+    case kStateRollSideIntro:
         iAniFrames_ = 0;
-        pooState_ = 74;
-    case 74:
+        pooState_ = kStateRollingSide;
+    case kStateRollingSide:
         if (counter_A83A++ < 2) {
             break;
         }
@@ -3948,18 +4070,18 @@ fallThrough:
         iSprite_ = aniRollSide_[iAniFrames_];
         iAniFrames_ += 1;
         if (iSprite_ == kAniEnd) {
-            pooState_ = kStateNormal1;
+            pooState_ = kStateNormalIntro;
             break;
         }
         setSprite(xPoo_, yPoo_, iSprite_);
         land_496F(0);
         break;
-    case 81:
+    case kStateInfRunIntro:
         iSprite_ = kSprRun1;
         setSprite(xPoo_, yPoo_, iSprite_);
-        pooState_ = 82;
+        pooState_ = kStateInfRunning;
         break;
-    case 82:
+    case kStateInfRunning:
         counter_A83A = 0;
         iSprite_ = iSprite_ == kSprRun1 ? kSprRun2 : kSprRun1;
         setSprite(xPoo_, yPoo_, iSprite_);
@@ -3967,25 +4089,26 @@ fallThrough:
     case 83:
         break;
     case 84:
-        pooState_ = 0;
+        pooState_ = kStateInit;
         break;
-    case 85:
+    case kStateWndRunIntro:
         hWnd_A81C = GetActiveWindow();
         if (hWnd_A81C == hPooWnd_ || hWnd_A81C == hOtherPooWnd_[kISubPooHwnd] || hWnd_A81C == NULL || sub_39D6(hWnd_A81C)) {
-            pooState_ = kStateNormal1;
+            pooState_ = kStateNormalIntro;
             break;
         }
-        getWndRectSp(hWnd_A81C, &stru_A81E);
-        if (stru_A81E.top < 10) {
-            pooState_ = kStateNormal1;
+        getWndRectSp(hWnd_A81C, &rect_A81E);
+        if (rect_A81E.top < 10) {
+            pooState_ = kStateNormalIntro;
             break;
         }
-        if (xDirection_ > 0 && stru_A81E.right < xPoo_ && stru_A81E.top < yPoo_ && yPoo_ + 40 < stru_A81E.bottom || xDirection_ < 0 && xPoo_ + 40 < stru_A81E.left && stru_A81E.top < yPoo_ && yPoo_ + 40 < stru_A81E.bottom) {
-            pooState_ = 87;
+        if (xDirection_ > 0 && rect_A81E.right < xPoo_ && rect_A81E.top < yPoo_ && yPoo_ + 40 < rect_A81E.bottom ||
+            xDirection_ < 0 && xPoo_ + 40 < rect_A81E.left && rect_A81E.top < yPoo_ && yPoo_ + 40 < rect_A81E.bottom) {
+            pooState_ = kStateWndPtRunIntro;
             break;
         }
-        word_A83C = (rand() % stru_A81E.right - stru_A81E.left) / 3 + (stru_A81E.right - stru_A81E.left) / 2 + stru_A81E.left - 20;
-        word_A83E = stru_A81E.top - 40;
+        targetX_ = (rand() % rect_A81E.right - rect_A81E.left) / 3 + (rect_A81E.right - rect_A81E.left) / 2 + rect_A81E.left - 20;
+        targetY_ = rect_A81E.top - 40;
         if (screenWidth_ / 2 - 20 > xPoo_) {
             xDirection_ = 1;
         } else {
@@ -3993,9 +4116,9 @@ fallThrough:
         }
         iSprite_ = kSprRun1;
         setSprite(xPoo_, yPoo_, iSprite_);
-        pooState_ = 86;
+        pooState_ = kStateScrRunning;
         break;
-    case 86:
+    case kStateScrRunning:
         if (counter_A83A++ < 1) {
             break;
         }
@@ -4005,65 +4128,67 @@ fallThrough:
         setSprite(xPoo_, yPoo_, iSprite_);
         if (xPoo_ < -40 || xPoo_ > screenWidth_) {
             if (!isLandableWnd(hWnd_A81C)) {
-                pooState_ = kStateNormal1;
+                pooState_ = kStateNormalIntro;
                 break;
             }
             if (rand() % 3 == 0) {
-                pooState_ = 3;
+                pooState_ = kStateGForceVFallIntro;
                 goto fallThrough;
             }
-            word_A840 = 0;
-            pooState_ = 92;
+            hasBounce_ = 0;
+            pooState_ = kStateFreeFallIntro;
             bool_A7FC = 1;
-            xPoo_ = word_A83C;
+            xPoo_ = targetX_;
             yPoo_ = -40;
             dyPoo_ = 0;
             dxPoo_ = 0;
-            fallt_A842 = rand() % 2;
-            if (fallt_A842 != 0) {
+            fallType_ = rand() % 2;
+            if (fallType_ != 0) {
                 dxPoo_ = -(xDirection_ * 3);
             }
-            sub_2B01(hPooWnd_, hWnd_A81C);
+            setWndOnto(hPooWnd_, hWnd_A81C);
         }
         break;
-    case 87:
-        sub_2B01(hPooWnd_, hWnd_A81C);
+    case kStateWndPtRunIntro:
+        setWndOnto(hPooWnd_, hWnd_A81C);
         if (xDirection_ > 0) {
-            word_A83C = stru_A81E.right;
-            word_A83E = stru_A81E.top;
+            targetX_ = rect_A81E.right;
+            targetY_ = rect_A81E.top;
         } else {
-            word_A83C = stru_A81E.left - 40;
-            word_A83E = stru_A81E.top;
+            targetX_ = rect_A81E.left - 40;
+            targetY_ = rect_A81E.top;
         }
-        pooState_ = 88;
-    case 88:
+        pooState_ = kStateWndPtRunning;
+    case kStateWndPtRunning:
         if (counter_A83A++ < 1) {
             break;
         }
         counter_A83A = 0;
         xPoo_ -= xDirection_ * 16;
         iSprite_ = iSprite_ == kSprRun1 ? kSprRun2 : kSprRun1;
-        if (word_A83C >= xPoo_ && xDirection_ > 0 || word_A83C <= xPoo_ && xDirection_ < 0) {
+        if (targetX_ >= xPoo_ && xDirection_ > 0 ||
+            targetX_ <= xPoo_ && xDirection_ < 0) {
             if (!isLandableWnd(hWnd_A81C)) {
-                pooState_ = kStateNormal1;
+                pooState_ = kStateNormalIntro;
                 break;
             }
-            getWndRectSp(hWnd_A81C, &var_10);
-            if (var_10.left == stru_A81E.left && var_10.right == stru_A81E.right && var_10.top < yPoo_ && yPoo_ + 40 < var_10.bottom) {
-                word_A83E = var_10.top - 12;
+            getWndRectSp(hWnd_A81C, &rect_10);
+            if (rect_10.left == rect_A81E.left && rect_10.right == rect_A81E.right &&
+                rect_10.top < yPoo_ && yPoo_ + 40 < rect_10.bottom) {
+                targetY_ = rect_10.top - 12;
                 bool_A7FC = 1;
-                xPoo_ = word_A83C;
+                xPoo_ = targetX_;
                 iSprite_ = kSprJumpUp;
-                pooState_ = 89;
+                pooState_ = kStateWndPtClimb;
                 break;
             } else {
-                pooState_ = kStateNormal1;
+                pooState_ = kStateNormalIntro;
                 break;
             }
         }
         setSprite(xPoo_, yPoo_, iSprite_);
         break;
-    case 89:
+    case kStateWndPtClimb:
         if (counter_A83A++ < 1) {
             break;
         }
@@ -4071,24 +4196,24 @@ fallThrough:
         setSprite(xPoo_, yPoo_, iSprite_);
         yPoo_ -= 6;
         iSprite_ = iSprite_ == kSprWalkSide1 ? kSprWalkSide2 : kSprWalkSide1;
-        if (word_A83E >= yPoo_) {
-            pooState_ = 90;
+        if (targetY_ >= yPoo_) {
+            pooState_ = kStateWndPtTurn;
             break;
         }
         sub_4B3B();
         break;
-    case 90:
+    case kStateWndPtTurn:
         if (counter_A83A++ < 2) {
             break;
         }
         counter_A83A = 0;
         xPoo_ -= xDirection_ * 8;
-        yPoo_ = word_A83E - 20;
+        yPoo_ = targetY_ - 20;
         iSprite_ = kSprClimbSide;
         setSprite(xPoo_, yPoo_, iSprite_);
-        pooState_ = 91;
+        pooState_ = kStateWndPtEnd;
         break;
-    case 91:
+    case kStateWndPtEnd:
         if (counter_A83A++ < 2) {
             break;
         }
@@ -4097,26 +4222,26 @@ fallThrough:
         yPoo_ -= 8;
         iSprite_ = kSprWalk0;
         setSprite(xPoo_, yPoo_, iSprite_);
-        pooState_ = kStateWalk1;
+        pooState_ = kStateWalkIntro;
         break;
-    case 92:
+    case kStateFreeFallIntro:
         dyPoo_ += 4;
         yPooStored_ = yPoo_;
         xPoo_ += dxPoo_;
         yPoo_ += dyPoo_;
-        if ((var_4 = sub_419E(hWnd_A81C, sprites_[iSprite_].height + yPoo_, sprites_[iSprite_].height + yPooStored_,
+        if ((landY = getWndLandY(hWnd_A81C, sprites_[iSprite_].height + yPoo_, sprites_[iSprite_].height + yPooStored_,
                               xPoo_, sprites_[iSprite_].width + xPoo_)) != 0) {
-            if (var_4 == -1) {
+            if (landY == -1) {
                 setSprite(xPoo_, yPoo_, iSprite_);
-                pooState_ = 0;
+                pooState_ = kStateInit;
                 break;
             }
-            yPoo_ = var_4 - sprites_[iSprite_].height;
-            if (dyPoo_ < 64 && word_A840 == 0 || dyPoo_ < 8) {
+            yPoo_ = landY - sprites_[iSprite_].height;
+            if (dyPoo_ < 64 && !hasBounce_ || dyPoo_ < 8) {
                 SetWindowPos(hPooWnd_, hWnd_A81C, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
-                word_A840 = 0;
+                hasBounce_ = 0;
                 iAniFrames_ = 0;
-                pooState_ = 93;
+                pooState_ = kStateFreeFallLand;
                 if (dyPoo_ < 36) {
                     iSprite_ = kSprFallenSit;
                     counter_A83A = -4;
@@ -4132,23 +4257,23 @@ fallThrough:
                 break;
             } else {
                 dyPoo_ = dyPoo_ * 2 / -3;
-                word_A840 = 1;
+                hasBounce_ = 1;
             }
         }
-        if (fallt_A842 != 0) {
+        if (fallType_ != kFallHang) {
             iSprite_ = iSprite_ == kSprRun1 ? kSprRun2 : kSprRun1;
         } else {
             iSprite_ = kSprHangBack1;
         }
         setSprite(xPoo_, yPoo_, iSprite_);
         break;
-    case 93:
+    case kStateFreeFallLand:
         if (counter_A83A++ < 1) {
             break;
         }
         counter_A83A = 0;
-        if (fallt_A842 != 0) {
-            pooState_ = kStateWalk1;
+        if (fallType_ != kFallHang) {
+            pooState_ = kStateWalkIntro;
             iSprite_ = kSprWalk1;
             break;
         }
@@ -4165,45 +4290,45 @@ fallThrough:
         }
         setSprite(xPoo_, yPoo_, iSprite_);
         if (iAniFrames_++ >= 2) {
-            pooState_ = kStateWalk1;
+            pooState_ = kStateWalkIntro;
         }
         break;
-    case 94:
+    case kStateHRunFallIntro:
         bool_A7FC = 1;
         dyPoo_ = 0;
         dxPoo_ = -(xDirection_ * 8);
-        fallt_A842 = 1;
-        pooState_ = 99;
+        fallType_ = kFallRun;
+        pooState_ = kStateFalling;
         goto fallThrough;
-    case 95:
+    case kStateHSlowRunHsaIntro:
         bool_A7FC = 1;
         dyPoo_ = 0;
         dxPoo_ = -(xDirection_ * 3);
-        fallt_A842 = 1;
-        pooState_ = 99;
+        fallType_ = kFallRun;
+        pooState_ = kStateFalling;
         goto fallThrough;
-    case kStateFall1:
+    case kStateFallIntro:
         bool_A7FC = 1;
         dyPoo_ = 0;
         dxPoo_ = 0;
-        fallt_A842 = 0;
-        pooState_ = 99;
+        fallType_ = kFallHang;
+        pooState_ = kStateFalling;
         goto fallThrough;
-    case 97:
+    case kStateVRunFallIntro:
         bool_A7FC = 1;
         dyPoo_ = 0;
         dxPoo_ = 0;
-        fallt_A842 = 1;
-        pooState_ = 99;
+        fallType_ = kFallRun;
+        pooState_ = kStateFalling;
         goto fallThrough;
-    case 98:
+    case kStateSideFallIntro:
         bool_A7FC = 1;
         dyPoo_ = 0;
         dxPoo_ = 0;
-        fallt_A842 = 2;
-        pooState_ = 99;
+        fallType_ = kFallSide;
+        pooState_ = kStateFalling;
         goto fallThrough;
-    case 99:
+    case kStateFalling:
         updateVWnds();
         dyPoo_ += 4;
         yPooStored_ = yPoo_;
@@ -4211,30 +4336,31 @@ fallThrough:
         yPoo_ += dyPoo_;
         if (yPooStored_ > screenHeight_) {
             setSprite(xPoo_, yPoo_, iSprite_);
-            pooState_ = 0;
+            pooState_ = kStateInit;
             break;
         }
-        if ((var_4 = sub_408C(&hWnd_A81C, sprites_[iSprite_].height + yPoo_, sprites_[iSprite_].height + yPooStored_, xPoo_, sprites_[iSprite_].width + xPoo_)) != 0) {
+        if ((landY = getLandInfo(&hWnd_A81C, sprites_[iSprite_].height + yPoo_, sprites_[iSprite_].height + yPooStored_,
+                              xPoo_, sprites_[iSprite_].width + xPoo_)) != 0) {
             if (!isLandableWnd(hWnd_A81C)) {
                 setSprite(xPoo_, yPoo_, iSprite_);
-                pooState_ = 0;
+                pooState_ = kStateInit;
                 break;
             }
-            getWndRectSp(hWnd_A81C, &stru_A81E);
-            yPoo_ = var_4 - sprites_[iSprite_].height;
-            if (fallt_A842 == 3) {
+            getWndRectSp(hWnd_A81C, &rect_A81E);
+            yPoo_ = landY - sprites_[iSprite_].height;
+            if (fallType_ == kFallByHit) {
                 iSprite_ = kSprHitFallen;
                 setSprite(xPoo_, yPoo_, iSprite_);
-                pooState_ = 29;
+                pooState_ = kStateHitEnd;
                 break;
             }
-            if (dyPoo_ < 64 && word_A840 == 0 || dyPoo_ < 8) {
+            if (dyPoo_ < 64 && !hasBounce_ || dyPoo_ < 8) {
                 if (hWnd_A81C != NULL) {
                     SetWindowPos(hPooWnd_, hWnd_A81C, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
                 }
-                word_A840 = 0;
+                hasBounce_ = 0;
                 iAniFrames_ = 0;
-                pooState_ = 100;
+                pooState_ = kStateFallBounce;
                 if (dyPoo_ < 36) {
                     iSprite_ = kSprFallenSit;
                     counter_A83A = -4;
@@ -4246,7 +4372,7 @@ fallThrough:
                     }
                     counter_A83A = -10;
                 }
-                if (fallt_A842 == 2) {
+                if (fallType_ == 2) {
                     if (dyPoo_ < 36) {
                         iSprite_ = kSprFallSide2;
                     } else {
@@ -4256,55 +4382,55 @@ fallThrough:
                 setSprite(xPoo_, yPoo_, iSprite_);
                 break;
             } else {
-                if ((rand() & 7) == 0 && word_A840 == 0) {
-                    word_A840 = 0;
+                if ((rand() & 7) == 0 && !hasBounce_) {
+                    hasBounce_ = 0;
                     iAniFrames_ = 0;
-                    pooState_ = 100;
+                    pooState_ = kStateFallBounce;
                     iSprite_ = kSprFallen;
                     counter_A83A = -12;
-                    if (fallt_A842 == 2) {
+                    if (fallType_ == 2) {
                         iSprite_ = kSprFallenSide;
                     }
                     setSprite(xPoo_, yPoo_, iSprite_);
                     break;
                 }
                 dyPoo_ = dyPoo_ * 2 / -3;
-                word_A840 = 1;
+                hasBounce_ = 1;
             }
         }
-        if (fallt_A842 == 2) {
+        if (fallType_ == kFallSide) {
             iSprite_ = iSprite_ == kSprFallSide1 ? kSprFallSide2 : kSprFallSide1;
-        } else if (fallt_A842 == 1) {
+        } else if (fallType_ == kFallRun) {
             iSprite_ = iSprite_ == kSprRun1 ? kSprRun2 : kSprRun1;
-        } else if (fallt_A842 == 0) {
+        } else if (fallType_ == kFallHang) {
             iSprite_ = kSprHangBack1;
         } else {
-            iSprite_ = aniHit_[index_A848];
-            index_A848 += 1;
+            iSprite_ = aniHit_[iAniHitFrame_];
+            iAniHitFrame_ += 1;
             if (iSprite_ == kSprHitFallen) {
-                index_A848 -= 1;
+                iAniHitFrame_ -= 1;
             }
         }
-        if (fallt_A842 == 3 && getPooCollisionX(xPoo_, xPoo_ - dxPoo_) != 0) {
+        if (fallType_ == kFallByHit && getPooHitX(xPoo_, xPoo_ - dxPoo_) != 0) {
             xDirection_ = -xDirection_;
-            pooState_ = kStateHit1;
+            pooState_ = kStateHitIntro;
             break;
         }
         setSprite(xPoo_, yPoo_, iSprite_);
         break;
-    case 100:
+    case kStateFallBounce:
         if (counter_A83A++ < 1) {
             break;
         }
         counter_A83A = 0;
-        if (fallt_A842 == 1) {
-            pooState_ = kStateWalk1;
+        if (fallType_ == kFallRun) {
+            pooState_ = kStateWalkIntro;
             iSprite_ = kSprWalk1;
             break;
         }
-        if (fallt_A842 == 2) {
+        if (fallType_ == kFallSide) {
             iAniFrames_ = 0;
-            pooState_ = 101;
+            pooState_ = kStateSideFallEnd;
             break;
         }
         if (iAniFrames_ == 0) {
@@ -4320,10 +4446,10 @@ fallThrough:
         }
         setSprite(xPoo_, yPoo_, iSprite_);
         if (iAniFrames_++ >= 2) {
-            pooState_ = kStateWalk1;
+            pooState_ = kStateWalkIntro;
         }
         break;
-    case 101:
+    case kStateSideFallEnd:
         if (counter_A83A++ < 1) {
             break;
         }
@@ -4336,75 +4462,75 @@ fallThrough:
         }
         setSprite(xPoo_, yPoo_, iSprite_);
         if (iAniFrames_++ >= 6) {
-            pooState_ = kStateWalk1;
+            pooState_ = kStateWalkIntro;
         }
         break;
-    case 102:
+    case kStateInsituFallIntro:
         stopPlaySound();
         iAniFrames_ = 6;
         iSprite_ = kSprWalk0;
-        rand_A82A = 0;
+        randAct_ = 0;
         if (rand() % 3 == 0) {
-            rand_A82A = 1;
+            randAct_ = 1;
         }
-        pooState_ = 103;
-    case 103:
-        if (rand_A82A != 0) {
+        pooState_ = kStateInsituFallPre;
+    case kStateInsituFallPre:
+        if (randAct_ != 0) {
             iSprite_ = iSprite_ == kSprAmazed1 ? kSprAmazed2 : kSprAmazed1;
         } else {
             iSprite_ = iSprite_ == kSprRun1 ? kSprRun2 : kSprRun1;
         }
         setSprite(xPoo_, yPoo_, iSprite_);
         if (iAniFrames_-- <= 0) {
-            pooState_ = 97;
+            pooState_ = kStateVRunFallIntro;
         }
         break;
-    case 104:
-        fallt_A842 = 0;
-        pooState_ = 106;
+    case kStateFrontSpFallIntro:
+        fallType_ = kFallSpFront;
+        pooState_ = kStateSpFallWatch;
         goto fallThrough;
-    case 105:
-        fallt_A842 = 1;
-        pooState_ = 106;
+    case kStateSideSpFallIntro:
+        fallType_ = kFallSpSide;
+        pooState_ = kStateSpFallWatch;
         goto fallThrough;
-    case 106:
-        if (fallt_A842 == 0) {
-            var_14.x = xPoo_;
-            var_14.y = yPoo_ + 39;
-            *(HWND *)&var_10 = WindowFromPoint(var_14);
-            var_14.x = xPoo_ + 39;
-            var_8 = WindowFromPoint(var_14);
-            if (*(HWND *)&var_10 == hPooWnd_ && var_8 == hPooWnd_) {
+    case kStateSpFallWatch:
+        if (fallType_ == kFallSpFront) {
+            point_14.x = xPoo_;
+            point_14.y = yPoo_ + 39;
+            *(HWND *)&rect_10 = WindowFromPoint(point_14);
+            point_14.x = xPoo_ + 39;
+            hWndv_8 = WindowFromPoint(point_14);
+            if (*(HWND *)&rect_10 == hPooWnd_ && hWndv_8 == hPooWnd_) {
                 putWndToTop(hPooWnd_);
-            } else if (*(HWND *)&var_10 == hPooWnd_) {
-                sub_2B01(hPooWnd_, var_8);
+            } else if (*(HWND *)&rect_10 == hPooWnd_) {
+                setWndOnto(hPooWnd_, hWndv_8);
             } else {
-                sub_2B01(hPooWnd_, *(HWND *)&var_10);
+                setWndOnto(hPooWnd_, *(HWND *)&rect_10);
             }
             iSprite_ = kSprDownFront1;
         } else {
             iSprite_ = kSprDown1;
         }
         setSprite(xPoo_, yPoo_, iSprite_);
-        pooState_ = 107;
+        pooState_ = kStateSpFallWink;
         iAniFrames_ = 0;
         break;
-    case 107:
-        iSprite_ = aniWinks_[4 - fallt_A842][iAniFrames_];
+    case kStateSpFallWink:
+        iSprite_ = aniWinks_[4 - fallType_][iAniFrames_];
         setSprite(xPoo_, yPoo_, iSprite_);
         iAniFrames_ += 1;
         if (iAniFrames_ > 7) {
-            if (fallt_A842 != 0) {
+            if (fallType_ != kFallSpFront) {
                 if ((rand() & 1) == 0) {
-                    pooState_ = 111;
+                    pooState_ = kStateSpFallPre;
                 } else {
-                    pooState_ = 109;
+                    pooState_ = kStateSpFallJump;
                 }
             } else {
                 if ((rand() & 1) == 0) {
-                    pooState_ = 111;
+                    pooState_ = kStateSpFallPre;
                 } else {
-                    pooState_ = 108;
+                    pooState_ = kStateSpFallGaze;
                 }
             }
         }
@@ -4416,40 +4542,40 @@ fallThrough:
         counter_A83A = 0;
         iSprite_ = kSprWalk0;
         setSprite(xPoo_, yPoo_, iSprite_);
-        pooState_ = kStateNormal1;
+        pooState_ = kStateNormalIntro;
         break;
-    case 109:
+    case kStateSpFallJump:
         dxPoo_ = -(xDirection_ * 14);
         iSprite_ = kSprJumpAir;
         xPoo_ += dxPoo_;
         setSprite(xPoo_, yPoo_, iSprite_);
-        pooState_ = 95;
+        pooState_ = kStateHSlowRunHsaIntro;
         iAniFrames_ = 0;
         break;
-    case 110:
+    case kStateSpFallObsJump:
         xPoo_ += dxPoo_;
         dxPoo_ += xDirection_;
         setSprite(xPoo_, yPoo_, iSprite_);
         if (iAniFrames_++ > 3) {
-            pooState_ = 95;
+            pooState_ = kStateHSlowRunHsaIntro;
         }
         break;
-    case 111:
-        if (fallt_A842 != 0) {
+    case kStateSpFallPre:
+        if (fallType_ != kFallSpFront) {
             xPoo_ += xDirection_ * -26;
             yPoo_ += 35;
             xDirection_ = -xDirection_;
         } else {
-            rand_A82A = rand() % kHangCount;
-            if (rand_A82A != 0) {
+            randAct_ = rand() % kHangCount;
+            if (randAct_ != 0) {
                 yPoo_ += 36;
             } else {
                 yPoo_ += 20;
             }
         }
         iAniFrames_ = 0;
-        pooState_ = 112;
-    case 112:
+        pooState_ = kStateSpFalling;
+    case kStateSpFalling:
         if (iAniFrames_ == 0) {
             if (counter_A83A++ < 10) {
                 break;
@@ -4461,28 +4587,28 @@ fallThrough:
             }
             counter_A83A = 0;
         }
-        if (fallt_A842 != 0) {
+        if (fallType_ != kFallSpFront) {
             iSprite_ = iSprite_ == kSprFallSide1 ? kSprFallSide2 : kSprFallSide1;
         } else {
-            iSprite_ = aniHangs_[rand_A82A][iAniFrames_ % 4];
+            iSprite_ = aniHangs_[randAct_][iAniFrames_ % 4];
         }
         setSprite(xPoo_, yPoo_, iSprite_);
         iAniFrames_ += 1;
         if (iAniFrames_ > 12) {
-            if (fallt_A842 != 0) {
-                pooState_ = 98;
+            if (fallType_ != kFallSpFront) {
+                pooState_ = kStateSideFallIntro;
             } else {
-                pooState_ = kStateFall1;
+                pooState_ = kStateFallIntro;
             }
         }
         break;
-    case 113:
-        word_CA76 = 1;
+    case kStateInfSleepIntro:
+        needSleepAfterChime_ = 1;
         iSprite_ = kSprWinkOpen;
         setSprite(xPoo_, yPoo_, iSprite_);
-        pooState_ = 114;
+        pooState_ = kStateInfSleepWink;
         break;
-    case 114:
+    case kStateInfSleepWink:
         if (counter_A83A++ < 1) {
             break;
         }
@@ -4491,11 +4617,11 @@ fallThrough:
         setSprite(xPoo_, yPoo_, iSprite_);
         if (iSprite_ == kSprWinkClosed) {
             iSprite_ = kSprSleep1;
-            pooState_ = 115;
+            pooState_ = kStateInfSleeping;
         }
         land_496F(0);
         break;
-    case 115:
+    case kStateInfSleeping:
         land_496F(0);
         if (counter_A83A++ < 4) {
             break;
@@ -4504,15 +4630,15 @@ fallThrough:
         iSprite_ = iSprite_ == kSprSleep1 ? kSprSleep2 : kSprSleep1;
         setSprite(xPoo_, yPoo_, iSprite_);
         break;
-    case kStateMerry11:
+    case kStateMryPassIntro:
         xPoo_ = screenWidth_;
         yPoo_ = screenHeight_ * 7 / 8;
         iSprite_ = kSprRun1;
         xDirection_ = 1;
         setSprite(xPoo_, yPoo_, iSprite_);
-        pooState_ = 117;
+        pooState_ = kStateMryPassRun;
         break;
-    case 117:
+    case kStateMryPassRun:
         if (counter_A83A++ < 1) {
             break;
         }
@@ -4521,22 +4647,22 @@ fallThrough:
         iSprite_ = iSprite_ == kSprRun1 ? kSprRun2 : kSprRun1;
         setSprite(xPoo_, yPoo_, iSprite_);
         if (screenWidth_ / 2 - 20 >= xPoo_) {
-            pooState_ = 118;
+            pooState_ = kStateMryPassSub;
         }
         break;
-    case 118:
+    case kStateMryPassSub:
         showSubPoo();
         xDirectionSub_ = -1;
         xSubPoo_ = -40;
         ySubPoo_ = screenHeight_ / 8;
         iSubSprite_ = kSprWifeRun1;
         iAniFrames_ = 0;
-        pooState_ = 119;
-        word_C0AE = 0;
+        pooState_ = kStateMryPassing;
+        bool_C0AE = 0;
         putWndToTop(hPooWnd_);
         putWndToTop(hOtherPooWnd_[kISubPooHwnd]);
         break;
-    case 119:
+    case kStateMryPassing:
         if (iAniFrames_ != 0) {
             iSprite_ = aniWinks_[kWinkUp][iAniFrames_];
             setSprite(xPoo_, yPoo_, iSprite_);
@@ -4564,10 +4690,10 @@ fallThrough:
         }
         if (xSubPoo_ > screenWidth_) {
             destroySubPooWnd();
-            pooState_ = 120;
+            pooState_ = kStateMryPassBack;
         }
         break;
-    case 120:
+    case kStateMryPassBack:
         if (counter_A83A++ < 1) {
             break;
         }
@@ -4576,10 +4702,10 @@ fallThrough:
         iSprite_ = iSprite_ == kSprRun1 ? kSprRun2 : kSprRun1;
         setSprite(xPoo_, yPoo_, iSprite_);
         if (xPoo_ > screenWidth_) {
-            pooState_ = kStateNormal1;
+            pooState_ = kStateNormalIntro;
         }
         break;
-    case kStateMerry21:
+    case kStateMryMeetIntro:
         xPoo_ = screenWidth_;
         yPoo_ = screenHeight_ * 7 / 8;
         iSprite_ = kSprRun1;
@@ -4591,12 +4717,12 @@ fallThrough:
         iSubSprite_ = kSprWifeRun1;
         setSprite(xPoo_, yPoo_, iSprite_);
         setSubSprite(xSubPoo_, ySubPoo_, iSubSprite_);
-        pooState_ = 122;
-        word_C0AE = 0;
+        pooState_ = kStateMryMeetRun;
+        bool_C0AE = 0;
         putWndToTop(hPooWnd_);
         putWndToTop(hOtherPooWnd_[kISubPooHwnd]);
         break;
-    case 122:
+    case kStateMryMeetRun:
         if (counter_A83A++ < 1) {
             break;
         }
@@ -4613,13 +4739,13 @@ fallThrough:
             setSprite(xPoo_, yPoo_, iSprite_);
             setSubSprite(xSubPoo_, ySubPoo_, iSubSprite_);
             iAniFrames_ = 0;
-            pooState_ = 123;
+            pooState_ = kStateMryMeetBlush;
         } else {
             setSprite(xPoo_, yPoo_, iSprite_);
             setSubSprite(xSubPoo_, ySubPoo_, iSubSprite_);
         }
         break;
-    case 123:
+    case kStateMryMeetBlush:
         if (counter_A83A++ < 3) {
             break;
         }
@@ -4628,31 +4754,31 @@ fallThrough:
         iAniFrames_ += 1;
         setSprite(xPoo_, yPoo_, iSprite_);
         if (iAniFrames_ >= 4) {
-            pooState_ = 124;
+            pooState_ = kStateMryMeetFade;
         }
         break;
-    case 124:
+    case kStateMryMeetFade:
         if (counter_A83A++ < 4) {
             break;
         }
         counter_A83A = 0;
-        word_CA46 += 1;
-        if (word_CA46 > 8) {
+        subPooFade_ += 1;
+        if (subPooFade_ > 8) {
             destroySubPooWnd();
             iAniFrames_ = 0;
-            pooState_ = 125;
+            pooState_ = kStateMryMeetEnd;
         }
         break;
-    case 125:
+    case kStateMryMeetEnd:
         iSprite_ = aniMerryBlush_[iAniFrames_];
         iAniFrames_ += 1;
         if (iSprite_ == kAniEnd) {
-            pooState_ = kStateNormal1;
+            pooState_ = kStateNormalIntro;
             break;
         }
         setSprite(xPoo_, yPoo_, iSprite_);
         break;
-    case kStateMerry31:
+    case kStateMryMateIntro:
         xPoo_ = screenWidth_;
         yPoo_ = screenHeight_ * 7 / 8;
         iSprite_ = kSprRun1;
@@ -4664,12 +4790,12 @@ fallThrough:
         iSubSprite_ = kSprWifeRun1;
         setSprite(xPoo_, yPoo_, iSprite_);
         setSubSprite(xSubPoo_, ySubPoo_, iSubSprite_);
-        pooState_ = 127;
-        word_C0AE = 0;
+        pooState_ = kStateMryMateRun;
+        bool_C0AE = 0;
         putWndToTop(hPooWnd_);
         putWndToTop(hOtherPooWnd_[kISubPooHwnd]);
         break;
-    case 127:
+    case kStateMryMateRun:
         if (counter_A83A++ < 1) {
             break;
         }
@@ -4680,21 +4806,21 @@ fallThrough:
         iSubSprite_ = iSubSprite_ == kSprWifeRun1 ? kSprWifeRun2 : kSprWifeRun1;
         if (xSubPoo_ < -40) {
             destroySubPooWnd();
-            pooState_ = kStateNormal1;
+            pooState_ = kStateNormalIntro;
         } else {
             setSprite(xPoo_, yPoo_, iSprite_);
             setSubSprite(xSubPoo_, ySubPoo_, iSubSprite_);
         }
         break;
-    case kStateUFO11:
+    case kStateUFOTakeIntro:
         xPoo_ = screenWidth_;
         yPoo_ = screenHeight_ * 7 / 8;
         iSprite_ = kSprRun1;
         xDirection_ = 1;
         setSprite(xPoo_, yPoo_, iSprite_);
-        pooState_ = 129;
+        pooState_ = kStateUFOTakeRun;
         break;
-    case 129:
+    case kStateUFOTakeRun:
         if (counter_A83A++ < 1) {
             break;
         }
@@ -4703,22 +4829,22 @@ fallThrough:
         iSprite_ = iSprite_ == kSprRun1 ? kSprRun2 : kSprRun1;
         setSprite(xPoo_, yPoo_, iSprite_);
         if (screenWidth_ / 2 - 20 >= xPoo_) {
-            pooState_ = 130;
+            pooState_ = kStateUFOTakeSub;
         }
         break;
-    case 130:
+    case kStateUFOTakeSub:
         showSubPoo();
         xDirectionSub_ = -1;
         xSubPoo_ = -40;
         ySubPoo_ = screenHeight_ / 8;
         iSubSprite_ = kSprUfoFirst;
         iAniFrames_ = 0;
-        pooState_ = 131;
-        word_C0AE = 0;
+        pooState_ = kStateUFOTakeFly;
+        bool_C0AE = 0;
         putWndToTop(hPooWnd_);
         putWndToTop(hOtherPooWnd_[kISubPooHwnd]);
         break;
-    case 131:
+    case kStateUFOTakeFly:
         if (iAniFrames_ != 0) {
             iSprite_ = aniWinks_[kWinkUp][iAniFrames_];
             setSprite(xPoo_, yPoo_, iSprite_);
@@ -4742,18 +4868,18 @@ fallThrough:
         if (xSubPoo_ > xPoo_) {
             xSubPoo_ = xPoo_;
             iSubSprite_ = kSprUfoOnFirst;
-            pooState_ = 132;
+            pooState_ = kStateUFOTakeBeam;
         }
         setSubSprite(xSubPoo_, ySubPoo_, iSubSprite_);
         break;
-    case 132:
+    case kStateUFOTakeBeam:
         iSprite_ = kSprLookUp1;
         setSprite(xPoo_, yPoo_, iSprite_);
         height_CA5C += 40;
         if (yPoo_ - ySubPoo_ - 40 <= height_CA5C) {
             height_CA5C = yPoo_ - ySubPoo_ - 40;
             height_CA5C -= 20;
-            pooState_ = 133;
+            pooState_ = kStateUFOTaking;
         }
         setSubSprite(xSubPoo_, ySubPoo_, iSubSprite_);
         if (counter_A83A++ < 1) {
@@ -4766,12 +4892,12 @@ fallThrough:
             iSubSprite_ += 1;
         }
         break;
-    case 133:
+    case kStateUFOTaking:
         height_CA5C -= 20;
         if (height_CA5C <= 0) {
             height_CA5C = 0;
             yPoo_ = ySubPoo_ + 40;
-            pooState_ = 134;
+            pooState_ = kStateUFOTakeLeave;
             iSprite_ = iSprite_ == kSprRun1 ? kSprRun2 : kSprRun1;
             setSprite(xPoo_, yPoo_, iSprite_);
             iSubSprite_ = kSprUfoFirst;
@@ -4792,7 +4918,7 @@ fallThrough:
             iSubSprite_ += 1;
         }
         break;
-    case 134:
+    case kStateUFOTakeLeave:
         xPoo_ = -80;
         setSprite(xPoo_, yPoo_, iSprite_);
         xSubPoo_ -= xDirectionSub_ * 16;
@@ -4804,21 +4930,21 @@ fallThrough:
         if (xSubPoo_ > screenWidth_) {
             destroySubPooWnd();
             stopPlaySound();
-            pooState_ = kStateNormal1;
+            pooState_ = kStateNormalIntro;
             break;
         }
         setSubSprite(xSubPoo_, ySubPoo_, iSubSprite_);
         break;
-    case kStateUFO21:
+    case kStateUFOEtIntro:
         ySubPoo_ = screenHeight_ * 7 / 8;
         xDirection_ = -1;
         xPoo_ = -40;
         yPoo_ = screenHeight_ / 8;
         iSprite_ = kSprUfoFirst;
         iAniFrames_ = 0;
-        pooState_ = 136;
+        pooState_ = kStateUFOEtFly;
         break;
-    case 136:
+    case kStateUFOEtFly:
         xPoo_ -= xDirection_ * 16;
         if (iSprite_ == kSprUfoLast) {
             iSprite_ = kSprUfoFirst;
@@ -4828,15 +4954,15 @@ fallThrough:
         if (screenWidth_ / 2 - 20 < xPoo_) {
             xPoo_ = screenWidth_ / 2 - 20;
             iSprite_ = kSprUfoOnFirst;
-            pooState_ = 137;
+            pooState_ = kStateUFOEtBeam;
         }
         setSprite(xPoo_, yPoo_, iSprite_);
         break;
-    case 137:
-        height_CA72 += 40;
-        if (ySubPoo_ - yPoo_ - 40 <= height_CA72) {
-            height_CA72 = ySubPoo_ - yPoo_ - 40;
-            pooState_ = 138;
+    case kStateUFOEtBeam:
+        ufoBeamHeight_ += 40;
+        if (ySubPoo_ - yPoo_ - 40 <= ufoBeamHeight_) {
+            ufoBeamHeight_ = ySubPoo_ - yPoo_ - 40;
+            pooState_ = kStateUFOEtAppear;
         }
         setSprite(xPoo_, yPoo_, iSprite_);
         if (counter_A83A++ < 1) {
@@ -4849,7 +4975,7 @@ fallThrough:
             iSprite_ += 1;
         }
         break;
-    case 138:
+    case kStateUFOEtAppear:
         if (counter_A83A++ < 4) {
             break;
         }
@@ -4859,17 +4985,17 @@ fallThrough:
         iSubSprite_ = kSprAlien1;
         setSubSprite(xSubPoo_, ySubPoo_, iSubSprite_);
         setSprite(xPoo_, yPoo_, iSprite_);
-        pooState_ = 139;
-        word_C0AE = 0;
+        pooState_ = kStateUFOEtLeave;
+        bool_C0AE = 0;
         putWndToTop(hPooWnd_);
         putWndToTop(hOtherPooWnd_[kISubPooHwnd]);
         break;
-    case 139:
-        if (height_CA72 != 0) {
-            height_CA72 -= 40;
-            if (height_CA72 <= 0) {
+    case kStateUFOEtLeave:
+        if (ufoBeamHeight_ != 0) {
+            ufoBeamHeight_ -= 40;
+            if (ufoBeamHeight_ <= 0) {
                 iSprite_ = kSprUfoFirst;
-                height_CA72 = 0;
+                ufoBeamHeight_ = 0;
             }
             if (iSprite_ == kSprUfoOnLast) {
                 iSprite_ = kSprUfoOnFirst;
@@ -4885,7 +5011,7 @@ fallThrough:
             }
         }
         if (xPoo_ > screenWidth_) {
-            pooState_ = 140;
+            pooState_ = kStateUFOEtFade;
         }
         setSprite(xPoo_, yPoo_, iSprite_);
         if (counter_A83A++ < 1) {
@@ -4895,23 +5021,23 @@ fallThrough:
         iSubSprite_ = iSubSprite_ == kSprAlien1 ? kSprAlien2 : kSprAlien1;
         setSubSprite(xSubPoo_, ySubPoo_, iSubSprite_);
         break;
-    case 140:
+    case kStateUFOEtFade:
         iSubSprite_ = kSprAlien0;
         setSubSprite(xSubPoo_, ySubPoo_, iSubSprite_);
         if (counter_A83A++ < 1) {
             break;
         }
         counter_A83A = 0;
-        word_CA46 += 1;
-        if (word_CA46 > 8) {
+        subPooFade_ += 1;
+        if (subPooFade_ > 8) {
             destroySubPooWnd();
             stopPlaySound();
-            pooState_ = kStateNormal1;
+            pooState_ = kStateNormalIntro;
         }
         break;
     case 141:
         break;
-    case kStateUFO31:
+    case kStateUFOEnterIntro:
         xPoo_ = -80;
         yPoo_ = screenHeight_ / 8;
         setSprite(xPoo_, yPoo_, iSprite_);
@@ -4921,12 +5047,12 @@ fallThrough:
         ySubPoo_ = screenHeight_ * 7 / 8;
         iSubSprite_ = kSprUfoFirst;
         iAniFrames_ = 0;
-        pooState_ = 143;
-        word_C0AE = 0;
+        pooState_ = kStateUFOEnterFly;
+        bool_C0AE = 0;
         putWndToTop(hPooWnd_);
         putWndToTop(hOtherPooWnd_[kISubPooHwnd]);
         break;
-    case 143:
+    case kStateUFOEnterFly:
         xSubPoo_ -= xDirectionSub_ * 16;
         if (iSubSprite_ == kSprUfoLast) {
             iSubSprite_ = kSprUfoFirst;
@@ -4939,11 +5065,11 @@ fallThrough:
             yPoo_ = ySubPoo_;
             iSprite_ = kSprRun1;
             xDirection_ = 1;
-            pooState_ = 144;
+            pooState_ = kStateUFOEnterRun;
         }
         setSubSprite(xSubPoo_, ySubPoo_, iSubSprite_);
         break;
-    case 144:
+    case kStateUFOEnterRun:
         if (counter_A83A++ < 1) {
             break;
         }
@@ -4960,10 +5086,10 @@ fallThrough:
         if (xSubPoo_ + 40 >= xPoo_) {
             xPoo_ = -80;
             setSprite(xPoo_, yPoo_, iSprite_);
-            pooState_ = 145;
+            pooState_ = kStateUFOEnterLeave;
         }
         break;
-    case 145:
+    case kStateUFOEnterLeave:
         ySubPoo_ -= 40;
         if (iSubSprite_ == kSprUfoLast) {
             iSubSprite_ = kSprUfoFirst;
@@ -4973,14 +5099,14 @@ fallThrough:
         if (ySubPoo_ < -40) {
             destroySubPooWnd();
             stopPlaySound();
-            pooState_ = kStateNormal1;
+            pooState_ = kStateNormalIntro;
             break;
         }
         setSubSprite(xSubPoo_, ySubPoo_, iSubSprite_);
         break;
     case 146:
         break;
-    case kStateBurn1:
+    case kStateBurnIntro:
         showSubPoo();
         keepSubPoo_ = 1;
         xDirectionSub_ = 1;
@@ -4994,7 +5120,7 @@ fallThrough:
         xSubPoo_ = dxPoo_ * 92 + screenWidth_;
         ySubPoo_ = dyPoo_ * 92 - 20;
         pooState_ = kStateBurning;
-        word_C0AE = 1;
+        bool_C0AE = 1;
         putWndToTop(hOtherPooWnd_[kISubPooHwnd]);
         putWndToTop(hPooWnd_);
     case kStateBurning:
@@ -5068,7 +5194,7 @@ fallThrough:
         setSprite(xPoo_, yPoo_, iSprite_);
         if (xPoo_ < -40) {
             destroySubPooWnd();
-            pooState_ = kStateNormal1;
+            pooState_ = kStateNormalIntro;
             break;
         }
         break;
@@ -5084,22 +5210,22 @@ void event_8FD7(int arg_0)
 {
     switch (arg_0) {
     case 0:
-        pooState_ = kStateNormal1;
+        pooState_ = kStateNormalIntro;
         if (bool_A7FC != 0) {
-            pooState_ = 97;
+            pooState_ = kStateVRunFallIntro;
         }
         break;
     case 1:
-        pooState_ = 81;
+        pooState_ = kStateInfRunIntro;
         break;
     case 2:
-        pooState_ = 97;
+        pooState_ = kStateVRunFallIntro;
         break;
     case 3:
-        word_CA54 = 113;
+        pooSleepState_ = kStateInfSleepIntro;
         break;
     case 4:
-        pooState_ = kStateFeed1;
+        pooState_ = kStateFeedIntro;
         break;
     default:
         break;
@@ -5109,99 +5235,99 @@ void event_8FD7(int arg_0)
 /* Process debug window action change. */
 void debugAction(WPARAM action)
 {
-    height_CA72 = 0;
+    ufoBeamHeight_ = 0;
     stopPlaySound();
     destroySubPooWnd();
     switch (action) {
     case 0:        ///Normal
-        pooState_ = kStateNormal1;
+        pooState_ = kStateNormalIntro;
         break;
     case 1:        ///Run
-        pooState_ = kStateRun1;
+        pooState_ = kStateRunIntro;
         break;
     case 2:        ///Walk
-        pooState_ = kStateWalk1;
+        pooState_ = kStateWalkIntro;
         break;
     case 3:        ///Handstand
-        pooState_ = kStateHandstand1;
+        pooState_ = kStateHandstandIntro;
         break;
     case 4:        ///Sex
-        pooState_ = kStateSex1;
+        pooState_ = kStateSexIntro;
         break;
     case 5:        ///Sleep
-        pooState_ = kStateSleep1;
+        pooState_ = kStateSleepIntro;
         break;
     case 6:        ///Wink
-        pooState_ = kStateWink1;
+        pooState_ = kStateWinkIntro;
         break;
     case 7:        ///Turn
-        pooState_ = kStateTurn1;
+        pooState_ = kStateTurnIntro;
         break;
     case 8:        ///Hit
-        pooState_ = kStateHit1;
+        pooState_ = kStateHitIntro;
         break;
     case 9:        ///Piss
-        pooState_ = kStatePiss1;
+        pooState_ = kStatePissIntro;
         break;
     case 10:        ///Yawn
-        pooState_ = kStateYawn1;
+        pooState_ = kStateYawnIntro;
         break;
     case 11:        ///Baa
-        pooState_ = kStateBaa1;
+        pooState_ = kStateBaaIntro;
         break;
     case 12:        ///Amazed
-        pooState_ = kStateAmazed1;
+        pooState_ = kStateAmazedIntro;
         break;
     case 13:        ///Scary
-        pooState_ = kStateScary1;
+        pooState_ = kStateScaryIntro;
         break;
     case 14:        ///Eat
-        pooState_ = kStateEat1;
+        pooState_ = kStateEatIntro;
         break;
     case 15:        ///Sit
-        pooState_ = kStateSit1;
+        pooState_ = kStateSitIntro;
         break;
     case 16:        ///Sneeze
-        pooState_ = kStateSneeze1;
+        pooState_ = kStateSneezeIntro;
         break;
     case 17:        ///Burn
-        pooState_ = kStateBurn1;
+        pooState_ = kStateBurnIntro;
         break;
     case 18:        ///Merry1
-        pooState_ = kStateMerry11;
+        pooState_ = kStateMryPassIntro;
         break;
     case 19:        ///Merry2
-        pooState_ = kStateMerry21;
+        pooState_ = kStateMryMeetIntro;
         break;
     case 20:        ///Merry3
-        pooState_ = kStateMerry31;
+        pooState_ = kStateMryMateIntro;
         break;
     case 21:        ///UFO1
-        pooState_ = kStateUFO11;
+        pooState_ = kStateUFOTakeIntro;
         break;
     case 22:        ///UFO2
-        pooState_ = kStateUFO21;
+        pooState_ = kStateUFOEtIntro;
         break;
     case 23:        ///UFO3
-        pooState_ = kStateUFO31;
+        pooState_ = kStateUFOEnterIntro;
         break;
     case 24:        ///Roll
-        pooState_ = kStateRoll1;
+        pooState_ = kStateRollIntro;
         break;
     case 25:        ///Blush
-        pooState_ = kStateBlush1;
+        pooState_ = kStateBlushIntro;
         break;
     case 26:        ///Slip
-        pooState_ = kStateSlip1;
+        pooState_ = kStateSlipIntro;
         break;
     case 27:        ///Fall
-        pooState_ = kStateFall1;
+        pooState_ = kStateFallIntro;
         break;
     case 28:        ///Jump
-        pooState_ = kStateJump1;
+        pooState_ = kStateJumpIntro;
         break;
     case 29:        ///Spin
-        pooState_ = kStateSpin1;
+        pooState_ = kStateSpinIntro;
         break;
     default:
         break;
@@ -5246,7 +5372,7 @@ BOOL initSubWnd(HWND hWnd)
     screenWidth_ = GetSystemMetrics(SM_CXSCREEN);
     screenHeight_ = GetSystemMetrics(SM_CYSCREEN);
     ReleaseDC(hWnd, hdc);
-    word_CA46 = 0;
+    subPooFade_ = 0;
     height_CA5C = 0;
     keepSubPoo_ = 0;
     lastSubSpriteX_ = 0;
@@ -5319,7 +5445,7 @@ void paint_9438(HWND hWnd)
     }
     if (lastSubSpriteX_ == curSubSpriteX_ && lastSubSpriteY_ == curSubSpriteY_ &&
         lastSubSpriteBmp0_ == curSubSpriteBmp0_ && lastSubSpriteBmpX_ == curSubSpriteBmpX_ &&
-        word_CA46 == 0 && height_CA5C == 0) {
+        subPooFade_ == 0 && height_CA5C == 0) {
         return;
     }
     iPaintSubBmp_ ^= 1;
@@ -5375,8 +5501,8 @@ void paint_9438(HWND hWnd)
         posx_16 = max(0, curSubSpriteX_ - paintSubRectX_);
         posy_14 = max(0, curSubSpriteY_ - paintSubRectY_);
         if (curSubSpriteBmp1_ != NULL) {
-            if (word_CA46 != 0) {
-                if (word_CA46 == 1) {
+            if (subPooFade_ != 0) {
+                if (subPooFade_ == 1) {
                     SelectObject(hdc_4, curSubSpriteBmp1_);
                     SelectObject(hdc_6, word_A85C);
                     BitBlt(hdc_6, 0, 0, 40, 40,
@@ -5388,11 +5514,11 @@ void paint_9438(HWND hWnd)
                 }
                 SelectObject(hdc_4, word_A85C);
                 SelectObject(hdc_6, sprites_[172].bitmaps[0]);
-                BitBlt(hdc_4, word_CA46 - 1, word_CA46 - 1, 41 - word_CA46, 40,
+                BitBlt(hdc_4, subPooFade_ - 1, subPooFade_ - 1, 41 - subPooFade_, 40,
                        hdc_6, sprites_[172].x, 0, SRCPAINT);
                 SelectObject(hdc_4, word_A85A);
                 SelectObject(hdc_6, sprites_[172].bitmaps[1]);
-                BitBlt(hdc_4, word_CA46 - 1, word_CA46 - 1, 41 - word_CA46, 40,
+                BitBlt(hdc_4, subPooFade_ - 1, subPooFade_ - 1, 41 - subPooFade_, 40,
                        hdc_6, sprites_[172].x, 0, SRCAND);
                 SelectObject(hdc_6, bmp_A854);
                 SelectObject(hdc_4, word_A85C);
