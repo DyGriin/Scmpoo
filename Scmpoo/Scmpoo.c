@@ -1137,7 +1137,7 @@ LRESULT CALLBACK sub_1DF3(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     switch (uMsg) {
     case WM_CREATE:
         if (!sub_3C20(hWnd)) {
-            MessageBox(hWnd, "Screen MateÇÕç≈ëÂÇWå¬Ç‹Ç≈Ç≈Ç∑", "Screen Mate", MB_ICONHAND | MB_OK);
+            MessageBox(hWnd, "Cannot run more than 8 Screen Mate", "Screen Mate", MB_ICONHAND | MB_OK);
             return -1;
         }
 #ifdef _WIN32
@@ -1168,13 +1168,13 @@ LRESULT CALLBACK sub_1DF3(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         SelectPalette(var_2, word_CA4A, FALSE);
         RealizePalette(var_2);
         if (!sub_42F3(var_2)) {
-            MessageBox(hWnd, "ÉÅÉÇÉäÇ™ïsë´ÇµÇƒÇ¢Ç‹Ç∑", "Screen Mate", MB_ICONHAND | MB_OK);
+            MessageBox(hWnd, "Insufficient memory", "Screen Mate", MB_ICONHAND | MB_OK);
             ReleaseDC(hWnd, var_2);
             return -1;
         }
         ReleaseDC(hWnd, var_2);
         if (!sub_306A(hWnd)) {
-            MessageBox(hWnd, "ÉÅÉÇÉäÇ™ïsë´ÇµÇƒÇ¢Ç‹Ç∑", "Screen Mate", MB_ICONHAND | MB_OK);
+            MessageBox(hWnd, "Insufficient memory", "Screen Mate", MB_ICONHAND | MB_OK);
             return -1;
         }
         SetTimer(hWnd, 1U, 108U, NULL);
@@ -1205,8 +1205,8 @@ LRESULT CALLBACK sub_1DF3(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             }
             sub_2ABF(hWnd);
             *(HMENU *)var_122 = CreatePopupMenu();
-            AppendMenu(*(HMENU *)var_122, 0U, 101U, "Screen MateÇÃê›íË...");
-            AppendMenu(*(HMENU *)var_122, 0U, IDCANCEL, "Screen MateÇÃèIóπ");
+            AppendMenu(*(HMENU *)var_122, 0U, 101U, "Screen Mate Settings...");
+            AppendMenu(*(HMENU *)var_122, 0U, IDCANCEL, "Exit Screen Mate");
             GetCursorPos(&var_126);
             TrackPopupMenu(*(HMENU *)var_122, 0U, var_126.x, var_126.y, 0, hWnd, NULL);
             DestroyMenu(*(HMENU *)var_122);
