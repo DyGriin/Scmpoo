@@ -24,6 +24,42 @@ enum
     kISubPooHwnd = kMaxPooCount,
 };
 
+enum SpriteState
+{
+    kStateNormal1 = 1,
+    kStateRun1 = 7,     //8, break
+    //8: 8/jump/hit
+    kStateJump1 = 9,    //10
+    //10: 10/run
+    kStateWalk1 = 11,
+    kStateHandstand1 = 13,
+    kStateSex1 = 15,
+    kStateSleep1 = 17,
+    kStateWink1 = 20,
+    kStateTurn1 = 24,
+    kStateHit1 = 30,
+    kStatePiss1 = 35,
+    kStateYawn1 = 43,
+    kStateBaa1 = 45,
+    kStateSneeze1 = 47,
+    kStateSuprise1 = 49,
+    kStateScary1 = 51,
+    kStateEat1 = 53,
+    kStateSit1 = 58,
+    kStateBlush1 = 62,
+    kStateRoll1 = 65,
+    kStateRotate1 = 69,
+    kStateSlip1 = 75,
+    kStateFall1 = 96,
+    kStateMerry11 = 116,
+    kStateMerry21 = 121,
+    kStateMerry31 = 126,
+    kStateUFO11 = 128,
+    kStateUFO21 = 135,
+    kStateUFO31 = 142,
+    kStateBurn1 = 147,
+};
+
 typedef struct spriteinfo {
     HBITMAP bitmaps[2];
     int x;
@@ -60,53 +96,53 @@ resourceinfo originalRes_[16] = { /* Resource list. */
 };
 
 resourceinfo hFlipRes_[16] = {0}; /* Resource list storing flipped images. */
-WORD word_A15A[80] = { /* Normal action table (option "Gravity always on" disabled). */
-    11, 11, 7, 7,
-    11, 11, 7, 7,
-    11, 11, 7, 7,
-    11, 11, 7, 7,
-    11, 11, 7, 7,
-    11, 11, 7, 7,
-    11, 11, 7, 7,
-    11, 11, 7, 7,
-    11, 11, 7, 7,
-    11, 11, 7, 7,
-    11, 7, 17, 20,
-    11, 7, 17, 20,
-    11, 7, 17, 20,
-    11, 7, 17, 20,
-    11, 7, 17, 20,
-    11, 7, 17, 20,
-    11, 7, 17, 20,
-    13, 58, 15, 45,
-    35, 53, 43, 47,
-    45, 47, 49, 51
+WORD nextStateNormal1_[80] = { /* Normal action table (option "Gravity always on" disabled). */
+    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
+    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
+    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
+    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
+    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
+    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
+    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
+    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
+    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
+    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
+    kStateWalk1, kStateRun1, kStateSleep1, kStateWink1,
+    kStateWalk1, kStateRun1, kStateSleep1, kStateWink1,
+    kStateWalk1, kStateRun1, kStateSleep1, kStateWink1,
+    kStateWalk1, kStateRun1, kStateSleep1, kStateWink1,
+    kStateWalk1, kStateRun1, kStateSleep1, kStateWink1,
+    kStateWalk1, kStateRun1, kStateSleep1, kStateWink1,
+    kStateWalk1, kStateRun1, kStateSleep1, kStateWink1,
+    kStateHandstand1, kStateSit1, kStateSex1, kStateBaa1,
+    kStatePiss1, kStateEat1, kStateYawn1, kStateSneeze1,
+    kStateBaa1, kStateSneeze1, kStateSuprise1, kStateScary1
 };
-WORD word_A1FA[80] = { /* Normal action table (option "Gravity always on" enabled). */
-    11, 11, 7, 7,
-    11, 11, 7, 7,
-    11, 11, 7, 7,
-    11, 11, 7, 7,
-    11, 11, 7, 7,
-    11, 11, 7, 7,
-    11, 11, 7, 7,
-    11, 11, 7, 7,
-    11, 11, 7, 7,
-    11, 11, 7, 7,
-    11, 7, 17, 20,
-    11, 7, 17, 20,
-    11, 7, 17, 20,
-    11, 7, 17, 20,
-    11, 7, 17, 20,
-    11, 7, 17, 20,
-    11, 7, 17, 20,
-    13, 58, 15, 65,
-    35, 53, 43, 75,
-    45, 47, 49, 51
+WORD nextStateNormal2_[80] = { /* Normal action table (option "Gravity always on" enabled). */
+    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
+    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
+    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
+    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
+    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
+    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
+    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
+    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
+    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
+    kStateWalk1, kStateWalk1, kStateRun1, kStateRun1,
+    kStateWalk1, kStateRun1, kStateSleep1, kStateWink1,
+    kStateWalk1, kStateRun1, kStateSleep1, kStateWink1,
+    kStateWalk1, kStateRun1, kStateSleep1, kStateWink1,
+    kStateWalk1, kStateRun1, kStateSleep1, kStateWink1,
+    kStateWalk1, kStateRun1, kStateSleep1, kStateWink1,
+    kStateWalk1, kStateRun1, kStateSleep1, kStateWink1,
+    kStateWalk1, kStateRun1, kStateSleep1, kStateWink1,
+    kStateHandstand1, kStateSit1, kStateSex1, kStateRoll1,
+    kStatePiss1, kStateEat1, kStateYawn1, kStateSlip1,
+    kStateBaa1, kStateSneeze1, kStateSuprise1, kStateScary1
 };
-WORD word_A29A[8] = { /* Special action table. */
-    116, 121, 126, 147,
-    128, 135, 142, 147
+WORD nextStateNormal6_[8] = { /* Special action table. */
+    kStateMerry11, kStateMerry21, kStateMerry31, kStateBurn1,
+    kStateUFO11, kStateUFO21, kStateUFO31, kStateBurn1
 };
 int word_A2AA = 1; /* Facing direction. 1 = left, -1 = right */
 int word_A2AC = 1; /* Facing direction (sub). 1 = left, -1 = right */
@@ -2385,16 +2421,16 @@ void releaseResources(void)
 void sub_4559(void)
 {
     if (word_A2AA > 0 && posx_A800 < 0) {
-        state_A8A0 = 24;
+        state_A8A0 = kStateTurn1;
     }
     if (word_A2AA < 0 && screenWidth_ - sprites_[index_A804].width < posx_A800) {
-        state_A8A0 = 24;
+        state_A8A0 = kStateTurn1;
     }
     if (word_A2AA > 0 && screenWidth_ - sprites_[index_A804].width > posx_A800 && rand() % 20 == 0) {
-        state_A8A0 = 24;
+        state_A8A0 = kStateTurn1;
     }
     if (word_A2AA < 0 && posx_A800 > 0 && rand() % 20 == 0) {
-        state_A8A0 = 24;
+        state_A8A0 = kStateTurn1;
     }
 }
 
@@ -2403,18 +2439,18 @@ void sub_4614(BOOL arg_0)
 {
     if (word_A7FC == 0) {
         if (word_A2AA > 0 && posx_A800 < 0) {
-            state_A8A0 = 30;
+            state_A8A0 = kStateHit1;
         }
         if (word_A2AA < 0 && screenWidth_ - sprites_[index_A804].width < posx_A800) {
-            state_A8A0 = 30;
+            state_A8A0 = kStateHit1;
         }
     }
     if (arg_0) {
         if (word_A2AA > 0 && screenWidth_ - 80 > posx_A800 && rand() % 20 == 0) {
-            state_A8A0 = 24;
+            state_A8A0 = kStateTurn1;
         }
         if (word_A2AA < 0 && posx_A800 > 40 && rand() % 20 == 0) {
-            state_A8A0 = 24;
+            state_A8A0 = kStateTurn1;
         }
     }
 }
@@ -2444,7 +2480,7 @@ void sub_46F7(void)
             } else if (word_CA76 != 0) {
                 state_A8A0 = 113;
             } else {
-                state_A8A0 = 1;
+                state_A8A0 = kStateNormal1;
             }
         }
     } else {
@@ -2621,10 +2657,10 @@ void sub_4C21(int posx_0, int posx_2, int arg_4)
     }
     if (sub_3A36(posx_0, posx_2, posy_A802, posy_A802 + 40) != 0) {
         if (arg_4 == 1) {
-            state_A8A0 = 24;
+            state_A8A0 = kStateTurn1;
         }
         if (arg_4 == 2) {
-            state_A8A0 = 30;
+            state_A8A0 = kStateHit1;
         }
     }
 }
@@ -2670,8 +2706,8 @@ loc_4D33:
         srand((unsigned int)GetTickCount());
         posx_A800 = -80;
         posy_A802 = -80;
-        state_A8A0 = 1;
-    case 1:
+        state_A8A0 = kStateNormal1;
+    case kStateNormal1:
         word_A844 = 0;
         if (confGForce_ != 0U) {
             state_A8A0 = 2;
@@ -2692,7 +2728,7 @@ loc_4D33:
             state_A8A0 = 4;
             break;
         }
-        state_A8A0 = word_A15A[rand() % 80];
+        state_A8A0 = nextStateNormal1_[rand() % 80];
         if (posx_A800 > screenWidth_ || posx_A800 < -40 || posy_A802 < -40 || posy_A802 > screenHeight_) {
             if ((rand() & 1) == 0) {
                 word_A2AA = 1;
@@ -2703,7 +2739,7 @@ loc_4D33:
                 posx_A800 = -40;
                 posy_A802 = rand() % (screenHeight_ - 64) + word_CA4E;
             }
-            state_A8A0 = 11;
+            state_A8A0 = kStateWalk1;
         }
         break;
     case 2:
@@ -2715,7 +2751,7 @@ loc_4D33:
             word_CA54 = 0;
             break;
         }
-        state_A8A0 = word_A1FA[rand() % 80];
+        state_A8A0 = nextStateNormal2_[rand() % 80];
         if (posx_A800 > screenWidth_ || posx_A800 < -40 || posy_A802 < -40 || posy_A802 > screenHeight_) {
             if (rand() % 10 == 0 && hasOtherPoo_ == 0) {
                 state_A8A0 = 6;
@@ -2784,9 +2820,9 @@ loc_4D33:
         }
         break;
     case 6:
-        state_A8A0 = word_A29A[rand() % 8];
+        state_A8A0 = nextStateNormal6_[rand() % 8];
         break;
-    case 7:
+    case kStateRun1:
         word_A7FE = 0;
         if ((rand() & 1) == 0) {
             word_A7FE = 1;
@@ -2817,7 +2853,7 @@ loc_4D33:
                     posx_A800 = var_2 - 40;
                 }
                 sub_4807(posx_A800, posy_A802, index_A804);
-                state_A8A0 = 30;
+                state_A8A0 = kStateHit1;
                 break;
             }
         }
@@ -2827,14 +2863,14 @@ loc_4D33:
         index_A804 = index_A804 == 4 ? 5 : 4;
         sub_4807(posx_A800, posy_A802, index_A804);
         if (rand() % 50 == 0 && word_A7FC != 0) {
-            state_A8A0 = 9;
+            state_A8A0 = kStateJump1;
         }
         sub_4614(TRUE);
         sub_46D2();
         sub_496F(2);
         sub_4C21(-(word_A2AA * 16 - posx_A800), word_A2AA * 16 + posx_A800, 2);
         break;
-    case 9:
+    case kStateJump1:
         word_A806 = -11;
         word_A808 = -(word_A2AA * 8);
         word_A80C = posy_A802;
@@ -2852,16 +2888,16 @@ loc_4D33:
         }
         if (word_A80C <= posy_A802) {
             posy_A802 = word_A80C;
-            state_A8A0 = 7;
+            state_A8A0 = kStateRun1;
         }
         sub_4807(posx_A800, posy_A802, index_A804);
         sub_4614(FALSE);
         sub_4C21(word_A808 + posx_A800, posx_A800 - word_A808, 2);
-        if (state_A8A0 == 30 && word_A80C != posy_A802) {
+        if (state_A8A0 == kStateHit1 && word_A80C != posy_A802) {
             word_A844 = posy_A802 - word_A80C;
         }
         break;
-    case 11:
+    case kStateWalk1:
         word_A7FE = 0;
         if ((word_A7FC & !(rand() & 1)) != 0) {
             word_A7FE = 1;
@@ -2912,7 +2948,7 @@ loc_4D33:
         sub_496F(1);
         sub_4C21(-(word_A2AA * 6 - posx_A800), word_A2AA * 6 + posx_A800, 1);
         break;
-    case 13:
+    case kStateHandstand1:
         word_A82A = rand() % 2;
         word_A826 = rand() % 4 + 4;
         if (word_A82A != 0) {
@@ -2941,7 +2977,7 @@ loc_4D33:
         sub_46D2();
         sub_496F(1);
         break;
-    case 15:
+    case kStateSex1:
         word_A82A = rand() % 2;
         word_A826 = rand() % 3 + 3;
         if (word_A82A != 0) {
@@ -2967,7 +3003,7 @@ loc_4D33:
         sub_46D2();
         sub_496F(0);
         break;
-    case 17:
+    case kStateSleep1:
         index_A804 = 6;
         sub_4807(posx_A800, posy_A802, index_A804);
         state_A8A0 = 18;
@@ -2996,7 +3032,7 @@ loc_4D33:
         sub_46D2();
         sub_496F(0);
         break;
-    case 20:
+    case kStateWink1:
         word_A82A = rand() % 3;
         if (word_A82A == 0) {
             index_A804 = 6;
@@ -3033,9 +3069,9 @@ loc_4D33:
         if (word_A83A-- > 0) {
             break;
         }
-        state_A8A0 = 1;
+        state_A8A0 = kStateNormal1;
         break;
-    case 24:
+    case kStateTurn1:
         if (word_A83A++ < 1) {
             break;
         }
@@ -3083,7 +3119,7 @@ loc_4D33:
         word_A83A = 0;
         index_A804 = 3;
         sub_4807(posx_A800, posy_A802, index_A804);
-        state_A8A0 = 1;
+        state_A8A0 = kStateNormal1;
         sub_496F(0);
         break;
     case 27:
@@ -3120,12 +3156,12 @@ loc_4D33:
             state_A8A0 = 34;
         }
         goto loc_4D33;
-    case 30:
+    case kStateHit1:
         if (word_A7FC != 0) {
             state_A8A0 = 27;
             goto loc_4D33;
         } else {
-            state_A8A0 = 24;
+            state_A8A0 = kStateTurn1;
             goto loc_4D33;
         }
         word_A83A = 0;
@@ -3140,7 +3176,7 @@ loc_4D33:
         state_A8A0 = 31;
     case 31:
         sub_4C21(word_A2AA * 10 + posx_A800, posx_A800, 2);
-        if (state_A8A0 == 30) {
+        if (state_A8A0 == kStateHit1) {
             if (word_A826 != 0) {
                 word_A844 -= word_A324[word_A826 + 9];
             }
@@ -3182,7 +3218,7 @@ loc_4D33:
             break;
         }
         word_A83A = 0;
-        state_A8A0 = 1;
+        state_A8A0 = kStateNormal1;
         break;
     case 34:
         posx_A800 += word_A2AA * 8;
@@ -3193,14 +3229,14 @@ loc_4D33:
         }
         sub_4807(posx_A800, posy_A802, index_A804);
         if (word_A82A == 2 && index_A804 == 70) {
-            state_A8A0 = 69;
+            state_A8A0 = kStateRotate1;
             break;
         }
         if (posx_A800 > screenWidth_ || posx_A800 < -40) {
-            state_A8A0 = 1;
+            state_A8A0 = kStateNormal1;
         }
         sub_4C21(word_A2AA * 8 + posx_A800, -(word_A2AA * 8 - posx_A800), 2);
-        if (state_A8A0 == 30) {
+        if (state_A8A0 == kStateHit1) {
             if (word_A846-- > 0) {
                 word_A2AA = -word_A2AA;
                 state_A8A0 = 34;
@@ -3210,7 +3246,7 @@ loc_4D33:
         }
         sub_496F(2);
         break;
-    case 35:
+    case kStatePiss1:
         if (word_A83A++ < 1) {
             break;
         }
@@ -3316,10 +3352,10 @@ loc_4D33:
         word_A83A = 0;
         index_A804 = 3;
         sub_4807(posx_A800, posy_A802, index_A804);
-        state_A8A0 = 1;
+        state_A8A0 = kStateNormal1;
         word_A826 = 0;
         break;
-    case 43:
+    case kStateYawn1:
         sound_42C8(IDW_YAWN, 0U, 0);
         word_A826 = 0;
         state_A8A0 = 44;
@@ -3331,13 +3367,13 @@ loc_4D33:
         index_A804 = word_A34C[word_A826];
         word_A826 += 1;
         if (index_A804 == 0) {
-            state_A8A0 = 1;
+            state_A8A0 = kStateNormal1;
             break;
         }
         sub_4807(posx_A800, posy_A802, index_A804);
         sub_496F(0);
         break;
-    case 45:
+    case kStateBaa1:
         sound_42C8(IDW_BAA, 0U, 0);
         word_A826 = 0;
         state_A8A0 = 46;
@@ -3349,13 +3385,13 @@ loc_4D33:
         index_A804 = word_A362[word_A826];
         word_A826 += 1;
         if (index_A804 == 0) {
-            state_A8A0 = 1;
+            state_A8A0 = kStateNormal1;
             break;
         }
         sub_4807(posx_A800, posy_A802, index_A804);
         sub_496F(0);
         break;
-    case 47:
+    case kStateSneeze1:
         word_A826 = 0;
         state_A8A0 = 48;
     case 48:
@@ -3369,13 +3405,13 @@ loc_4D33:
         index_A804 = word_A372[word_A826];
         word_A826 += 1;
         if (index_A804 == 0) {
-            state_A8A0 = 1;
+            state_A8A0 = kStateNormal1;
             break;
         }
         sub_4807(posx_A800, posy_A802, index_A804);
         sub_496F(0);
         break;
-    case 49:
+    case kStateSuprise1:
         word_A826 = 0;
         state_A8A0 = 50;
     case 50:
@@ -3386,13 +3422,13 @@ loc_4D33:
         index_A804 = word_A38C[word_A826];
         word_A826 += 1;
         if (index_A804 == 0) {
-            state_A8A0 = 1;
+            state_A8A0 = kStateNormal1;
             break;
         }
         sub_4807(posx_A800, posy_A802, index_A804);
         sub_496F(0);
         break;
-    case 51:
+    case kStateScary1:
         word_A826 = 0;
         state_A8A0 = 52;
     case 52:
@@ -3403,12 +3439,12 @@ loc_4D33:
         index_A804 = index_A804 == 56 ? 57 : 56;
         if (word_A826++ > 30) {
             index_A804 = 3;
-            state_A8A0 = 1;
+            state_A8A0 = kStateNormal1;
         }
         sub_4807(posx_A800, posy_A802, index_A804);
         sub_496F(0);
         break;
-    case 53:
+    case kStateEat1:
         word_A826 = 0;
         state_A8A0 = 54;
         showSubPoo();
@@ -3447,7 +3483,7 @@ loc_4D33:
         }
         if (index_A804 == 0) {
             destroySubPooWnd();
-            state_A8A0 = 1;
+            state_A8A0 = kStateNormal1;
             break;
         }
         sub_4807(posx_A800, posy_A802, index_A804);
@@ -3488,7 +3524,7 @@ loc_4D33:
         sub_4807(posx_A800, posy_A802, index_A804);
         sub_496F(0);
         break;
-    case 58:
+    case kStateSit1:
         if (word_A83A++ < 1) {
             break;
         }
@@ -3552,7 +3588,7 @@ loc_4D33:
         break;
     case 64:
         break;
-    case 65:
+    case kStateRoll1:
         index_A804 = 3;
         sub_4807(posx_A800, posy_A802, index_A804);
         word_A826 = 0;
@@ -3589,10 +3625,10 @@ loc_4D33:
         index_A804 = word_A524[word_A826 % 8];
         sub_4807(posx_A800, posy_A802, index_A804);
         if (word_A2AA > 0 && posx_A800 < 0) {
-            state_A8A0 = 30;
+            state_A8A0 = kStateHit1;
         }
         if (word_A2AA < 0 && screenWidth_ - sprites_[index_A804].width < posx_A800) {
-            state_A8A0 = 30;
+            state_A8A0 = kStateHit1;
         }
         if (--word_A828 <= 0) {
             state_A8A0 = 68;
@@ -3619,12 +3655,12 @@ loc_4D33:
         }
         sub_4807(posx_A800, posy_A802, index_A804);
         if (word_A826++ > 1) {
-            state_A8A0 = 1;
+            state_A8A0 = kStateNormal1;
             break;
         }
         sub_496F(0);
         break;
-    case 62:
+    case kStateBlush1:
         state_A8A0 = 63;
         word_A826 = 0;
         break;
@@ -3635,14 +3671,14 @@ loc_4D33:
         word_A83A = 0;
         index_A804 = word_A50C[word_A826];
         if (index_A804 == 0) {
-            state_A8A0 = 1;
+            state_A8A0 = kStateNormal1;
             break;
         }
         sub_4807(posx_A800, posy_A802, index_A804);
         word_A826 += 1;
         sub_496F(0);
         break;
-    case 75:
+    case kStateSlip1:
         word_A826 = rand() % 8 + 8;
         word_A828 = word_A826;
         index_A804 = 131;
@@ -3705,12 +3741,12 @@ loc_4D33:
             word_A826 += 1;
         }
         if (index_A804 == 0) {
-            state_A8A0 = 1;
+            state_A8A0 = kStateNormal1;
             break;
         }
         sub_4807(posx_A800, posy_A802, index_A804);
         break;
-    case 69:
+    case kStateRotate1:
         word_A83A = 0;
         word_A826 = 0;
         state_A8A0 = 70;
@@ -3765,7 +3801,7 @@ loc_4D33:
         word_A83A = 0;
         index_A804 = 3;
         sub_4807(posx_A800, posy_A802, index_A804);
-        state_A8A0 = 1;
+        state_A8A0 = kStateNormal1;
         break;
     case 73:
         word_A826 = 0;
@@ -3778,7 +3814,7 @@ loc_4D33:
         index_A804 = word_A422[word_A826];
         word_A826 += 1;
         if (index_A804 == 0) {
-            state_A8A0 = 1;
+            state_A8A0 = kStateNormal1;
             break;
         }
         sub_4807(posx_A800, posy_A802, index_A804);
@@ -3802,12 +3838,12 @@ loc_4D33:
     case 85:
         word_A81C = GetActiveWindow();
         if (word_A81C == hPooWnd_ || word_A81C == hOtherPooWnd_[kISubPooHwnd] || word_A81C == NULL || sub_39D6(word_A81C)) {
-            state_A8A0 = 1;
+            state_A8A0 = kStateNormal1;
             break;
         }
         sub_491D(word_A81C, &stru_A81E);
         if (stru_A81E.top < 10) {
-            state_A8A0 = 1;
+            state_A8A0 = kStateNormal1;
             break;
         }
         if (word_A2AA > 0 && stru_A81E.right < posx_A800 && stru_A81E.top < posy_A802 && posy_A802 + 40 < stru_A81E.bottom || word_A2AA < 0 && posx_A800 + 40 < stru_A81E.left && stru_A81E.top < posy_A802 && posy_A802 + 40 < stru_A81E.bottom) {
@@ -3835,7 +3871,7 @@ loc_4D33:
         sub_4807(posx_A800, posy_A802, index_A804);
         if (posx_A800 < -40 || posx_A800 > screenWidth_) {
             if (!sub_48F3(word_A81C)) {
-                state_A8A0 = 1;
+                state_A8A0 = kStateNormal1;
                 break;
             }
             if (rand() % 3 == 0) {
@@ -3875,7 +3911,7 @@ loc_4D33:
         index_A804 = index_A804 == 4 ? 5 : 4;
         if (word_A83C >= posx_A800 && word_A2AA > 0 || word_A83C <= posx_A800 && word_A2AA < 0) {
             if (!sub_48F3(word_A81C)) {
-                state_A8A0 = 1;
+                state_A8A0 = kStateNormal1;
                 break;
             }
             sub_491D(word_A81C, &var_10);
@@ -3887,7 +3923,7 @@ loc_4D33:
                 state_A8A0 = 89;
                 break;
             } else {
-                state_A8A0 = 1;
+                state_A8A0 = kStateNormal1;
                 break;
             }
         }
@@ -3927,7 +3963,7 @@ loc_4D33:
         posy_A802 -= 8;
         index_A804 = 3;
         sub_4807(posx_A800, posy_A802, index_A804);
-        state_A8A0 = 11;
+        state_A8A0 = kStateWalk1;
         break;
     case 92:
         word_A806 += 4;
@@ -3977,7 +4013,7 @@ loc_4D33:
         }
         word_A83A = 0;
         if (word_A842 != 0) {
-            state_A8A0 = 11;
+            state_A8A0 = kStateWalk1;
             index_A804 = 2;
             break;
         }
@@ -3994,7 +4030,7 @@ loc_4D33:
         }
         sub_4807(posx_A800, posy_A802, index_A804);
         if (word_A826++ >= 2) {
-            state_A8A0 = 11;
+            state_A8A0 = kStateWalk1;
         }
         break;
     case 94:
@@ -4011,7 +4047,7 @@ loc_4D33:
         word_A842 = 1;
         state_A8A0 = 99;
         goto loc_4D33;
-    case 96:
+    case kStateFall1:
         word_A7FC = 1;
         word_A806 = 0;
         word_A808 = 0;
@@ -4116,7 +4152,7 @@ loc_4D33:
         }
         if (word_A842 == 3 && sub_4C91(posx_A800, posx_A800 - word_A808) != 0) {
             word_A2AA = -word_A2AA;
-            state_A8A0 = 30;
+            state_A8A0 = kStateHit1;
             break;
         }
         sub_4807(posx_A800, posy_A802, index_A804);
@@ -4127,7 +4163,7 @@ loc_4D33:
         }
         word_A83A = 0;
         if (word_A842 == 1) {
-            state_A8A0 = 11;
+            state_A8A0 = kStateWalk1;
             index_A804 = 2;
             break;
         }
@@ -4149,7 +4185,7 @@ loc_4D33:
         }
         sub_4807(posx_A800, posy_A802, index_A804);
         if (word_A826++ >= 2) {
-            state_A8A0 = 11;
+            state_A8A0 = kStateWalk1;
         }
         break;
     case 101:
@@ -4165,7 +4201,7 @@ loc_4D33:
         }
         sub_4807(posx_A800, posy_A802, index_A804);
         if (word_A826++ >= 6) {
-            state_A8A0 = 11;
+            state_A8A0 = kStateWalk1;
         }
         break;
     case 102:
@@ -4245,7 +4281,7 @@ loc_4D33:
         word_A83A = 0;
         index_A804 = 3;
         sub_4807(posx_A800, posy_A802, index_A804);
-        state_A8A0 = 1;
+        state_A8A0 = kStateNormal1;
         break;
     case 109:
         word_A808 = -(word_A2AA * 14);
@@ -4301,7 +4337,7 @@ loc_4D33:
             if (word_A842 != 0) {
                 state_A8A0 = 98;
             } else {
-                state_A8A0 = 96;
+                state_A8A0 = kStateFall1;
             }
         }
         break;
@@ -4333,7 +4369,7 @@ loc_4D33:
         index_A804 = index_A804 == 0 ? 1 : 0;
         sub_4807(posx_A800, posy_A802, index_A804);
         break;
-    case 116:
+    case kStateMerry11:
         posx_A800 = screenWidth_;
         posy_A802 = screenHeight_ * 7 / 8;
         index_A804 = 4;
@@ -4405,10 +4441,10 @@ loc_4D33:
         index_A804 = index_A804 == 4 ? 5 : 4;
         sub_4807(posx_A800, posy_A802, index_A804);
         if (posx_A800 > screenWidth_) {
-            state_A8A0 = 1;
+            state_A8A0 = kStateNormal1;
         }
         break;
-    case 121:
+    case kStateMerry21:
         posx_A800 = screenWidth_;
         posy_A802 = screenHeight_ * 7 / 8;
         index_A804 = 4;
@@ -4476,12 +4512,12 @@ loc_4D33:
         index_A804 = word_A45C[word_A826];
         word_A826 += 1;
         if (index_A804 == 0) {
-            state_A8A0 = 1;
+            state_A8A0 = kStateNormal1;
             break;
         }
         sub_4807(posx_A800, posy_A802, index_A804);
         break;
-    case 126:
+    case kStateMerry31:
         posx_A800 = screenWidth_;
         posy_A802 = screenHeight_ * 7 / 8;
         index_A804 = 4;
@@ -4509,13 +4545,13 @@ loc_4D33:
         word_A812 = word_A812 == 154 ? 155 : 154;
         if (word_A80E < -40) {
             destroySubPooWnd();
-            state_A8A0 = 1;
+            state_A8A0 = kStateNormal1;
         } else {
             sub_4807(posx_A800, posy_A802, index_A804);
             sub_488C(word_A80E, word_A810, word_A812);
         }
         break;
-    case 128:
+    case kStateUFO11:
         posx_A800 = screenWidth_;
         posy_A802 = screenHeight_ * 7 / 8;
         index_A804 = 4;
@@ -4633,12 +4669,12 @@ loc_4D33:
         if (word_A80E > screenWidth_) {
             destroySubPooWnd();
             stopPlaySound();
-            state_A8A0 = 1;
+            state_A8A0 = kStateNormal1;
             break;
         }
         sub_488C(word_A80E, word_A810, word_A812);
         break;
-    case 135:
+    case kStateUFO21:
         word_A810 = screenHeight_ * 7 / 8;
         word_A2AA = -1;
         posx_A800 = -40;
@@ -4735,12 +4771,12 @@ loc_4D33:
         if (word_CA46 > 8) {
             destroySubPooWnd();
             stopPlaySound();
-            state_A8A0 = 1;
+            state_A8A0 = kStateNormal1;
         }
         break;
     case 141:
         break;
-    case 142:
+    case kStateUFO31:
         posx_A800 = -80;
         posy_A802 = screenHeight_ / 8;
         sub_4807(posx_A800, posy_A802, index_A804);
@@ -4802,14 +4838,14 @@ loc_4D33:
         if (word_A810 < -40) {
             destroySubPooWnd();
             stopPlaySound();
-            state_A8A0 = 1;
+            state_A8A0 = kStateNormal1;
             break;
         }
         sub_488C(word_A80E, word_A810, word_A812);
         break;
     case 146:
         break;
-    case 147:
+    case kStateBurn1:
         showSubPoo();
         word_CA56 = 1;
         word_A2AC = 1;
@@ -4898,7 +4934,7 @@ loc_4D33:
         sub_4807(posx_A800, posy_A802, index_A804);
         if (posx_A800 < -40) {
             destroySubPooWnd();
-            state_A8A0 = 1;
+            state_A8A0 = kStateNormal1;
             break;
         }
         break;
@@ -4914,7 +4950,7 @@ void event_8FD7(int arg_0)
 {
     switch (arg_0) {
     case 0:
-        state_A8A0 = 1;
+        state_A8A0 = kStateNormal1;
         if (word_A7FC != 0) {
             state_A8A0 = 97;
         }
@@ -4943,95 +4979,95 @@ void debugAction(WPARAM action)
     stopPlaySound();
     destroySubPooWnd();
     switch (action) {
-    case 0:
-        state_A8A0 = 1;
+    case 0:        ///Normal
+        state_A8A0 = kStateNormal1;
         break;
-    case 1:
-        state_A8A0 = 7;
+    case 1:        ///Run
+        state_A8A0 = kStateRun1;
         break;
-    case 2:
-        state_A8A0 = 11;
+    case 2:        ///Walk
+        state_A8A0 = kStateWalk1;
         break;
-    case 3:
-        state_A8A0 = 13;
+    case 3:        ///Handstand
+        state_A8A0 = kStateHandstand1;
         break;
-    case 4:
-        state_A8A0 = 15;
+    case 4:        ///Sex
+        state_A8A0 = kStateSex1;
         break;
-    case 5:
-        state_A8A0 = 17;
+    case 5:        ///Sleep
+        state_A8A0 = kStateSleep1;
         break;
-    case 6:
-        state_A8A0 = 20;
+    case 6:        ///Wink
+        state_A8A0 = kStateWink1;
         break;
-    case 7:
-        state_A8A0 = 24;
+    case 7:        ///Turn
+        state_A8A0 = kStateTurn1;
         break;
-    case 8:
-        state_A8A0 = 30;
+    case 8:        ///Hit
+        state_A8A0 = kStateHit1;
         break;
-    case 9:
-        state_A8A0 = 35;
+    case 9:        ///Piss
+        state_A8A0 = kStatePiss1;
         break;
-    case 10:
-        state_A8A0 = 43;
+    case 10:        ///Yawn
+        state_A8A0 = kStateYawn1;
         break;
-    case 11:
-        state_A8A0 = 45;
+    case 11:        ///Baa
+        state_A8A0 = kStateBaa1;
         break;
-    case 12:
-        state_A8A0 = 49;
+    case 12:        ///Suprise
+        state_A8A0 = kStateSuprise1;
         break;
-    case 13:
-        state_A8A0 = 51;
+    case 13:        ///Scary
+        state_A8A0 = kStateScary1;
         break;
-    case 14:
-        state_A8A0 = 53;
+    case 14:        ///Eat
+        state_A8A0 = kStateEat1;
         break;
-    case 15:
-        state_A8A0 = 58;
+    case 15:        ///Sit
+        state_A8A0 = kStateSit1;
         break;
-    case 16:
-        state_A8A0 = 47;
+    case 16:        ///Sneeze
+        state_A8A0 = kStateSneeze1;
         break;
-    case 17:
-        state_A8A0 = 147;
+    case 17:        ///Burn
+        state_A8A0 = kStateBurn1;
         break;
-    case 18:
-        state_A8A0 = 116;
+    case 18:        ///Merry1
+        state_A8A0 = kStateMerry11;
         break;
-    case 19:
-        state_A8A0 = 121;
+    case 19:        ///Merry2
+        state_A8A0 = kStateMerry21;
         break;
-    case 20:
-        state_A8A0 = 126;
+    case 20:        ///Merry3
+        state_A8A0 = kStateMerry31;
         break;
-    case 21:
-        state_A8A0 = 128;
+    case 21:        ///UFO1
+        state_A8A0 = kStateUFO11;
         break;
-    case 22:
-        state_A8A0 = 135;
+    case 22:        ///UFO2
+        state_A8A0 = kStateUFO21;
         break;
-    case 23:
-        state_A8A0 = 142;
+    case 23:        ///UFO3
+        state_A8A0 = kStateUFO31;
         break;
-    case 24:
-        state_A8A0 = 65;
+    case 24:        ///Roll
+        state_A8A0 = kStateRoll1;
         break;
-    case 25:
-        state_A8A0 = 62;
+    case 25:        ///Blush
+        state_A8A0 = kStateBlush1;
         break;
-    case 26:
-        state_A8A0 = 75;
+    case 26:        ///Slip
+        state_A8A0 = kStateSlip1;
         break;
-    case 27:
-        state_A8A0 = 96;
+    case 27:        ///Fall
+        state_A8A0 = kStateFall1;
         break;
-    case 28:
-        state_A8A0 = 9;
+    case 28:        ///Jump
+        state_A8A0 = kStateJump1;
         break;
-    case 29:
-        state_A8A0 = 69;
+    case 29:        ///Rotate
+        state_A8A0 = kStateRotate1;
         break;
     default:
         break;
