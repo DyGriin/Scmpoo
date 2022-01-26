@@ -25,7 +25,7 @@ typedef struct spriteinfo {
 } spriteinfo;
 
 typedef struct resourceinfo {
-    int resource;
+    int resId;
     WORD flags;
     spriteinfo info;
 } resourceinfo;
@@ -37,7 +37,7 @@ typedef struct windowinfo {
 } windowinfo;
 
 int word_9CF0 = 245; /* Palette search maximum index (unused). */
-resourceinfo stru_9EE2[16] = { /* Resource list. */
+resourceinfo originalRes_[16] = { /* Resource list. */
     {101, 1, {{NULL, NULL}, 0, 0, 0, 0}},
     {102, 1, {{NULL, NULL}, 0, 0, 0, 0}},
     {103, 1, {{NULL, NULL}, 0, 0, 0, 0}},
@@ -50,7 +50,7 @@ resourceinfo stru_9EE2[16] = { /* Resource list. */
     {110, 1, {{NULL, NULL}, 0, 0, 0, 0}},
     {111, 1, {{NULL, NULL}, 0, 0, 0, 0}}
 };
-resourceinfo stru_9FE2[16] = {0}; /* Resource list storing flipped images. */
+resourceinfo hFlipRes_[16] = {0}; /* Resource list storing flipped images. */
 WORD word_A15A[80] = { /* Normal action table (option "Gravity always on" disabled). */
     11, 11, 7, 7,
     11, 11, 7, 7,
@@ -163,49 +163,49 @@ WORD word_A536[8] = { /* Spin animation. 0-3: face, 4-7: back */
     3, 9, 10, 11, 2, 14, 13, 12
 };
 WORD word_A798 = 0; /* Has cursor position changed in current timer period? */
-int word_A79A = 0; /* Cursor position with respect to screen, X-coordinate */
-int word_A79C = 0; /* Cursor position with respect to screen, Y-coordinate */
-WORD word_A79E = 0; /* Dragging Screen Mate window? */
-WORD word_A7A0 = 0; /* Destroy Screen Mate window by right double-click? */
+int posx_A79A = 0; /* Cursor position with respect to screen, X-coordinate */
+int posy_A79C = 0; /* Cursor position with respect to screen, Y-coordinate */
+WORD isMouseBtnDown_ = 0; /* Dragging Screen Mate window? */
+WORD isRBtnDbClicked_ = 0; /* Destroy Screen Mate window by right double-click? */
 WORD word_A7A2 = 0; /* Unused. */
-RECT stru_A7A4 = {0, 0, 0, 0}; /* Screen Mate window rectangle. */
+RECT lastWndRect_ = {0, 0, 0, 0}; /* Screen Mate window rectangle. */
 WORD word_A7AC = 0; /* Not to clear window on WM_PAINT? */
-POINT stru_A7B0 = {0, 0}; /* Current cursor position. */
+POINT point_A7B0 = {0, 0}; /* Current cursor position. */
 WORD word_A7B4 = 0; /* Not to clear window on WM_PAINT? (sub) */
-HBITMAP word_A7B6[2] = {NULL, NULL}; /* Double buffer. */
-HBITMAP word_A7BA = NULL; /* Sprite render target. */
-HBITMAP word_A7BC = NULL; /* Sprite colour image for current frame. */
-HBITMAP word_A7BE = NULL; /* Sprite mask image for current frame. */
-int word_A7C0 = 0; /* Sprite X-coordinate on resource image for current frame. */
-int word_A7C2 = 0; /* Sprite Y-coordinate on resource image for current frame. */
+HBITMAP bmp_A7B6[2] = {NULL, NULL}; /* Double buffer. */
+HBITMAP bmp_A7BA = NULL; /* Sprite render target. */
+HBITMAP bmp_A7BC = NULL; /* Sprite colour image for current frame. */
+HBITMAP bmp_A7BE = NULL; /* Sprite mask image for current frame. */
+int posx_A7C0 = 0; /* Sprite X-coordinate on resource image for current frame. */
+int posy_A7C2 = 0; /* Sprite Y-coordinate on resource image for current frame. */
 int word_A7C8 = 0; /* Sprite X-coordinate on resource image for previous frame. */
 int word_A7CA = 0; /* Sprite Y-coordinate on resource image for previous frame (unused). */
 WORD word_A7D0 = 0; /* Current framebuffer index. */
 WORD word_A7D2 = 0; /* 0 to render sprite; 1 to update window. */
 WORD word_A7D4 = 0; /* Unused. */
 HBITMAP word_A7D8 = NULL; /* Sprite colour image for previous frame. */
-int word_A7DA = 0; /* Screen X-coordinate for current frame. */
-int word_A7DC = 0; /* Screen Y-coordinate for current frame. */
-int word_A7DE = 0; /* Sprite width for current frame. */
-int word_A7E0 = 0; /* Sprite height for current frame. */
-int word_A7E2 = 0; /* Update area rectangle X-coordinate for current frame. */
-int word_A7E4 = 0; /* Update area rectangle Y-coordinate for current frame. */
+int posx_A7DA = 0; /* Screen X-coordinate for current frame. */
+int posy_A7DC = 0; /* Screen Y-coordinate for current frame. */
+int width_A7DE = 0; /* Sprite width for current frame. */
+int height_A7E0 = 0; /* Sprite height for current frame. */
+int posx_A7E2 = 0; /* Update area rectangle X-coordinate for current frame. */
+int posy_A7E4 = 0; /* Update area rectangle Y-coordinate for current frame. */
 int word_A7E6 = 0; /* Update area rectangle width for current frame. */
 int word_A7E8 = 0; /* Update area rectangle height for current frame. */
 int word_A7EA = 0; /* Update area rectangle X-coordinate for previous frame. */
 int word_A7EC = 0; /* Update area rectangle Y-coordinate for previous frame. */
 int word_A7EE = 0; /* Update area rectangle width for previous frame. */
 int word_A7F0 = 0; /* Update area rectangle height for previous frame. */
-int word_A7F2 = 0; /* Screen X-coordinate for previous frame. */
-int word_A7F4 = 0; /* Screen Y-coordinate for previous frame. */
+int posx_A7F2 = 0; /* Screen X-coordinate for previous frame. */
+int posy_A7F4 = 0; /* Screen Y-coordinate for previous frame. */
 int word_A7F6 = 0; /* Sprite width for previous frame. */
 int word_A7F8 = 0; /* Sprite height for previous frame. */
 WORD word_A7FA = 0; /* Current frame rectangle and previous frame rectangle have no intersecion? (unused) */
 WORD word_A7FC = 0; /* Is gravity enabled? */
 WORD word_A7FE = 0; /* Is collision with visible window enabled? */
-int word_A800 = 0; /* Current X-coordinate. */
-int word_A802 = 0; /* Current Y-coordinate. */
-int word_A804 = 0; /* Sprite index. */
+int posx_A800 = 0; /* Current X-coordinate. */
+int posy_A802 = 0; /* Current Y-coordinate. */
+int index_A804 = 0; /* Sprite index. */
 int word_A806 = 0; /* Vertical speed. */
 int word_A808 = 0; /* Horizontal speed. */
 int word_A80C = 0; /* Y-coordinate memory. */
@@ -263,96 +263,96 @@ int word_A892 = 0; /* Screen Y-coordinate for previous frame (sub). */
 int word_A894 = 0; /* Sprite width for previous frame (sub). */
 int word_A896 = 0; /* Sprite height for previous frame (sub). */
 WORD word_A898 = 0; /* Current frame rectangle and previous frame rectangle have no intersecion? (sub) (unused) */
-WORD word_A8A0 = 0; /* State. */
-spriteinfo stru_A8A2[512] = {{{NULL, NULL}, 0, 0, 0, 0}}; /* Sprite list. First 256 for left-facing sprites, last 256 for right-facing sprites. */
+WORD state_A8A0 = 0; /* State. */
+spriteinfo sprites_[512] = {{{NULL, NULL}, 0, 0, 0, 0}}; /* Sprite list. First 256 for left-facing sprites, last 256 for right-facing sprites. */
 int word_C0A4 = 0; /* No mouse action consecutive period counter. */
-UINT word_C0AC = 0U; /* Configuration: Chime */
+UINT confChime_ = 0U; /* Configuration: Chime */
 WORD word_C0AE = 0; /* Screen Mate window on top of subwindow? (unused) */
-HWND word_C0B0 = NULL; /* Self instance window handle. */
+HWND hPooWnd_ = NULL; /* Self instance window handle. */
 HBITMAP word_C0B2 = NULL; /* UFO beam render target. */
 HBRUSH word_C0B4 = NULL; /* UFO beam paint colour brush. */
-UINT word_C0B6 = 0U; /* Configuration: Always moving */
+UINT confNoSleep_ = 0U; /* Configuration: Always moving */
 HBITMAP word_C0B8 = NULL; /* UFO beam colour rectangle image. */
 WORD word_C0BA = 0; /* Remaining no-update periods after clearing windows. */
 windowinfo stru_C0BC[32] = {{NULL, {0, 0, 0, 0}, {0}}}; /* Currently visible window list. */
-WORD word_CA3C = 0; /* Prevent special actions? */
-WORD word_CA3E = 0; /* Always on top? (unused) */
-int word_CA40 = 0; /* Known instance count. */
-UINT word_CA42 = 0U; /* Configuration: Gravity always on */
+WORD hasOtherPoo_ = 0; /* Prevent special actions? */
+WORD confTopMost__ = 0; /* Always on top? (unused) */
+int otherPooCount_ = 0; /* Known instance count. */
+UINT confGForce_ = 0U; /* Configuration: Gravity always on */
 HBRUSH word_CA44 = NULL; /* UFO beam mask colour brush. */
 int word_CA46 = 0; /* Fade out frame counter. */
-int word_CA48 = 0; /* Unused. */
-HPALETTE word_CA4A = NULL; /* Palette being used by window. */
+int otherPooCount2_ = 0; /* Unused. */
+HPALETTE hPalette_ = NULL; /* Palette being used by window. */
 int word_CA4C = 0; /* Unused. */
 int word_CA4E = 0; /* Unused. */
-int word_CA50 = 0; /* Screen width. */
-int word_CA52 = 0; /* Screen height. */
+int screenWidth_ = 0; /* Screen width. */
+int screenHeight_ = 0; /* Screen height. */
 WORD word_CA54 = 0; /* Temporarily holds sleep timeout action. */
 WORD word_CA56 = 0; /* Not to clear subwindow? */
-HINSTANCE word_CA58 = NULL; /* Current instance. */
-UINT word_CA5A = 0U; /* Configuration: Cry */
+HINSTANCE hSelfInst_ = NULL; /* Current instance. */
+UINT confSound_ = 0U; /* Configuration: Cry */
 int word_CA5C = 0; /* UFO beam height (sub). */
 WORD word_CA5E = 0; /* Unused. */
-HWND word_CA60[9] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}; /* Known instance list. When no other instance exists, [8] is used to store subwindow handle. */
+HWND hOtherPooWnd_[9] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}; /* Known instance list. When no other instance exists, [8] is used to store subwindow handle. */
 int word_CA72 = 0; /* UFO beam height. */
 int word_CA74 = 0; /* Number of currently visible windows. */
 WORD word_CA76 = 0; /* Sleeping after timeout? */
 WORD word_CA78 = 0; /* Unused. */
 #ifdef _WIN32
-HWND ownerwindow = NULL;
+HWND hOwnerWnd_ = NULL;
 #endif
 
 void PASCAL sub_10(void FAR *, void FAR *);
 int PASCAL sub_114(void FAR *, void FAR *, int);
 void PASCAL sub_230(void FAR *, void FAR *);
-#define sub_414(p) ((((BITMAPINFOHEADER FAR *)p)->biClrUsed == 0) ? ((DWORD)1 << ((BITMAPINFOHEADER FAR *)p)->biBitCount) : (((BITMAPINFOHEADER FAR *)p)->biClrUsed))
-WORD sub_155A(void FAR *);
-WORD sub_15B4(void FAR *);
-HPALETTE sub_1658(HDC, void FAR *);
+#define BICOLORCOUNT(p) ((((BITMAPINFOHEADER FAR *)p)->biClrUsed == 0) ? ((DWORD)1 << ((BITMAPINFOHEADER FAR *)p)->biBitCount) : (((BITMAPINFOHEADER FAR *)p)->biClrUsed))
+WORD readBmpPaletteSize(void FAR *);
+WORD readBmpColorCount(void FAR *);
+HPALETTE createPaletteFromBmp(HDC hdc, void FAR *bmpData);
 HPALETTE sub_1791(HDC, BYTE, BYTE, BYTE);
 void sub_17FD(HDC, HPALETTE, HPALETTE, int);
-WORD sub_1945(void FAR *);
-void FAR * sub_19EC(void FAR *);
-void sub_1A16(void FAR *, void FAR *, UINT);
+WORD getBmpColorOfFirstPixel(void FAR *bmpData);
+void FAR * getBmpPixelBegin(void FAR *data);
+void bmpFlipCopy(void FAR *, void FAR *, UINT flags);
 int PASCAL WinMain(HINSTANCE, HINSTANCE, LPSTR, int);
 void sub_1DDC(void);
-LRESULT CALLBACK sub_1DF3(HWND, UINT, WPARAM, LPARAM);
-LRESULT CALLBACK sub_2699(HWND, UINT, WPARAM, LPARAM);
-BOOL CALLBACK sub_27FF(HWND, UINT, WPARAM, LPARAM);
-BOOL CALLBACK sub_292A(HWND, UINT, WPARAM, LPARAM);
-void sub_2A21(void);
-void sub_2A96(void);
-void sub_2ABF(HWND);
+LRESULT CALLBACK pooWndProc(HWND, UINT, WPARAM, LPARAM);
+LRESULT CALLBACK pooSubWndProc(HWND, UINT, WPARAM, LPARAM);
+BOOL CALLBACK configDlgProc(HWND, UINT, WPARAM, LPARAM);
+BOOL CALLBACK debugDlgProc(HWND, UINT, WPARAM, LPARAM);
+void showSubPoo(void);
+void destroySubPooWnd(void);
+void putWndToTop(HWND hWnd);
 void sub_2B01(HWND, HWND);
-BOOL sub_2B30(HDC, spriteinfo *, int, int);
-void sub_2EEC(spriteinfo *);
-void sub_2F36(void);
+BOOL loadSprite(HDC, spriteinfo *, int resId, int);
+void releaseSprite(spriteinfo *sprite);
+void readConfig(void);
 void sub_2FB7(LPCSTR, LPCSTR, UINT, LPCSTR);
-void sub_2FF8(void);
-BOOL sub_306A(HWND);
-void sub_3119();
-void sub_31A8(int, int, int);
-void sub_3237(HWND);
-void sub_3284(HWND);
-void sub_3717(HWND);
+void saveConfig(void);
+BOOL initBitmaps(HWND);
+void releaseWndBmp();
+void sub_31A8(int, int, int index);
+void reset_3237(HWND);
+void paint_3284(HWND hWnd);
+void paint_3717(HWND hWnd);
 void sub_399D(HWND, int, int, int, int);
 BOOL sub_39D6(HWND);
 int sub_3A36(int, int, int, int);
-void sub_3B4C(HWND);
-BOOL sub_3C20(HWND);
+void checkOtherPoo_3B4C(HWND hWnd);
+BOOL checkOtherPoo(HWND);
 void sub_3D12(HWND);
 void sub_3D5F(HWND);
-void sub_3DA7(HWND);
+void sub_3DA7(HWND hWnd);
 void sub_3DF0(void);
 int sub_3E7C(HWND *, int, int, int, int);
 int sub_408C(HWND *, int, int, int, int);
 int sub_419E(HWND, int, int, int, int);
 void sub_4210(int, UINT, WORD);
-void sub_428E(void);
-void sub_42AA(LPCSTR);
+void stopPlaySound(void);
+void asyncPlaySound(LPCSTR path);
 void sub_42C8(int, UINT, WORD);
-BOOL sub_42F3(HDC);
-void sub_44ED(void);
+BOOL initResources(HDC hdc);
+void releaseResources(void);
 void sub_4559(void);
 void sub_4614(BOOL);
 void sub_46D2(void);
@@ -365,13 +365,13 @@ void sub_496F(int);
 void sub_4B3B(void);
 void sub_4C21(int, int, int);
 int sub_4C91(int, int);
-void sub_4CE1(void);
+void resetState(void);
 void sub_4CF8(void);
-void sub_8FD7(int);
-void sub_904A(WPARAM);
-void sub_91CD(int, int);
-BOOL sub_9200(HWND);
-void sub_930F();
+void event_8FD7(int);
+void debugAction(WPARAM);
+void movePooWnd(int, int);
+BOOL initSubWnd(HWND);
+void releaseSubWnd();
 void sub_9350(int, int, int);
 void sub_93DF(HWND);
 void sub_9438(HWND);
@@ -403,7 +403,7 @@ void PASCAL sub_10(void FAR * arg_4, void FAR * arg_0)
     dx = 0; /* xor edx, edx */
     source = arg_0; /* lds si, [bp+arg_0] */
     destination = arg_4; /* les di, [bp+arg_4] */
-    eax = (WORD)sub_414(source); /* call sub_414 */
+    eax = (WORD)BICOLORCOUNT(source); /* call BICOLORCOUNT */
     sp -= sizeof(WORD); /* push ax */
     *(WORD *)sp = ax;
     *(DWORD FAR *)destination = *(DWORD FAR *)source; /* movsd; biSize */
@@ -535,7 +535,7 @@ int PASCAL sub_114(void FAR * arg_6, void FAR * arg_2, int arg_0)
     dx = 0; /* xor edx, edx */
     source = arg_2; /* lds si, [bp+arg_2] */
     destination = arg_6; /* les di, [bp+arg_6] */
-    eax = (WORD)sub_414(source); /* call sub_414 */
+    eax = (WORD)BICOLORCOUNT(source); /* call BICOLORCOUNT */
     sp -= sizeof(WORD); /* push ax */
     *(WORD *)sp = ax;
     *(DWORD FAR *)destination = *(DWORD FAR *)source; /* movsd; biSize */
@@ -650,10 +650,10 @@ int PASCAL sub_114(void FAR * arg_6, void FAR * arg_2, int arg_0)
 }
 
 /* Decompress bitmap image. */
-void PASCAL sub_230(void FAR * arg_4, void FAR * arg_0)
+void PASCAL sub_230(void FAR * dest, void FAR * bmpData)
 {
-    BYTE FAR * source = arg_0;
-    BYTE FAR * destination = arg_4;
+    BYTE FAR * source = bmpData;
+    BYTE FAR * destination = dest;
     BYTE FAR * originalsource = NULL;
     BYTE FAR * originaldestination = NULL;
     WORD var_2 = (WORD)((BITMAPINFOHEADER FAR *)source)->biWidth;
@@ -666,16 +666,16 @@ void PASCAL sub_230(void FAR * arg_4, void FAR * arg_0)
     for (; counter != 0; counter -= 1) {
         *destination++ = *source++;
     }
-    ((BITMAPINFOHEADER FAR *)arg_4)->biCompression = BI_RGB;
-    counter = sub_414(arg_0) * 4;
+    ((BITMAPINFOHEADER FAR *)dest)->biCompression = BI_RGB;
+    counter = BICOLORCOUNT(bmpData) * 4;
     for (; counter != 0; counter -= 1) {
         *destination++ = *source++;
     }
     if (compression == BI_RGB) {
         if (bitcount == 4) {
-            ((BITMAPINFOHEADER FAR *)arg_4)->biBitCount = 8;
-            if (((BITMAPINFOHEADER FAR *)arg_4)->biClrUsed == 0) {
-                ((BITMAPINFOHEADER FAR *)arg_4)->biClrUsed = 16;
+            ((BITMAPINFOHEADER FAR *)dest)->biBitCount = 8;
+            if (((BITMAPINFOHEADER FAR *)dest)->biClrUsed == 0) {
+                ((BITMAPINFOHEADER FAR *)dest)->biClrUsed = 16;
             }
             compression = edx;
             var_2 = (var_2 + 1) / 2 + 3 & -4;
@@ -704,9 +704,9 @@ void PASCAL sub_230(void FAR * arg_4, void FAR * arg_0)
             }
         }
     } else if (compression == BI_RLE4) {
-        ((BITMAPINFOHEADER FAR *)arg_4)->biBitCount = 8;
-        if (((BITMAPINFOHEADER FAR *)arg_4)->biClrUsed == 0) {
-            ((BITMAPINFOHEADER FAR *)arg_4)->biClrUsed = 16;
+        ((BITMAPINFOHEADER FAR *)dest)->biBitCount = 8;
+        if (((BITMAPINFOHEADER FAR *)dest)->biClrUsed == 0) {
+            ((BITMAPINFOHEADER FAR *)dest)->biClrUsed = 16;
         }
         for (;;) {
             originaldestination = destination;
@@ -801,36 +801,36 @@ void PASCAL sub_230(void FAR * arg_4, void FAR * arg_0)
 }
 
 /* Get palette size. */
-WORD sub_155A(void FAR * arg_0)
+WORD readBmpPaletteSize(void FAR * data)
 {
-    DWORD FAR * var_4;
-    WORD var_6;
-    var_4 = arg_0;
-    var_6 = sub_15B4(var_4);
-    if (*var_4 == 12) {
-        return var_6 * sizeof(RGBTRIPLE);
+    DWORD FAR * uData;
+    WORD colorCount;
+    uData = data;
+    colorCount = readBmpColorCount(uData);
+    if (*uData == 12) {
+        return colorCount * sizeof(RGBTRIPLE);
     } else {
-        return var_6 * sizeof(RGBQUAD);
+        return colorCount * sizeof(RGBQUAD);
     }
 }
 
 /* Get number of colours in palette. */
-WORD sub_15B4(void FAR * arg_0)
+WORD readBmpColorCount(void FAR * data)
 {
-    WORD var_2;
-    BITMAPINFOHEADER FAR * var_6;
-    BITMAPCOREHEADER FAR * var_A;
-    var_6 = arg_0;
-    var_A = arg_0;
-    if (var_6->biSize != 12) {
-        if (var_6->biClrUsed != 0) {
-            return (WORD)var_6->biClrUsed;
+    WORD bitCount;
+    BITMAPINFOHEADER FAR * pBmpInfo;
+    BITMAPCOREHEADER FAR * pBmpCore;
+    pBmpInfo = data;
+    pBmpCore = data;
+    if (pBmpInfo->biSize != 12) {
+        if (pBmpInfo->biClrUsed != 0) {
+            return (WORD)pBmpInfo->biClrUsed;
         }
-        var_2 = var_6->biBitCount;
+        bitCount = pBmpInfo->biBitCount;
     } else {
-        var_2 = var_A->bcBitCount;
+        bitCount = pBmpCore->bcBitCount;
     }
-    switch (var_2) {
+    switch (bitCount) {
     case 1:
         return 2;
     case 4:
@@ -843,36 +843,40 @@ WORD sub_15B4(void FAR * arg_0)
 }
 
 /* Create palette based on given bitmap image. */
-HPALETTE sub_1658(HDC arg_0, void FAR * arg_2)
+HPALETTE createPaletteFromBmp(HDC hdc, void FAR * bmpData)
 {
-    const BYTE FAR * var_4;
-    HPALETTE var_6;
-    LOGPALETTE * var_8;
-    int var_A;
-    int var_C;
-    if ((GetDeviceCaps(arg_0, RASTERCAPS) & RC_PALETTE) == 0) {
-        var_A = 256;
+    const BYTE FAR * ptr;
+    HPALETTE hPalette;
+    LOGPALETTE * pLogPalette;
+    int colorCount;
+    int i;
+    if ((GetDeviceCaps(hdc, RASTERCAPS) & RC_PALETTE) == 0) {
+        colorCount = 256;
     } else {
-        var_A = arg_2 != NULL ? ((BITMAPINFOHEADER FAR *)arg_2)->biClrUsed != 0 ? (int)(((BITMAPINFOHEADER FAR *)arg_2)->biClrUsed) : (1 << ((BITMAPINFOHEADER FAR *)arg_2)->biBitCount) : GetDeviceCaps(arg_0, SIZEPALETTE);
+        colorCount = bmpData != NULL ?
+                    ((BITMAPINFOHEADER FAR *)bmpData)->biClrUsed != 0 ?
+                        (int)(((BITMAPINFOHEADER FAR *)bmpData)->biClrUsed) :
+                        (1 << ((BITMAPINFOHEADER FAR *)bmpData)->biBitCount)
+                  : GetDeviceCaps(hdc, SIZEPALETTE);
     }
-    var_8 = (LOGPALETTE *)LocalAlloc(LPTR, (var_A + 2) * sizeof(PALETTEENTRY));
-    var_8->palVersion = 0x0300;
-    var_8->palNumEntries = (WORD)var_A;
-    if (arg_2 != NULL) {
-        var_4 = (BYTE FAR *)arg_2 + ((BITMAPINFOHEADER FAR *)arg_2)->biSize;
-        for (var_C = 0; var_C < var_A; var_C += 1) {
-            var_8->palPalEntry[var_C].peRed = var_4[2];
-            var_8->palPalEntry[var_C].peGreen = var_4[1];
-            var_8->palPalEntry[var_C].peBlue = var_4[0];
-            var_8->palPalEntry[var_C].peFlags = 0;
-            var_4 += sizeof(PALETTEENTRY);
+    pLogPalette = (LOGPALETTE *)LocalAlloc(LPTR, (colorCount + 2) * sizeof(PALETTEENTRY));
+    pLogPalette->palVersion = 0x0300;
+    pLogPalette->palNumEntries = (WORD)colorCount;
+    if (bmpData != NULL) {
+        ptr = (BYTE FAR *)bmpData + ((BITMAPINFOHEADER FAR *)bmpData)->biSize;
+        for (i = 0; i < colorCount; i += 1) {
+            pLogPalette->palPalEntry[i].peRed = ptr[2];
+            pLogPalette->palPalEntry[i].peGreen = ptr[1];
+            pLogPalette->palPalEntry[i].peBlue = ptr[0];
+            pLogPalette->palPalEntry[i].peFlags = 0;
+            ptr += sizeof(PALETTEENTRY);
         }
     } else {
-        GetSystemPaletteEntries(arg_0, 0U, var_A, var_8->palPalEntry);
+        GetSystemPaletteEntries(hdc, 0U, colorCount, pLogPalette->palPalEntry);
     }
-    var_6 = CreatePalette(var_8);
-    LocalFree(var_8);
-    return var_6;
+    hPalette = CreatePalette(pLogPalette);
+    LocalFree(pLogPalette);
+    return hPalette;
 }
 
 /* Create mask palette based on given RGB values. */
@@ -936,176 +940,188 @@ void sub_17FD(HDC arg_0, HPALETTE arg_2, HPALETTE arg_4, int arg_6)
 }
 
 /* Get colour index of first pixel. */
-WORD sub_1945(void FAR * arg_0)
+WORD getBmpColorOfFirstPixel(void FAR * bmpData)
 {
-    BYTE FAR * var_4;
-    BYTE var_6;
-    var_4 = sub_19EC(arg_0);
-    var_6 = *var_4++;
-    switch (((BITMAPINFOHEADER FAR *)arg_0)->biCompression) {
+    BYTE FAR * pPixel;
+    BYTE color;
+    pPixel = getBmpPixelBegin(bmpData);
+    color = *pPixel++;
+    switch (((BITMAPINFOHEADER FAR *)bmpData)->biCompression) {
     case BI_RGB:
-        if (((BITMAPINFOHEADER FAR *)arg_0)->biBitCount == 4) {
-            var_6 >>= 4;
+        if (((BITMAPINFOHEADER FAR *)bmpData)->biBitCount == 4) {
+            color >>= 4;
         }
         break;
     case BI_RLE8:
-        if (var_6 == 0) {
-            var_4 += 1;
+        if (color == 0) {
+            pPixel += 1;
         }
-        var_6 = *var_4;
+        color = *pPixel;
         break;
     case BI_RLE4:
-        if (var_6 == 0) {
-            var_4 += 1;
+        if (color == 0) {
+            pPixel += 1;
         }
-        var_6 = *var_4 >> 4;
+        color = *pPixel >> 4;
         break;
     default:
         break;
     }
-    return var_6;
+    return color;
 }
 
 /* Get pointer to pixel bits in bitmap image. */
-void FAR * sub_19EC(void FAR * arg_0)
+void FAR * getBmpPixelBegin(void FAR * data)
 {
-    return (void FAR *)((BYTE FAR *)arg_0 + *(WORD FAR *)arg_0 + ((BITMAPINFOHEADER FAR *)arg_0)->biClrUsed * sizeof(RGBQUAD));
+    return (void FAR *)((BYTE FAR *)data + *(WORD FAR *)data + ((BITMAPINFOHEADER FAR *)data)->biClrUsed * sizeof(RGBQUAD));
 }
 
-/* Flip bitmap image. arg_8 contains 1: Flip horizontally, arg_8 contains 2: Flip vertically */
-void sub_1A16(void FAR * arg_0, void FAR * arg_4, UINT arg_8)
+/* Flip bitmap image. flags bit 0: Flip horizontally, bit 1: Flip vertically */
+void bmpFlipCopy(void FAR * dest, void FAR * src, UINT flags)
 {
-    BYTE FAR * var_4;
-    BYTE FAR * var_8;
-    BYTE FAR * var_C;
-    int var_E;
-    int var_10;
-    int var_12;
-    int var_14;
-    LONG var_18;
-    var_4 = arg_0;
-    var_8 = arg_4;
-    var_C = sub_19EC(arg_4);
-    while (var_C > var_8) {
-        *var_4++ = *var_8++;
+    BYTE FAR * itrDest;
+    BYTE FAR * itrSrc;
+    BYTE FAR * pSrcPixel;
+    int padding;
+    int bytesPerLn;
+    int i;
+    int j;
+    LONG offset;
+    itrDest = dest;
+    itrSrc = src;
+    pSrcPixel = getBmpPixelBegin(src);
+    while (itrSrc < pSrcPixel) {
+        *itrDest++ = *itrSrc++;
     }
-    var_E = ((BITMAPINFOHEADER FAR *)arg_4)->biBitCount == 4 ? (int)(-(((BITMAPINFOHEADER FAR *)arg_4)->biWidth % 8) & 7) : (int)(-(((BITMAPINFOHEADER FAR *)arg_4)->biWidth % 4) & 3);
-    var_10 = ((BITMAPINFOHEADER FAR *)arg_4)->biBitCount == 4 ? (int)(((BITMAPINFOHEADER FAR *)arg_4)->biWidth + var_E) / 2 : (int)(((BITMAPINFOHEADER FAR *)arg_4)->biWidth + var_E);
-    if ((arg_8 & 2) != 0) {
-        var_C += (((BITMAPINFOHEADER FAR *)arg_4)->biHeight - 1) * var_10;
+    padding = ((BITMAPINFOHEADER FAR *)src)->biBitCount == 4 ?
+                (int)(-(((BITMAPINFOHEADER FAR *)src)->biWidth % 8) & 7) :
+                (int)(-(((BITMAPINFOHEADER FAR *)src)->biWidth % 4) & 3);
+    bytesPerLn = ((BITMAPINFOHEADER FAR *)src)->biBitCount == 4 ?
+                (int)(((BITMAPINFOHEADER FAR *)src)->biWidth + padding) / 2 :
+                (int)(((BITMAPINFOHEADER FAR *)src)->biWidth + padding);
+    if ((flags & 2) != 0) {
+        /// to to last line
+        pSrcPixel += (((BITMAPINFOHEADER FAR *)src)->biHeight - 1) * bytesPerLn;
     }
-    if ((arg_8 & 1) != 0) {
-        var_18 = ((BITMAPINFOHEADER FAR *)arg_4)->biBitCount == 4 ? ((BITMAPINFOHEADER FAR *)arg_4)->biWidth / 2 : ((BITMAPINFOHEADER FAR *)arg_4)->biWidth;
-        var_C += var_18 - 1;
+    if ((flags & 1) != 0) {
+        /// to last pixel of line
+        offset = ((BITMAPINFOHEADER FAR *)src)->biBitCount == 4 ?
+                    ((BITMAPINFOHEADER FAR *)src)->biWidth / 2 :
+                    ((BITMAPINFOHEADER FAR *)src)->biWidth;
+        pSrcPixel += offset - 1;
     }
-    for (var_12 = 0; ((BITMAPINFOHEADER FAR *)arg_4)->biHeight > var_12; var_12 += 1) {
-        var_8 = var_C;
-        if (((BITMAPINFOHEADER FAR *)arg_4)->biBitCount == 4) {
-            if ((arg_8 & 1) != 0) {
-                for (var_14 = 0; var_14 < var_10; var_14 += 1) {
-                    *var_4 = *var_8 >> 4 & 0x0F | *var_8 << 4;
-                    var_8 -= 1;
-                    var_4 += 1;
+    for (i = 0; i < ((BITMAPINFOHEADER FAR *)src)->biHeight; i += 1) {
+        itrSrc = pSrcPixel;
+        if (((BITMAPINFOHEADER FAR *)src)->biBitCount == 4) {
+            if ((flags & 1) != 0) {
+                for (j = 0; j < bytesPerLn; j += 1) {
+                    /// swap 4bit data
+                    *itrDest = *itrSrc >> 4 & 0x0F | *itrSrc << 4;
+                    itrSrc -= 1;
+                    itrDest += 1;
                 }
             } else {
-                for (var_14 = 0; var_14 < var_10; var_14 += 1) {
-                    *var_4++ = *var_8++;
+                for (j = 0; j < bytesPerLn; j += 1) {
+                    *itrDest++ = *itrSrc++;
                 }
             }
         } else {
-            if ((arg_8 & 1) != 0) {
-                for (var_14 = 0; var_14 < var_10; var_14 += 1) {
-                    *var_4++ = *var_8--;
+            if ((flags & 1) != 0) {
+                for (j = 0; j < bytesPerLn; j += 1) {
+                    *itrDest++ = *itrSrc--;
                 }
             } else {
-                for (var_14 = 0; var_14 < var_10; var_14 += 1) {
-                    *var_4++ = *var_8++;
+                for (j = 0; j < bytesPerLn; j += 1) {
+                    *itrDest++ = *itrSrc++;
                 }
             }
         }
-        var_18 = (arg_8 & 2) != 0 ? -var_10 : var_10;
-        var_C += var_18;
+        offset = (flags & 2) != 0 ? -bytesPerLn : bytesPerLn;
+        pSrcPixel += offset;
     }
 }
 
 /* WinMain function. */
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
-    HWND var_2;
-    MSG var_14;
-    WNDCLASS var_2E;
+    HWND hPooWnd;
+    MSG msg;
+    WNDCLASS wndClass;
     if (hPrevInstance == NULL) {
-        var_2E.style = CS_DBLCLKS;
-        var_2E.lpfnWndProc = sub_1DF3;
-        var_2E.cbClsExtra = 0;
-        var_2E.cbWndExtra = 8;
-        var_2E.hInstance = hInstance;
-        var_2E.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(100));
-        var_2E.hCursor = LoadCursor(hInstance, MAKEINTRESOURCE(106));
-        var_2E.hbrBackground = NULL;
-        var_2E.lpszMenuName = NULL;
-        var_2E.lpszClassName = "ScreenMatePoo";
-        if (RegisterClass(&var_2E) == 0) {
+        wndClass.style = CS_DBLCLKS;
+        wndClass.lpfnWndProc = pooWndProc;
+        wndClass.cbClsExtra = 0;
+        wndClass.cbWndExtra = 8;
+        wndClass.hInstance = hInstance;
+        wndClass.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(100));
+        wndClass.hCursor = LoadCursor(hInstance, MAKEINTRESOURCE(106));
+        wndClass.hbrBackground = NULL;
+        wndClass.lpszMenuName = NULL;
+        wndClass.lpszClassName = "ScreenMatePoo";
+        if (RegisterClass(&wndClass) == 0) {
             return 0;
         }
     }
     if (hPrevInstance == NULL) {
-        var_2E.style = CS_DBLCLKS;
-        var_2E.lpfnWndProc = sub_2699;
-        var_2E.cbClsExtra = 0;
-        var_2E.cbWndExtra = 0;
-        var_2E.hInstance = hInstance;
-        var_2E.hIcon = NULL;
-        var_2E.hCursor = LoadCursor(NULL, IDC_ARROW);
-        var_2E.hbrBackground = NULL;
-        var_2E.lpszMenuName = NULL;
-        var_2E.lpszClassName = "ScreenMatePooSub";
-        if (RegisterClass(&var_2E) == 0) {
+        wndClass.style = CS_DBLCLKS;
+        wndClass.lpfnWndProc = pooSubWndProc;
+        wndClass.cbClsExtra = 0;
+        wndClass.cbWndExtra = 0;
+        wndClass.hInstance = hInstance;
+        wndClass.hIcon = NULL;
+        wndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+        wndClass.hbrBackground = NULL;
+        wndClass.lpszMenuName = NULL;
+        wndClass.lpszClassName = "ScreenMatePooSub";
+        if (RegisterClass(&wndClass) == 0) {
             return 0;
         }
     }
-    word_CA58 = hInstance;
+    hSelfInst_ = hInstance;
     if (FindWindow("ScreenMatePoo", "Screen Mate") != NULL) {
-        word_CA3C = 1;
+        hasOtherPoo_ = 1;      //isMultiInst
     }
 #ifdef _WIN32
-    /* In 32-bit Windows, popup window is now in the taskbar by default. Additional code is needed to hide the popup window from taskbar while keeping it in the Alt+Tab list. */
-    var_2E.style = 0;
-    var_2E.lpfnWndProc = DefWindowProc;
-    var_2E.cbClsExtra = 0;
-    var_2E.cbWndExtra = 0;
-    var_2E.hInstance = hInstance;
-    var_2E.hIcon = NULL;
-    var_2E.hCursor = NULL;
-    var_2E.hbrBackground = NULL;
-    var_2E.lpszMenuName = NULL;
-    var_2E.lpszClassName = "ScreenMatePooOwner";
-    if (RegisterClass(&var_2E) == 0) {
+    /* In 32-bit Windows, popup window is now in the taskbar by default.
+     * Additional code is needed to hide the popup window from taskbar while
+     * keeping it in the Alt+Tab list.
+     */
+    wndClass.style = 0;
+    wndClass.lpfnWndProc = DefWindowProc;
+    wndClass.cbClsExtra = 0;
+    wndClass.cbWndExtra = 0;
+    wndClass.hInstance = hInstance;
+    wndClass.hIcon = NULL;
+    wndClass.hCursor = NULL;
+    wndClass.hbrBackground = NULL;
+    wndClass.lpszMenuName = NULL;
+    wndClass.lpszClassName = "ScreenMatePooOwner";
+    if (RegisterClass(&wndClass) == 0) {
         return 0;
     }
     /* Create a hidden owner top-level window to hide visible windows from taskbar. */
-    ownerwindow = CreateWindowEx(0L, "ScreenMatePooOwner", NULL, 0L, 0, 0, 0, 0, NULL, NULL, hInstance, NULL);
-    if (ownerwindow == NULL) {
+    hOwnerWnd_ = CreateWindowEx(0L, "ScreenMatePooOwner", NULL, 0L, 0, 0, 0, 0, NULL, NULL, hInstance, NULL);
+    if (hOwnerWnd_ == NULL) {
         return 0;
     }
     /* Set the visible window to be owned by the hidden top-level window. */
-    var_2 = CreateWindowEx(0L, "ScreenMatePoo", "Screen Mate", WS_POPUP, 0, 0, 0, 0, ownerwindow, NULL, hInstance, NULL);
+    hPooWnd = CreateWindowEx(0L, "ScreenMatePoo", "Screen Mate", WS_POPUP, 0, 0, 0, 0, hOwnerWnd_, NULL, hInstance, NULL);
 #else
-    var_2 = CreateWindowEx(0L, "ScreenMatePoo", "Screen Mate", WS_POPUP, 0, 0, 0, 0, NULL, NULL, hInstance, NULL);
+    hPooWnd = CreateWindowEx(0L, "ScreenMatePoo", "Screen Mate", WS_POPUP, 0, 0, 0, 0, NULL, NULL, hInstance, NULL);
 #endif
-    if (var_2 == NULL) {
+    if (hPooWnd == NULL) {
         return 0;
     }
-    ShowWindow(var_2, nShowCmd);
-    UpdateWindow(var_2);
-    while (GetMessage(&var_14, NULL, 0U, 0U)) {
-        TranslateMessage(&var_14);
-        DispatchMessage(&var_14);
+    ShowWindow(hPooWnd, nShowCmd);
+    UpdateWindow(hPooWnd);
+    while (GetMessage(&msg, NULL, 0U, 0U)) {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
     }
 #ifdef _WIN32
-    DestroyWindow(ownerwindow);
+    DestroyWindow(hOwnerWnd_);
 #endif
-    return (int)var_14.wParam;
+    return (int)msg.wParam;
 }
 
 /* Set cursor position changed flag (unused). */
@@ -1115,33 +1131,35 @@ void sub_1DDC(void)
 }
 
 /* Window procedure. */
-LRESULT CALLBACK sub_1DF3(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK pooWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    HDC var_2;
-    void FAR * var_6;
-    HGLOBAL var_8;
-    HRSRC var_A;
-    void FAR * var_E;
-    int var_10;
-    int var_12;
-    RECT var_1A;
-    POINT var_1E;
-    char var_122[260];
-    POINT var_126;
-    UINT var_128;
+    HDC hdc;
+    void FAR * pResData;
+    HGLOBAL hResData;
+    HRSRC hRes;
+    void FAR * pColorData;
+    int posx_10;
+    int posy_12;
+    RECT rect;
+    char dragPath[260];
+    HMENU hPopMenu;
+    WORD oldTopMostConf;
+    POINT cursorPos;
+    UINT oldGForceConf;
     FARPROC proc;
-    LPWINDOWPOS windowpos;
+    LPWINDOWPOS pWndPos;
 #ifdef _WIN32
     HANDLE user32;
 #endif
     switch (uMsg) {
     case WM_CREATE:
-        if (!sub_3C20(hWnd)) {
+        if (!checkOtherPoo(hWnd)) {
             MessageBox(hWnd, "Cannot run more than 8 Screen Mate", "Screen Mate", MB_ICONHAND | MB_OK);
             return -1;
         }
 #ifdef _WIN32
-        /* Additional code that allows drag-and-drop across different privileges in Windows Vista and higher. */
+        /* Additional code that allows drag-and-drop across different privileges
+           in Windows Vista and higher. */
         user32 = GetModuleHandle("user32.dll");
         if (user32 != NULL) {
             BOOL (WINAPI * changewindowmessagefilterex)(HWND, UINT, DWORD, LPVOID) = (BOOL (WINAPI *)(HWND, UINT, DWORD, LPVOID))GetProcAddress(user32, "ChangeWindowMessageFilterEx");
@@ -1153,37 +1171,37 @@ LRESULT CALLBACK sub_1DF3(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         }
 #endif
         DragAcceptFiles(hWnd, TRUE);
-        word_C0B0 = hWnd;
-        sub_2F36();
-        if (word_CA3E != 0) {
+        hPooWnd_ = hWnd;
+        readConfig();
+        if (confTopMost__ != 0) {
             SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
         }
-        var_2 = GetDC(hWnd);
-        var_A = FindResource(word_CA58, MAKEINTRESOURCE(101), RT_BITMAP);
-        var_8 = LoadResource(word_CA58, var_A);
-        var_6 = LockResource(var_8);
-        var_E = (void FAR *)((BYTE FAR *)var_6 + *(WORD FAR *)var_6 + sub_155A(var_6));
-        word_CA4A = sub_1658(var_2, var_6);
-        FreeResource(var_8);
-        SelectPalette(var_2, word_CA4A, FALSE);
-        RealizePalette(var_2);
-        if (!sub_42F3(var_2)) {
+        hdc = GetDC(hWnd);
+        hRes = FindResource(hSelfInst_, MAKEINTRESOURCE(101), RT_BITMAP);
+        hResData = LoadResource(hSelfInst_, hRes);
+        pResData = LockResource(hResData);
+        pColorData = (void FAR *)((BYTE FAR *)pResData + *(WORD FAR *)pResData + readBmpPaletteSize(pResData));
+        hPalette_ = createPaletteFromBmp(hdc, pResData);
+        FreeResource(hResData);
+        SelectPalette(hdc, hPalette_, FALSE);
+        RealizePalette(hdc);
+        if (!initResources(hdc)) {
             MessageBox(hWnd, "Insufficient memory", "Screen Mate", MB_ICONHAND | MB_OK);
-            ReleaseDC(hWnd, var_2);
+            ReleaseDC(hWnd, hdc);
             return -1;
         }
-        ReleaseDC(hWnd, var_2);
-        if (!sub_306A(hWnd)) {
+        ReleaseDC(hWnd, hdc);
+        if (!initBitmaps(hWnd)) {
             MessageBox(hWnd, "Insufficient memory", "Screen Mate", MB_ICONHAND | MB_OK);
             return -1;
         }
         SetTimer(hWnd, 1U, 108U, NULL);
         break;
     case WM_DROPFILES:
-        if (word_CA60[8] == NULL) {
-            if (DragQueryFile((HDROP)wParam, 0U, var_122, 260U) != 0U) {
-                sub_42AA(var_122);
-                sub_8FD7(4);
+        if (hOtherPooWnd_[8] == NULL) {
+            if (DragQueryFile((HDROP)wParam, 0U, dragPath, 260U) != 0U) {
+                asyncPlaySound(dragPath);
+                event_8FD7(4);
             }
         }
         DragFinish((HDROP)wParam);
@@ -1193,34 +1211,34 @@ LRESULT CALLBACK sub_1DF3(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         case 0x202:
         case 0x205:
             if (word_C0AE != 0) {
-                if (word_CA60[8] != NULL) {
-                    sub_2ABF(word_CA60[8]);
+                if (hOtherPooWnd_[8] != NULL) {
+                    putWndToTop(hOtherPooWnd_[8]);
                 }
-                sub_2ABF(hWnd);
+                putWndToTop(hWnd);
             } else {
-                sub_2ABF(hWnd);
-                if (word_CA60[8] != NULL) {
-                    sub_2ABF(word_CA60[8]);
+                putWndToTop(hWnd);
+                if (hOtherPooWnd_[8] != NULL) {
+                    putWndToTop(hOtherPooWnd_[8]);
                 }
             }
-            sub_2ABF(hWnd);
-            *(HMENU *)var_122 = CreatePopupMenu();
-            AppendMenu(*(HMENU *)var_122, 0U, 101U, "Screen Mate Settings...");
-            AppendMenu(*(HMENU *)var_122, 0U, IDCANCEL, "Exit Screen Mate");
-            GetCursorPos(&var_126);
-            TrackPopupMenu(*(HMENU *)var_122, 0U, var_126.x, var_126.y, 0, hWnd, NULL);
-            DestroyMenu(*(HMENU *)var_122);
+            putWndToTop(hWnd);
+            hPopMenu = CreatePopupMenu();
+            AppendMenu(hPopMenu, 0U, 101U, "Screen Mate Settings...");
+            AppendMenu(hPopMenu, 0U, IDCANCEL, "Screen Mate Exit");
+            GetCursorPos(&cursorPos);
+            TrackPopupMenu(hPopMenu, 0U, cursorPos.x, cursorPos.y, 0, hWnd, NULL);
+            DestroyMenu(hPopMenu);
             return 0;
         default:
             break;
         }
         return 0;
     case WM_WINDOWPOSCHANGING:
-        windowpos = (LPWINDOWPOS)lParam;
+        pWndPos = (LPWINDOWPOS)lParam;
         if (word_A7A2 != 0) {
-            windowpos = (LPWINDOWPOS)lParam;
+            pWndPos = (LPWINDOWPOS)lParam;
         }
-        windowpos->flags |= SWP_NOCOPYBITS;
+        pWndPos->flags |= SWP_NOCOPYBITS;
         word_A7AC = 1;
         return 0;
     case WM_WINDOWPOSCHANGED:
@@ -1230,18 +1248,18 @@ LRESULT CALLBACK sub_1DF3(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             word_C0BA -= 1;
             return 0;
         }
-        if (word_C0B6 == 0) {
-            GetCursorPos(&var_1E);
-            if (stru_A7B0.x != var_1E.x || stru_A7B0.y != var_1E.y) {
-                stru_A7B0.x = var_1E.x;
-                stru_A7B0.y = var_1E.y;
+        if (confNoSleep_ == 0) {
+            GetCursorPos(&cursorPos);
+            if (point_A7B0.x != cursorPos.x || point_A7B0.y != cursorPos.y) {
+                point_A7B0.x = cursorPos.x;
+                point_A7B0.y = cursorPos.y;
                 word_A798 = 1;
             }
             if (word_CA76 != 0) {
                 if (word_A798 != 0) {
                     word_CA76 = 0;
                     word_C0A4 = 0;
-                    sub_8FD7(0);
+                    event_8FD7(0);
                 }
             } else {
                 if (word_A798 != 0) {
@@ -1249,16 +1267,16 @@ LRESULT CALLBACK sub_1DF3(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                     word_C0A4 = 0;
                 } else {
                     if (word_C0A4++ > 300) {
-                        sub_8FD7(3);
+                        event_8FD7(3);
                     }
                 }
             }
         }
         word_A7AC = 0;
-        word_C0B0 = hWnd;
+        hPooWnd_ = hWnd;
         sub_4CF8();
-        sub_3284(hWnd);
-        sub_3717(hWnd);
+        paint_3284(hWnd);
+        paint_3717(hWnd);
         word_A7A2 = 1;
         return 0;
     case WM_USER:
@@ -1275,16 +1293,16 @@ LRESULT CALLBACK sub_1DF3(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             ValidateRect(hWnd, NULL);
             return 0;
         }
-        sub_3237(hWnd);
+        reset_3237(hWnd);
         ValidateRect(hWnd, NULL);
         return 0;
-        GetWindowRect(hWnd, &var_1A);
-        if (stru_A7A4.top == var_1A.top && stru_A7A4.bottom == var_1A.bottom && stru_A7A4.left == var_1A.left && stru_A7A4.right == var_1A.right) {
-            sub_3237(hWnd);
+        GetWindowRect(hWnd, &rect);
+        if (lastWndRect_.top == rect.top && lastWndRect_.bottom == rect.bottom && lastWndRect_.left == rect.left && lastWndRect_.right == rect.right) {
+            reset_3237(hWnd);
             ValidateRect(hWnd, NULL);
             return 0;
         }
-        GetWindowRect(hWnd, &stru_A7A4);
+        GetWindowRect(hWnd, &lastWndRect_);
         ValidateRect(hWnd, NULL);
         return 0;
         break;
@@ -1305,96 +1323,98 @@ LRESULT CALLBACK sub_1DF3(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         break;
     case WM_LBUTTONDOWN:
     case WM_RBUTTONDOWN:
-        if (word_CA60[8] != NULL) {
+        if (hOtherPooWnd_[8] != NULL) {
             break;
         }
-        if (word_A79E != 0) {
+        if (isMouseBtnDown_ != 0) {
             break;
         }
         SetCapture(hWnd);
-        GetWindowRect(hWnd, &var_1A);
-        word_A79A = (short)LOWORD(lParam) + var_1A.left;
-        word_A79C = (short)HIWORD(lParam) + var_1A.top;
-        word_A79E = 1;
-        sub_8FD7(1);
-        sub_3284(hWnd);
-        sub_3717(hWnd);
+        GetWindowRect(hWnd, &rect);
+        posx_A79A = (short)LOWORD(lParam) + rect.left;
+        posy_A79C = (short)HIWORD(lParam) + rect.top;
+        isMouseBtnDown_ = 1;
+        event_8FD7(1);
+        paint_3284(hWnd);
+        paint_3717(hWnd);
         break;
     case WM_MOUSEMOVE:
-        if (word_A79E == 0) {
+        if (isMouseBtnDown_ == 0) {
             break;
         }
-        GetWindowRect(hWnd, &var_1A);
-        var_10 = (short)LOWORD(lParam) + var_1A.left;
-        var_12 = (short)HIWORD(lParam) + var_1A.top;
-        if (word_A79A == var_10 && word_A79C == var_12) {
+        GetWindowRect(hWnd, &rect);
+        posx_10 = (short)LOWORD(lParam) + rect.left;
+        posy_12 = (short)HIWORD(lParam) + rect.top;
+        if (posx_A79A == posx_10 && posy_A79C == posy_12) {
             break;
         }
-        sub_91CD(var_10 - word_A79A, var_12 - word_A79C);
-        word_A79A = var_10;
-        word_A79C = var_12;
-        sub_3284(hWnd);
-        sub_3717(hWnd);
+        movePooWnd(posx_10 - posx_A79A, posy_12 - posy_A79C);
+        posx_A79A = posx_10;
+        posy_A79C = posy_12;
+        paint_3284(hWnd);
+        paint_3717(hWnd);
         break;
     case WM_RBUTTONUP:
-        if (word_A7A0 != 0) {
+        if (isRBtnDbClicked_ != 0) {
             DestroyWindow(hWnd);
             break;
         }
+        /// flow to bottom
     case WM_LBUTTONUP:
-        if (word_A79E != 0) {
-            GetWindowRect(hWnd, &var_1A);
-            var_10 = (short)LOWORD(lParam) + var_1A.left;
-            var_12 = (short)HIWORD(lParam) + var_1A.top;
-            sub_91CD(var_10 - word_A79A, var_12 - word_A79C);
-            sub_8FD7(0);
+        if (isMouseBtnDown_ != 0) {
+            GetWindowRect(hWnd, &rect);
+            posx_10 = (short)LOWORD(lParam) + rect.left;
+            posy_12 = (short)HIWORD(lParam) + rect.top;
+            movePooWnd(posx_10 - posx_A79A, posy_12 - posy_A79C);
+            event_8FD7(0);
             if (uMsg == WM_RBUTTONUP) {
-                sub_8FD7(2);
+                event_8FD7(2);
             }
-            sub_3284(hWnd);
-            sub_3717(hWnd);
+            paint_3284(hWnd);
+            paint_3717(hWnd);
             ReleaseCapture();
-            word_A79E = 0;
+            isMouseBtnDown_ = 0;
         }
         break;
     case WM_RBUTTONDBLCLK:
-        word_A7A0 = 1;
+        isRBtnDbClicked_ = 1;
         break;
     case WM_LBUTTONDBLCLK:
     case WM_USER + 2:
-        *(WORD *)var_122 = word_CA3E;
-        var_128 = word_CA42;
-        word_C0B0 = hWnd;
-        if ((HIBYTE(GetKeyState(VK_SHIFT)) & 0x80) != 0 && (HIBYTE(GetKeyState(VK_CONTROL)) & 0x80) != 0) {
-            proc = MakeProcInstance((FARPROC)sub_292A, word_CA58);
-            DialogBox(word_CA58, MAKEINTRESOURCE(108), hWnd, (DLGPROC)proc);
+        oldTopMostConf = confTopMost__;
+        oldGForceConf = confGForce_;
+        hPooWnd_ = hWnd;
+        if ((HIBYTE(GetKeyState(VK_SHIFT)) & 0x80) != 0 &&
+            (HIBYTE(GetKeyState(VK_CONTROL)) & 0x80) != 0) {
+            proc = MakeProcInstance((FARPROC)debugDlgProc, hSelfInst_);
+            DialogBox(hSelfInst_, MAKEINTRESOURCE(108), hWnd, (DLGPROC)proc);
         } else {
-            proc = MakeProcInstance((FARPROC)sub_27FF, word_CA58);
-            DialogBox(word_CA58, MAKEINTRESOURCE(107), hWnd, (DLGPROC)proc);
+            proc = MakeProcInstance((FARPROC)configDlgProc, hSelfInst_);
+            DialogBox(hSelfInst_, MAKEINTRESOURCE(107), hWnd, (DLGPROC)proc);
         }
         FreeProcInstance(proc);
-        sub_3237(hWnd);
-        if (*(WORD *)var_122 != word_CA3E) {
-            if (word_CA3E != 0) {
+        reset_3237(hWnd);
+        if (oldTopMostConf != confTopMost__) {
+            if (confTopMost__ != 0) {
                 SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
             } else {
                 SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
             }
         }
-        if (var_128 != word_CA42 && word_CA42 != 0) {
-            sub_8FD7(2);
+        if (oldGForceConf != confGForce_ && confGForce_ != 0) {
+            event_8FD7(2);
         }
         break;
     case WM_DESTROY:
         sub_3D12(hWnd);
-        if (word_CA60[8] != NULL) {
-            sub_2A96();
+        if (hOtherPooWnd_[8] != NULL) {
+            destroySubPooWnd();
         }
         KillTimer(hWnd, 1U);
-        sub_428E();
-        sub_3119((WORD)0);
-        sub_44ED();
-        DeleteObject(word_CA4A);
+        stopPlaySound();
+        releaseWndBmp();
+        releaseResources();
+        DeleteObject(hPalette_);
         DragAcceptFiles(hWnd, FALSE);
         PostQuitMessage(0);
         break;
@@ -1405,20 +1425,20 @@ LRESULT CALLBACK sub_1DF3(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 /* Window procedure (sub). */
-LRESULT CALLBACK sub_2699(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK pooSubWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    LPWINDOWPOS var_4;
+    LPWINDOWPOS wndPos;
     switch (uMsg) {
     case WM_CREATE:
-        if (!sub_9200(hWnd)) {
+        if (!initSubWnd(hWnd)) {
             DestroyWindow(hWnd);
             return 1;
         }
         SetTimer(hWnd, 1U, 108U, NULL);
         break;
     case WM_WINDOWPOSCHANGING:
-        var_4 = (LPWINDOWPOS)lParam;
-        var_4->flags |= SWP_NOCOPYBITS;
+        wndPos = (LPWINDOWPOS)lParam;
+        wndPos->flags |= SWP_NOCOPYBITS;
         word_A7B4 = 1;
         return 0;
     case WM_WINDOWPOSCHANGED:
@@ -1427,8 +1447,8 @@ LRESULT CALLBACK sub_2699(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         word_A7B4 = 0;
         sub_9438(hWnd);
         if (!sub_9A49(hWnd)) {
-            word_CA3C = 1;
-            sub_4CE1();
+            hasOtherPoo_ = 1;
+            resetState();
         }
         return 0;
     case WM_PAINT:
@@ -1443,7 +1463,7 @@ LRESULT CALLBACK sub_2699(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_ERASEBKGND:
         return 0;
     case WM_DESTROY:
-        sub_930F(0);
+        releaseSubWnd();
         KillTimer(hWnd, 1U);
         break;
     default:
@@ -1453,14 +1473,14 @@ LRESULT CALLBACK sub_2699(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 /* Configuration window callback. */
-BOOL CALLBACK sub_27FF(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+BOOL CALLBACK configDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg) {
     case WM_INITDIALOG:
-        SendDlgItemMessage(hDlg, 1001, BM_SETCHECK, (WPARAM)word_C0AC, 0);
-        SendDlgItemMessage(hDlg, 1002, BM_SETCHECK, (WPARAM)word_CA5A, 0);
-        SendDlgItemMessage(hDlg, 1003, BM_SETCHECK, (WPARAM)word_C0B6, 0);
-        SendDlgItemMessage(hDlg, 1004, BM_SETCHECK, (WPARAM)word_CA42, 0);
+        SendDlgItemMessage(hDlg, 1001, BM_SETCHECK, (WPARAM)confChime_, 0);
+        SendDlgItemMessage(hDlg, 1002, BM_SETCHECK, (WPARAM)confSound_, 0);
+        SendDlgItemMessage(hDlg, 1003, BM_SETCHECK, (WPARAM)confNoSleep_, 0);
+        SendDlgItemMessage(hDlg, 1004, BM_SETCHECK, (WPARAM)confGForce_, 0);
         return TRUE;
     case WM_COMMAND:
         if (wParam == IDRETRY) {
@@ -1468,14 +1488,14 @@ BOOL CALLBACK sub_27FF(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             return TRUE;
         }
         if (wParam == IDOK) {
-            word_C0AC = IsDlgButtonChecked(hDlg, 1001);
-            word_CA5A = IsDlgButtonChecked(hDlg, 1002);
-            word_C0B6 = IsDlgButtonChecked(hDlg, 1003);
-            word_CA42 = IsDlgButtonChecked(hDlg, 1004);
-            sub_2FF8();
+            confChime_ = IsDlgButtonChecked(hDlg, 1001);
+            confSound_ = IsDlgButtonChecked(hDlg, 1002);
+            confNoSleep_ = IsDlgButtonChecked(hDlg, 1003);
+            confGForce_ = IsDlgButtonChecked(hDlg, 1004);
+            saveConfig();
         }
         if (wParam == IDABORT) {
-            DestroyWindow(word_C0B0);
+            DestroyWindow(hPooWnd_);
         }
         if (wParam == IDOK || wParam == IDCANCEL || wParam == IDABORT) {
             EndDialog(hDlg, (int)wParam);
@@ -1488,7 +1508,7 @@ BOOL CALLBACK sub_27FF(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 /* Debug window callback. */
-BOOL CALLBACK sub_292A(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+BOOL CALLBACK debugDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg) {
     case WM_INITDIALOG:
@@ -1499,20 +1519,21 @@ BOOL CALLBACK sub_292A(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             EndDialog(hDlg, (int)wParam);
         }
         if (wParam >= 1002 && wParam <= 1031 && IsDlgButtonChecked(hDlg, (int)wParam) != 0U) {
-            sub_904A(wParam - 1002);
+            /// set Action(0~29)
+            debugAction(wParam - 1002);
         }
         switch (wParam) {
-        case 1032:
-            sub_91CD(0, -20);
+        case 1032:      ///Up
+            movePooWnd(0, -20);
             break;
-        case 1033:
-            sub_91CD(0, 20);
+        case 1033:      ///Dn
+            movePooWnd(0, 20);
             break;
-        case 1034:
-            sub_91CD(-20, 0);
+        case 1034:      ///L
+            movePooWnd(-20, 0);
             break;
-        case 1035:
-            sub_91CD(20, 0);
+        case 1035:      ///R
+            movePooWnd(20, 0);
             break;
         default:
             break;
@@ -1525,182 +1546,184 @@ BOOL CALLBACK sub_292A(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 /* Create subwindow. */
-void sub_2A21(void)
+void showSubPoo(void)
 {
-    if (word_CA60[8] != NULL) {
+    if (hOtherPooWnd_[8] != NULL) {
         return;
     }
 #ifdef _WIN32
     /* Set the visible window to be owned by the hidden top-level window. */
-    word_CA60[8] = CreateWindowEx(0L, "ScreenMatePooSub", "ScreenMate Sub", WS_POPUP, 0, 0, 0, 0, ownerwindow, NULL, word_CA58, NULL);
+    hOtherPooWnd_[8] = CreateWindowEx(0L, "ScreenMatePooSub", "ScreenMate Sub", WS_POPUP, 0, 0, 0, 0, hOwnerWnd_, NULL, hSelfInst_, NULL);
 #else
-    word_CA60[8] = CreateWindowEx(0L, "ScreenMatePooSub", "ScreenMate Sub", WS_POPUP, 0, 0, 0, 0, NULL, NULL, word_CA58, NULL);
+    hOtherPooWnd_[8] = CreateWindowEx(0L, "ScreenMatePooSub", "ScreenMate Sub", WS_POPUP, 0, 0, 0, 0, NULL, NULL, hSelfInst_, NULL);
 #endif
-    if (word_CA60[8] != NULL) {
-        ShowWindow(word_CA60[8], SW_SHOWNA);
-        UpdateWindow(word_CA60[8]);
+    if (hOtherPooWnd_[8] != NULL) {
+        ShowWindow(hOtherPooWnd_[8], SW_SHOWNA);
+        UpdateWindow(hOtherPooWnd_[8]);
     } else {
-        word_CA3C = 1;
-        sub_4CE1();
+        hasOtherPoo_ = 1;
+        resetState();
     }
 }
 
 /* Destroy subwindow. */
-void sub_2A96(void)
+void destroySubPooWnd(void)
 {
-    if (word_CA60[8] != NULL) {
-        DestroyWindow(word_CA60[8]);
-        word_CA60[8] = NULL;
+    if (hOtherPooWnd_[8] != NULL) {
+        DestroyWindow(hOtherPooWnd_[8]);
+        hOtherPooWnd_[8] = NULL;
     }
 }
 
 /* Place window to topmost position. */
-void sub_2ABF(HWND arg_0)
+void putWndToTop(HWND hWnd)
 {
-    if (word_CA3E == 0) {
-        SetWindowPos(arg_0, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
-        SetWindowPos(arg_0, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
+    if (confTopMost__ == 0) {
+        SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
+        SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
     }
 }
 
 /* Place a window on top of another. */
 void sub_2B01(HWND arg_0, HWND arg_2)
 {
-    if (word_CA3E == 0) {
+    if (confTopMost__ == 0) {
         SetWindowPos(arg_0, arg_2, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
     }
 }
 
-/* Load resource image, generate (flipped) colour and mask images, store handles into sprite info structure. */
-BOOL sub_2B30(HDC arg_0, spriteinfo * arg_2, int arg_4, int arg_6)
+/* Load resource image, generate (flipped) colour and mask images,
+ * store handles into sprite info structure.
+ * flag: <0 auto mask, 0 no mask, >0 mask from res */
+BOOL loadSprite(HDC hdc, spriteinfo * pSprite, int resId, int flag)
 {
-    void FAR * var_4;
-    void FAR * var_8;
-    void FAR * var_C;
-    void FAR * var_10;
-    void FAR * var_14;
-    HGLOBAL var_16;
-    HGLOBAL var_18;
-    HGLOBAL var_1A;
-    var_16 = NULL;
-    var_18 = NULL;
-    var_1A = NULL;
-    var_16 = LoadResource(word_CA58, FindResource(word_CA58, MAKEINTRESOURCE(arg_4), RT_BITMAP));
-    var_C = LockResource(var_16);
-    if (var_16 == NULL) {
+    void FAR * pBmpPixels;
+    void FAR * pPalettePosOfFirstPixel_UNUSED;
+    void FAR * pResData;
+    void FAR * pBmpData;
+    void FAR * pOriginBmpData;
+    HGLOBAL hResData;
+    HGLOBAL hBmpData;
+    HGLOBAL hOriginBmpData;
+    hResData = NULL;
+    hBmpData = NULL;
+    hOriginBmpData = NULL;
+    hResData = LoadResource(hSelfInst_, FindResource(hSelfInst_, MAKEINTRESOURCE(resId), RT_BITMAP));
+    pResData = LockResource(hResData);
+    if (hResData == NULL) {
         return FALSE;
     }
-    arg_2->x = 0;
-    arg_2->y = 0;
-    arg_2->width = *(int FAR *)((BYTE FAR *)var_C + 4);
-    arg_2->height = *(int FAR *)((BYTE FAR *)var_C + 8);
-    if (arg_6 < 0) {
-        var_18 = GlobalAlloc(GMEM_MOVEABLE, 65535);
-        if (var_18 == NULL) {
-            goto loc_2EB2;
+    pSprite->x = 0;
+    pSprite->y = 0;
+    pSprite->width = *(int FAR *)((BYTE FAR *)pResData + 4);
+    pSprite->height = *(int FAR *)((BYTE FAR *)pResData + 8);
+    if (flag < 0) {
+        hBmpData = GlobalAlloc(GMEM_MOVEABLE, 65535);
+        if (hBmpData == NULL) {
+            goto failed;
         }
-        var_10 = GlobalLock(var_18);
-        if (arg_6 < -1) {
-            var_1A = GlobalAlloc(GMEM_MOVEABLE, 65535);
-            if (var_1A == NULL) {
-                goto loc_2EB2;
+        pBmpData = GlobalLock(hBmpData);
+        if (flag < -1) {
+            hOriginBmpData = GlobalAlloc(GMEM_MOVEABLE, 65535);
+            if (hOriginBmpData == NULL) {
+                goto failed;
             }
-            var_14 = GlobalLock(var_1A);
-            sub_230(var_14, var_C);
-            if (arg_6 == -2) {
-                sub_1A16(var_10, var_14, 2U);
+            pOriginBmpData = GlobalLock(hOriginBmpData);
+            sub_230(pOriginBmpData, pResData);
+            if (flag == -2) {
+                bmpFlipCopy(pBmpData, pOriginBmpData, 2U);
             } else {
-                sub_1A16(var_10, var_14, 1U);
+                bmpFlipCopy(pBmpData, pOriginBmpData, 1U);
             }
-            GlobalFree(var_1A);
-            var_1A = NULL;
+            GlobalFree(hOriginBmpData);
+            hOriginBmpData = NULL;
         } else {
-            sub_230(var_10, var_C);
+            sub_230(pBmpData, pResData);
         }
-        var_4 = (void FAR *)((BYTE FAR *)var_10 + *(WORD FAR *)var_10 + sub_155A(var_10));
-        var_8 = (void FAR *)((BYTE FAR *)var_10 + *(WORD FAR *)var_10 + sub_1945(var_10) * sizeof(RGBQUAD));
-        *(DWORD FAR *)var_8 = 0;
-        arg_2->bitmaps[0] = CreateDIBitmap(arg_0, var_10, CBM_INIT, var_4, var_10, DIB_RGB_COLORS);
-        if (arg_2->bitmaps[0] == NULL) {
-            goto loc_2EB2;
+        pBmpPixels = (void FAR *)((BYTE FAR *)pBmpData + *(WORD FAR *)pBmpData + readBmpPaletteSize(pBmpData));
+        pPalettePosOfFirstPixel_UNUSED = (void FAR *)((BYTE FAR *)pBmpData + *(WORD FAR *)pBmpData + getBmpColorOfFirstPixel(pBmpData) * sizeof(RGBQUAD));
+        *(DWORD FAR *)pPalettePosOfFirstPixel_UNUSED = 0;
+        pSprite->bitmaps[0] = CreateDIBitmap(hdc, pBmpData, CBM_INIT, pBmpPixels, pBmpData, DIB_RGB_COLORS);
+        if (pSprite->bitmaps[0] == NULL) {
+            goto failed;
         }
-        sub_10(var_10, var_10);
-        var_4 = (void FAR *)((BYTE FAR *)var_10 + *(WORD FAR *)var_10 + sub_155A(var_10));
-        arg_2->bitmaps[1] = CreateDIBitmap(arg_0, var_10, CBM_INIT, var_4, var_10, DIB_RGB_COLORS);
-        if (arg_2->bitmaps[1] == NULL) {
-            goto loc_2EB2;
+        sub_10(pBmpData, pBmpData);
+        pBmpPixels = (void FAR *)((BYTE FAR *)pBmpData + *(WORD FAR *)pBmpData + readBmpPaletteSize(pBmpData));
+        pSprite->bitmaps[1] = CreateDIBitmap(hdc, pBmpData, CBM_INIT, pBmpPixels, pBmpData, DIB_RGB_COLORS);
+        if (pSprite->bitmaps[1] == NULL) {
+            goto failed;
         }
-        FreeResource(var_16);
-        var_16 = NULL;
-        GlobalFree(var_18);
-        var_18 = NULL;
+        FreeResource(hResData);
+        hResData = NULL;
+        GlobalFree(hBmpData);
+        hBmpData = NULL;
         return TRUE;
     } else {
-        var_4 = (void FAR *)((BYTE FAR *)var_C + *(WORD FAR *)var_C + sub_155A(var_C));
-        arg_2->bitmaps[0] = CreateDIBitmap(arg_0, var_C, CBM_INIT, var_4, var_C, DIB_RGB_COLORS);
-        if (arg_2->bitmaps[0] == NULL) {
-            goto loc_2EB2;
+        pBmpPixels = (void FAR *)((BYTE FAR *)pResData + *(WORD FAR *)pResData + readBmpPaletteSize(pResData));
+        pSprite->bitmaps[0] = CreateDIBitmap(hdc, pResData, CBM_INIT, pBmpPixels, pResData, DIB_RGB_COLORS);
+        if (pSprite->bitmaps[0] == NULL) {
+            goto failed;
         }
-        FreeResource(var_16);
-        var_16 = NULL;
-        if (arg_6 == 0) {
-            arg_2->bitmaps[1] = NULL;
+        FreeResource(hResData);
+        hResData = NULL;
+        if (flag == 0) {
+            pSprite->bitmaps[1] = NULL;
             return TRUE;
         }
-        var_16 = LoadResource(word_CA58, FindResource(word_CA58, MAKEINTRESOURCE(arg_6), RT_BITMAP));
-        var_C = LockResource(var_16);
-        if (var_16 == NULL) {
-            goto loc_2EB2;
+        hResData = LoadResource(hSelfInst_, FindResource(hSelfInst_, MAKEINTRESOURCE(flag), RT_BITMAP));
+        pResData = LockResource(hResData);
+        if (hResData == NULL) {
+            goto failed;
         }
-        arg_2->x = 0;
-        arg_2->y = 0;
-        arg_2->width = *(int FAR *)((BYTE FAR *)var_C + 4);
-        arg_2->height = *(int FAR *)((BYTE FAR *)var_C + 8);
-        var_4 = (void FAR *)((BYTE FAR *)var_C + *(WORD FAR *)var_C + sub_155A(var_C));
-        arg_2->bitmaps[1] = CreateDIBitmap(arg_0, var_C, CBM_INIT, var_4, var_C, DIB_RGB_COLORS);
-        if (arg_2->bitmaps[1] == NULL) {
-            goto loc_2EB2;
+        pSprite->x = 0;
+        pSprite->y = 0;
+        pSprite->width = *(int FAR *)((BYTE FAR *)pResData + 4);
+        pSprite->height = *(int FAR *)((BYTE FAR *)pResData + 8);
+        pBmpPixels = (void FAR *)((BYTE FAR *)pResData + *(WORD FAR *)pResData + readBmpPaletteSize(pResData));
+        pSprite->bitmaps[1] = CreateDIBitmap(hdc, pResData, CBM_INIT, pBmpPixels, pResData, DIB_RGB_COLORS);
+        if (pSprite->bitmaps[1] == NULL) {
+            goto failed;
         }
-        FreeResource(var_16);
+        FreeResource(hResData);
         return TRUE;
     }
-loc_2EB2:
-    if (var_16 != NULL) {
-        FreeResource(var_16);
+failed:
+    if (hResData != NULL) {
+        FreeResource(hResData);
     }
-    if (var_18 != NULL) {
-        GlobalFree(var_18);
+    if (hBmpData != NULL) {
+        GlobalFree(hBmpData);
     }
-    if (var_1A != NULL) {
-        GlobalFree(var_1A);
+    if (hOriginBmpData != NULL) {
+        GlobalFree(hOriginBmpData);
     }
     return FALSE;
 }
 
 /* Release sprite images. */
-void sub_2EEC(spriteinfo * arg_0)
+void releaseSprite(spriteinfo * sprite)
 {
-    if (arg_0->bitmaps[0] != NULL) {
-        DeleteObject(arg_0->bitmaps[0]);
+    if (sprite->bitmaps[0] != NULL) {
+        DeleteObject(sprite->bitmaps[0]);
     }
-    if (arg_0->bitmaps[1] != NULL) {
-        DeleteObject(arg_0->bitmaps[1]);
+    if (sprite->bitmaps[1] != NULL) {
+        DeleteObject(sprite->bitmaps[1]);
     }
-    arg_0->bitmaps[0] = NULL;
-    arg_0->bitmaps[1] = NULL;
+    sprite->bitmaps[0] = NULL;
+    sprite->bitmaps[1] = NULL;
 }
 
 /* Read configuration from file. */
-void sub_2F36(void)
+void readConfig(void)
 {
     word_CA78 = 1;
-    word_CA3E = 0;
-    word_C0AC = 0U;
-    word_CA5A = 0U;
-    word_CA5A = GetPrivateProfileInt("Stray", "Sound", 0, "scmate.ini");
-    word_C0AC = GetPrivateProfileInt("Stray", "Alarm", 0, "scmate.ini");
-    word_C0B6 = GetPrivateProfileInt("Stray", "NoSleep", 0, "scmate.ini");
-    word_CA42 = GetPrivateProfileInt("Stray", "GForce", 1, "scmate.ini");
+    confTopMost__ = 0;
+    confChime_ = 0U;
+    confSound_ = 0U;
+    confSound_ = GetPrivateProfileInt("Stray", "Sound", 0, "scmate.ini");
+    confChime_ = GetPrivateProfileInt("Stray", "Alarm", 0, "scmate.ini");
+    confNoSleep_ = GetPrivateProfileInt("Stray", "NoSleep", 0, "scmate.ini");
+    confGForce_ = GetPrivateProfileInt("Stray", "GForce", 1, "scmate.ini");
 }
 
 /* Save individual configuration to file. */
@@ -1712,48 +1735,48 @@ void sub_2FB7(LPCSTR arg_0, LPCSTR arg_4, UINT arg_8, LPCSTR arg_A)
 }
 
 /* Save configurations to file. */
-void sub_2FF8(void)
+void saveConfig(void)
 {
-    sub_2FB7("Stray", "Sound", word_CA5A, "scmate.ini");
-    sub_2FB7("Stray", "Alarm", word_C0AC, "scmate.ini");
-    sub_2FB7("Stray", "NoSleep", word_C0B6, "scmate.ini");
-    sub_2FB7("Stray", "GForce", word_CA42, "scmate.ini");
+    sub_2FB7("Stray", "Sound", confSound_, "scmate.ini");
+    sub_2FB7("Stray", "Alarm", confChime_, "scmate.ini");
+    sub_2FB7("Stray", "NoSleep", confNoSleep_, "scmate.ini");
+    sub_2FB7("Stray", "GForce", confGForce_, "scmate.ini");
 }
 
 /* Initialize bitmaps. */
-BOOL sub_306A(HWND arg_0)
+BOOL initBitmaps(HWND hWnd)
 {
-    HDC var_2;
-    var_2 = GetDC(arg_0);
-    word_A7B6[0] = CreateCompatibleBitmap(var_2, 100, 100);
-    if (word_A7B6[0] == NULL) {
-        goto loc_3104;
+    HDC hdc;
+    hdc = GetDC(hWnd);
+    bmp_A7B6[0] = CreateCompatibleBitmap(hdc, 100, 100);
+    if (bmp_A7B6[0] == NULL) {
+        goto failed;
     }
-    word_A7B6[1] = CreateCompatibleBitmap(var_2, 100, 100);
-    if (word_A7B6[1] == NULL) {
-        goto loc_3104;
+    bmp_A7B6[1] = CreateCompatibleBitmap(hdc, 100, 100);
+    if (bmp_A7B6[1] == NULL) {
+        goto failed;
     }
-    word_A7BA = CreateCompatibleBitmap(var_2, 100, 100);
-    if (word_A7BA == NULL) {
-        goto loc_3104;
+    bmp_A7BA = CreateCompatibleBitmap(hdc, 100, 100);
+    if (bmp_A7BA == NULL) {
+        goto failed;
     }
     word_CA4C = 0;
     word_CA4E = 0;
-    word_CA50 = GetSystemMetrics(SM_CXSCREEN);
-    word_CA52 = GetSystemMetrics(SM_CYSCREEN);
-    ReleaseDC(arg_0, var_2);
+    screenWidth_ = GetSystemMetrics(SM_CXSCREEN);
+    screenHeight_ = GetSystemMetrics(SM_CYSCREEN);
+    ReleaseDC(hWnd, hdc);
     return TRUE;
-loc_3104:
-    ReleaseDC(arg_0, var_2);
+failed:
+    ReleaseDC(hWnd, hdc);
     return FALSE;
 }
 
 /* Release bitmaps. */
-void sub_3119()
+void releaseWndBmp()
 {
-    DeleteObject(word_A7B6[0]);
-    DeleteObject(word_A7B6[1]);
-    DeleteObject(word_A7BA);
+    DeleteObject(bmp_A7B6[0]);
+    DeleteObject(bmp_A7B6[1]);
+    DeleteObject(bmp_A7BA);
     if (word_C0B4 != NULL) {
         DeleteObject(word_C0B4);
         word_C0B4 = NULL;
@@ -1773,23 +1796,23 @@ void sub_3119()
 }
 
 /* Update window position and sprite to be actually used. */
-void sub_31A8(int arg_0, int arg_2, int arg_4)
+void sub_31A8(int x, int y, int index)
 {
-    word_A7DA = arg_0;
-    word_A7DC = arg_2;
-    word_A7BC = stru_A8A2[arg_4].bitmaps[0];
-    word_A7BE = stru_A8A2[arg_4].bitmaps[1];
-    word_A7C0 = stru_A8A2[arg_4].x;
-    word_A7C2 = stru_A8A2[arg_4].y;
-    word_A7DE = stru_A8A2[arg_4].width;
-    word_A7E0 = stru_A8A2[arg_4].height;
+    posx_A7DA = x;
+    posy_A7DC = y;
+    bmp_A7BC = sprites_[index].bitmaps[0];
+    bmp_A7BE = sprites_[index].bitmaps[1];
+    posx_A7C0 = sprites_[index].x;
+    posy_A7C2 = sprites_[index].y;
+    width_A7DE = sprites_[index].width;
+    height_A7E0 = sprites_[index].height;
 }
 
 /* Clear window. */
-void sub_3237(HWND arg_0)
+void reset_3237(HWND arg_0)
 {
-    word_A7F2 = 0;
-    word_A7F4 = 0;
+    posx_A7F2 = 0;
+    posy_A7F4 = 0;
     word_A7F6 = 0;
     word_A7F8 = 0;
     MoveWindow(arg_0, 0, 0, 0, 0, TRUE);
@@ -1799,112 +1822,115 @@ void sub_3237(HWND arg_0)
 }
 
 /* Render sprite with double buffering. */
-void sub_3284(HWND arg_0)
+void paint_3284(HWND hWnd)
 {
     HDC var_2;
-    HDC var_4;
-    HDC var_6;
-    int var_C;
-    int var_E;
+    HDC hdc_4;
+    HDC hdc_6;
+    int posy_C;
+    int posx_E;
     int var_10;
     int var_12;
-    int var_14;
-    int var_16;
-    int var_18;
-    int var_1A;
+    int posy_14;
+    int posx_16;
+    int height_18;
+    int width_1A;
     int var_1C;
     int var_1E;
     if (word_A7D2 != 0) {
         return;
     }
-    if (word_A7F2 == word_A7DA && word_A7F4 == word_A7DC && word_A7D8 == word_A7BC && word_A7C8 == word_A7C0 && word_CA72 == 0) {
+    if (posx_A7F2 == posx_A7DA && posy_A7F4 == posy_A7DC &&
+            word_A7D8 == bmp_A7BC && word_A7C8 == posx_A7C0 &&
+            word_CA72 == 0) {
         return;
     }
     word_A7D0 ^= 1;
     var_2 = GetDC(NULL);
-    SelectPalette(var_2, word_CA4A, FALSE);
-    var_4 = CreateCompatibleDC(var_2);
-    var_6 = CreateCompatibleDC(var_2);
-    SelectPalette(var_6, word_CA4A, FALSE);
-    SelectPalette(var_4, word_CA4A, FALSE);
-    var_16 = max(word_A7DA, word_A7F2);
-    var_14 = max(word_A7DC, word_A7F4);
-    var_12 = min(word_A7DE + word_A7DA, word_A7F6 + word_A7F2) - var_16;
-    var_10 = min(word_A7DC + word_A7E0, word_A7F4 + word_A7F8) - var_14;
+    SelectPalette(var_2, hPalette_, FALSE);
+    hdc_4 = CreateCompatibleDC(var_2);
+    hdc_6 = CreateCompatibleDC(var_2);
+    SelectPalette(hdc_6, hPalette_, FALSE);
+    SelectPalette(hdc_4, hPalette_, FALSE);
+    posx_16 = max(posx_A7DA, posx_A7F2);
+    posy_14 = max(posy_A7DC, posy_A7F4);
+    var_12 = min(width_A7DE + posx_A7DA, word_A7F6 + posx_A7F2) - posx_16;
+    var_10 = min(posy_A7DC + height_A7E0, posy_A7F4 + word_A7F8) - posy_14;
     if (var_12 <= 0 || var_10 <= 0) {
         word_A7FA = 1;
         if (word_A7D4 != 0) {
             word_A7D4 = 0;
         }
-        word_A7E2 = word_A7DA;
-        word_A7E4 = word_A7DC;
-        word_A7E6 = word_A7DE;
-        word_A7E8 = word_A7E0;
-        SelectObject(var_4, word_A7B6[word_A7D0]);
-        BitBlt(var_4, 0, 0, word_A7E6, word_A7E8, var_2, word_A7E2, word_A7E4, SRCCOPY);
+        posx_A7E2 = posx_A7DA;
+        posy_A7E4 = posy_A7DC;
+        word_A7E6 = width_A7DE;
+        word_A7E8 = height_A7E0;
+        SelectObject(hdc_4, bmp_A7B6[word_A7D0]);
+        BitBlt(hdc_4, 0, 0, word_A7E6, word_A7E8, var_2, posx_A7E2, posy_A7E4, SRCCOPY);
     } else {
         word_A7FA = 0;
-        word_A7E2 = min(word_A7DA, word_A7F2);
-        word_A7E4 = min(word_A7DC, word_A7F4);
-        word_A7E6 = max(word_A7DE + word_A7DA, word_A7F6 + word_A7F2) - word_A7E2;
-        word_A7E8 = max(word_A7DC + word_A7E0, word_A7F4 + word_A7F8) - word_A7E4;
-        SelectObject(var_4, word_A7B6[word_A7D0]);
-        BitBlt(var_4, 0, 0, word_A7E6, word_A7E8, var_2, word_A7E2, word_A7E4, SRCCOPY);
-        var_1E = max(word_A7E2, word_A7EA);
-        var_1C = max(word_A7E4, word_A7EC);
-        var_1A = min(word_A7E6 + word_A7E2, word_A7EE + word_A7EA) - var_1E;
-        var_18 = min(word_A7E4 + word_A7E8, word_A7EC + word_A7F0) - var_1C;
-        var_16 = max(0, var_1E - word_A7E2);
-        var_14 = max(0, var_1C - word_A7E4);
-        var_E = max(0, var_1E - word_A7EA);
-        var_C = max(0, var_1C - word_A7EC);
-        if (var_1A > 0 && var_18 > 0) {
-            SelectObject(var_6, word_A7B6[LOBYTE(word_A7D0) - 0xFF & 1]);
-            BitBlt(var_4, var_16, var_14, var_1A, var_18, var_6, var_E, var_C, SRCCOPY);
+        posx_A7E2 = min(posx_A7DA, posx_A7F2);
+        posy_A7E4 = min(posy_A7DC, posy_A7F4);
+        word_A7E6 = max(width_A7DE + posx_A7DA, word_A7F6 + posx_A7F2) - posx_A7E2;
+        word_A7E8 = max(posy_A7DC + height_A7E0, posy_A7F4 + word_A7F8) - posy_A7E4;
+        SelectObject(hdc_4, bmp_A7B6[word_A7D0]);
+        BitBlt(hdc_4, 0, 0, word_A7E6, word_A7E8, var_2, posx_A7E2, posy_A7E4, SRCCOPY);
+        var_1E = max(posx_A7E2, word_A7EA);
+        var_1C = max(posy_A7E4, word_A7EC);
+        width_1A = min(word_A7E6 + posx_A7E2, word_A7EE + word_A7EA) - var_1E;
+        height_18 = min(posy_A7E4 + word_A7E8, word_A7EC + word_A7F0) - var_1C;
+        posx_16 = max(0, var_1E - posx_A7E2);
+        posy_14 = max(0, var_1C - posy_A7E4);
+        posx_E = max(0, var_1E - word_A7EA);
+        posy_C = max(0, var_1C - word_A7EC);
+        if (width_1A > 0 && height_18 > 0) {
+            SelectObject(hdc_6, bmp_A7B6[LOBYTE(word_A7D0) - 0xFF & 1]);
+            BitBlt(hdc_4, posx_16, posy_14, width_1A, height_18, hdc_6, posx_E, posy_C, SRCCOPY);
         }
     }
-    if (word_A7BC != NULL) {
-        SelectObject(var_6, word_A7BA);
-        BitBlt(var_6, 0, 0, word_A7E6, word_A7E8, var_4, 0, 0, SRCCOPY);
-        var_16 = max(0, word_A7DA - word_A7E2);
-        var_14 = max(0, word_A7DC - word_A7E4);
-        if (word_A7BE != NULL) {
-            SelectObject(var_4, word_A7BE);
-            BitBlt(var_6, var_16, var_14, word_A7DE, word_A7E0, var_4, word_A7C0, word_A7C2, SRCAND);
-            SelectObject(var_4, word_A7BC);
-            BitBlt(var_6, var_16, var_14, word_A7DE, word_A7E0, var_4, word_A7C0, word_A7C2, SRCPAINT);
+
+    if (bmp_A7BC != NULL) {
+        SelectObject(hdc_6, bmp_A7BA);
+        BitBlt(hdc_6, 0, 0, word_A7E6, word_A7E8, hdc_4, 0, 0, SRCCOPY);
+        posx_16 = max(0, posx_A7DA - posx_A7E2);
+        posy_14 = max(0, posy_A7DC - posy_A7E4);
+        if (bmp_A7BE != NULL) {
+            SelectObject(hdc_4, bmp_A7BE);
+            BitBlt(hdc_6, posx_16, posy_14, width_A7DE, height_A7E0, hdc_4, posx_A7C0, posy_A7C2, SRCAND);
+            SelectObject(hdc_4, bmp_A7BC);
+            BitBlt(hdc_6, posx_16, posy_14, width_A7DE, height_A7E0, hdc_4, posx_A7C0, posy_A7C2, SRCPAINT);
         } else {
-            SelectObject(var_4, word_A7BC);
-            BitBlt(var_6, var_16, var_14, word_A7DE, word_A7E0, var_4, word_A7C0, word_A7C2, SRCCOPY);
+            SelectObject(hdc_4, bmp_A7BC);
+            BitBlt(hdc_6, posx_16, posy_14, width_A7DE, height_A7E0, hdc_4, posx_A7C0, posy_A7C2, SRCCOPY);
         }
         word_A7D2 = 1;
         word_CA5E = 1;
-        MoveWindow(arg_0, word_A7E2, word_A7E4, word_A7E6, word_A7E8 + word_CA72, TRUE);
+        MoveWindow(hWnd, posx_A7E2, posy_A7E4, word_A7E6, word_A7E8 + word_CA72, TRUE);
         word_CA5E = 0;
     }
-    DeleteDC(var_4);
-    DeleteDC(var_6);
-    word_A7EA = word_A7E2;
-    word_A7EC = word_A7E4;
+    DeleteDC(hdc_4);
+    DeleteDC(hdc_6);
+    word_A7EA = posx_A7E2;
+    word_A7EC = posy_A7E4;
     word_A7EE = word_A7E6;
     word_A7F0 = word_A7E8;
-    word_A7F2 = word_A7DA;
-    word_A7F4 = word_A7DC;
-    word_A7F6 = word_A7DE;
-    word_A7F8 = word_A7E0;
-    word_A7D8 = word_A7BC;
-    word_A7C8 = word_A7C0;
-    word_A7CA = word_A7C2;
+    posx_A7F2 = posx_A7DA;
+    posy_A7F4 = posy_A7DC;
+    word_A7F6 = width_A7DE;
+    word_A7F8 = height_A7E0;
+    word_A7D8 = bmp_A7BC;
+    word_A7C8 = posx_A7C0;
+    word_A7CA = posy_A7C2;
     ReleaseDC(NULL, var_2);
 }
 
 /* Render UFO beam (if any) and present render targets onto window. */
-void sub_3717(HWND arg_0)
+void paint_3717(HWND hWnd)
 {
-    HDC var_2;
-    HDC var_4;
+    HDC hdc_2;
+    HDC hdc_4;
     RECT var_C;
-    HDC var_E;
+    HDC hdc_E;
 #ifdef WIN32
     HDC screen;
 #endif
@@ -1912,24 +1938,24 @@ void sub_3717(HWND arg_0)
         return;
     }
     word_A7D2 = 0;
-    var_2 = GetDC(arg_0);
-    SelectPalette(var_2, word_CA4A, FALSE);
-    RealizePalette(var_2);
-    var_4 = CreateCompatibleDC(var_2);
-    SelectPalette(var_4, word_CA4A, FALSE);
-    SelectObject(var_4, word_A7BA);
-    BitBlt(var_2, 0, 0, word_A7E6, word_A7E8, var_4, 0, 0, SRCCOPY);
+    hdc_2 = GetDC(hWnd);
+    SelectPalette(hdc_2, hPalette_, FALSE);
+    RealizePalette(hdc_2);
+    hdc_4 = CreateCompatibleDC(hdc_2);
+    SelectPalette(hdc_4, hPalette_, FALSE);
+    SelectObject(hdc_4, bmp_A7BA);
+    BitBlt(hdc_2, 0, 0, word_A7E6, word_A7E8, hdc_4, 0, 0, SRCCOPY);
     if (word_CA72 != 0) {
         if (word_C0B8 == NULL) {
-            word_C0B8 = CreateCompatibleBitmap(var_2, 40, word_CA52 * 4 / 5);
+            word_C0B8 = CreateCompatibleBitmap(hdc_2, 40, screenHeight_ * 4 / 5);
             if (word_C0B8 == NULL) {
-                goto loc_398B;
+                goto failed;
             }
         }
         if (word_C0B2 == NULL) {
-            word_C0B2 = CreateCompatibleBitmap(var_2, 40, word_CA52 * 4 / 5);
+            word_C0B2 = CreateCompatibleBitmap(hdc_2, 40, screenHeight_ * 4 / 5);
             if (word_C0B2 == NULL) {
-                goto loc_398B;
+                goto failed;
             }
         }
         if (word_CA44 == NULL) {
@@ -1938,12 +1964,12 @@ void sub_3717(HWND arg_0)
         if (word_C0B4 == NULL) {
             word_C0B4 = CreateSolidBrush(RGB(128, 128, 0));
         }
-        var_E = CreateCompatibleDC(var_2);
-        SelectObject(var_E, word_C0B2);
+        hdc_E = CreateCompatibleDC(hdc_2);
+        SelectObject(hdc_E, word_C0B2);
 #ifdef _WIN32
         /* Screen contents with height of only 40 pixels can be captured from window device context on Windows 10. Capture directly from screen instead. */
         screen = GetDC(NULL);
-        BitBlt(var_E, 0, 0, 40, word_CA72, screen, word_A7E2, word_A7E4 + 40, SRCCOPY);
+        BitBlt(hdc_E, 0, 0, 40, word_CA72, screen, posx_A7E2, posy_A7E4 + 40, SRCCOPY);
         ReleaseDC(NULL, screen);
 #else
         BitBlt(var_E, 0, 0, 40, word_CA72, var_2, 0, 40, SRCCOPY);
@@ -1952,14 +1978,14 @@ void sub_3717(HWND arg_0)
         var_C.top = 0;
         var_C.right = 40;
         var_C.bottom = word_CA72;
-        SelectObject(var_4, word_C0B8);
-        FillRect(var_4, &var_C, word_CA44);
-        BitBlt(var_E, 0, 0, 40, word_CA72, var_4, 0, 0, SRCAND);
-        FillRect(var_4, &var_C, word_C0B4);
-        BitBlt(var_E, 0, 0, 40, word_CA72, var_4, 0, 0, SRCPAINT);
-        BitBlt(var_2, 0, 40, 40, word_CA72, var_E, 0, 0, SRCCOPY);
-        DeleteDC(var_E);
-        DeleteDC(var_4);
+        SelectObject(hdc_4, word_C0B8);
+        FillRect(hdc_4, &var_C, word_CA44);
+        BitBlt(hdc_E, 0, 0, 40, word_CA72, hdc_4, 0, 0, SRCAND);
+        FillRect(hdc_4, &var_C, word_C0B4);
+        BitBlt(hdc_E, 0, 0, 40, word_CA72, hdc_4, 0, 0, SRCPAINT);
+        BitBlt(hdc_2, 0, 40, 40, word_CA72, hdc_E, 0, 0, SRCCOPY);
+        DeleteDC(hdc_E);
+        DeleteDC(hdc_4);
     } else {
         if (word_C0B4 != NULL) {
             DeleteObject(word_C0B4);
@@ -1977,12 +2003,12 @@ void sub_3717(HWND arg_0)
             DeleteObject(word_C0B8);
             word_C0B8 = NULL;
         }
-        DeleteDC(var_4);
+        DeleteDC(hdc_4);
     }
-    ReleaseDC(arg_0, var_2);
+    ReleaseDC(hWnd, hdc_2);
     return;
-loc_398B:
-    ReleaseDC(arg_0, var_2);
+failed:
+    ReleaseDC(hWnd, hdc_2);
 }
 
 /* Unused. */
@@ -1995,12 +2021,12 @@ void sub_399D(HWND arg_0, int arg_2, int arg_4, int arg_6, int arg_8)
 /* Find if a window has a match in known instance list. */
 BOOL sub_39D6(HWND arg_0)
 {
-    int var_2;
-    if (word_CA40 == 0) {
+    int i;
+    if (otherPooCount_ == 0) {
         return FALSE;
     }
-    for (var_2 = 0; var_2 < 8; var_2 += 1) {
-        if (word_CA60[var_2] == arg_0 && word_CA60[var_2] != NULL) {
+    for (i = 0; i < 8; i += 1) {
+        if (hOtherPooWnd_[i] == arg_0 && hOtherPooWnd_[i] != NULL) {
             return TRUE;
         }
     }
@@ -2008,27 +2034,29 @@ BOOL sub_39D6(HWND arg_0)
 }
 
 /* Find X-coordinate of possible collision with other instances. Return zero when no collision detected. */
-int sub_3A36(int arg_0, int arg_2, int arg_4, int arg_6)
+int sub_3A36(int posx_a0, int posx_a2, int posy_a4, int posy_a6)
 {
-    int var_2;
-    int var_4;
-    int var_6;
-    int var_8;
-    int var_A;
-    for (var_2 = 0; var_2 < 8; var_2 += 1) {
-        if (word_CA60[var_2] != NULL) {
-            var_4 = (short)GetWindowWord(word_CA60[var_2], 0);
-            var_8 = (short)GetWindowWord(word_CA60[var_2], 2);
-            var_6 = var_4 + 40;
-            var_A = var_8 + 40;
-            if (var_6 == 0) {
+    int i;
+    int posx_4;
+    int posx_6;
+    int posy_8;
+    int posy_A;
+    for (i = 0; i < 8; i += 1) {
+        if (hOtherPooWnd_[i] != NULL) {
+            posx_4 = (short)GetWindowWord(hOtherPooWnd_[i], 0);
+            posy_8 = (short)GetWindowWord(hOtherPooWnd_[i], 2);
+            posx_6 = posx_4 + 40;
+            posy_A = posy_8 + 40;
+            if (posx_6 == 0) {
                 continue;
             }
-            if ((var_8 <= arg_4 && var_A > arg_4 || var_8 < arg_6 && var_A > arg_6) && var_6 > arg_0 && var_6 <= arg_2 && arg_2 > arg_0) {
-                return var_6;
+            if (((posy_8 <= posy_a4 && posy_A > posy_a4) || (posy_8 < posy_a6 && posy_A > posy_a6)) &&
+                    posx_6 > posx_a0 && posx_6 <= posx_a2 && posx_a2 > posx_a0) {
+                return posx_6;
             }
-            if ((var_8 <= arg_4 && var_A > arg_4 || var_8 < arg_6 && var_A > arg_6) && var_4 >= arg_2 && var_4 < arg_0 && arg_2 < arg_0) {
-                return var_4;
+            if (((posy_8 <= posy_a4 && posy_A > posy_a4) || (posy_8 < posy_a6 && posy_A > posy_a6)) &&
+                    posx_4 >= posx_a2 && posx_4 < posx_a0 && posx_a2 < posx_a0) {
+                return posx_4;
             }
         }
     }
@@ -2036,73 +2064,74 @@ int sub_3A36(int arg_0, int arg_2, int arg_4, int arg_6)
 }
 
 /* Populate known instance list by searching for visible windows with name match. */
-void sub_3B4C(HWND arg_0)
+void checkOtherPoo_3B4C(HWND hWnd)
 {
-    HWND var_2;
-    UINT var_4;
-    int var_6;
-    int var_8;
-    char var_48[64];
-    for (var_6 = 0; var_6 < 8; var_6 += 1) {
-        word_CA60[var_6] = NULL;
+    HWND hDeskWnd;
+    UINT gwCmd;
+    int i;
+    int wndCount;
+    char deskWndTitle[64];
+    for (i = 0; i < 8; i += 1) {
+        hOtherPooWnd_[i] = NULL;
     }
-    var_2 = GetDesktopWindow();
-    var_4 = GW_CHILD;
-    var_6 = 0;
-    var_8 = 0;
-    while ((var_2 = GetWindow(var_2, var_4)) != NULL && var_6 < 64) {
-        var_4 = GW_HWNDNEXT;
-        if (var_2 == arg_0) {
+    hDeskWnd = GetDesktopWindow();
+    gwCmd = GW_CHILD;
+    i = 0;
+    wndCount = 0;
+    while ((hDeskWnd = GetWindow(hDeskWnd, gwCmd)) != NULL && i < 64) {
+        gwCmd = GW_HWNDNEXT;
+        if (hDeskWnd == hWnd) {
             continue;
         }
-        if ((GetWindowLong(var_2, GWL_STYLE) & WS_VISIBLE) != 0) {
-            GetWindowText(var_2, var_48, 16);
-            if (lstrcmp(var_48, "Screen Mate") == 0) {
-                word_CA60[var_8] = var_2;
-                var_8 += 1;
-                if (var_8 > 8) {
+        if ((GetWindowLong(hDeskWnd, GWL_STYLE) & WS_VISIBLE) != 0) {
+            GetWindowText(hDeskWnd, deskWndTitle, 16);
+            if (lstrcmp(deskWndTitle, "Screen Mate") == 0) {
+                hOtherPooWnd_[wndCount] = hDeskWnd;
+                wndCount += 1;
+                if (wndCount > 8) {
                     return;
                 }
             }
-            var_6 += 1;
+            i += 1;
         }
     }
-    word_CA40 = var_8;
+    otherPooCount_ = wndCount;
 }
 
-/* Populate known instance list by searching for visible windows with name match, then notify other instances of self creation. */
-BOOL sub_3C20(HWND arg_0)
+/* Populate known instance list by searching for visible windows with name match,
+ * then notify other instances of self creation. */
+BOOL checkOtherPoo(HWND hWnd)
 {
-    HWND var_2;
-    UINT var_4;
-    int var_6;
-    int var_8;
-    char var_48[64];
-    var_2 = GetDesktopWindow();
-    var_4 = GW_CHILD;
-    var_6 = 0;
-    var_8 = 0;
-    while ((var_2 = GetWindow(var_2, var_4)) != NULL && var_6 < 64) {
-        var_4 = GW_HWNDNEXT;
-        if (var_2 == arg_0) {
+    HWND hDeskWnd;
+    UINT gwCmd;
+    int i;
+    int wndCount;
+    char deskWndTitle[64];
+    hDeskWnd = GetDesktopWindow();
+    gwCmd = GW_CHILD;
+    i = 0;
+    wndCount = 0;
+    while ((hDeskWnd = GetWindow(hDeskWnd, gwCmd)) != NULL && i < 64) {
+        gwCmd = GW_HWNDNEXT;
+        if (hDeskWnd == hWnd) {
             continue;
         }
-        if ((GetWindowLong(var_2, GWL_STYLE) & WS_VISIBLE) != 0) {
-            GetWindowText(var_2, var_48, 16);
-            if (lstrcmp(var_48, "Screen Mate") == 0) {
-                word_CA60[var_8] = var_2;
-                var_8 += 1;
-                if (var_8 > 8) {
+        if ((GetWindowLong(hDeskWnd, GWL_STYLE) & WS_VISIBLE) != 0) {
+            GetWindowText(hDeskWnd, deskWndTitle, 16);
+            if (lstrcmp(deskWndTitle, "Screen Mate") == 0) {
+                hOtherPooWnd_[wndCount] = hDeskWnd;
+                wndCount += 1;
+                if (wndCount > 8) {
                     return FALSE;
                 }
             }
-            var_6 += 1;
+            i += 1;
         }
     }
-    word_CA40 = var_8;
-    word_CA48 = var_8;
-    for (var_6 = 0; var_6 < word_CA40; var_6 += 1) {
-        SendMessage(word_CA60[var_6], WM_USER, (WPARAM)1, (LPARAM)arg_0);
+    otherPooCount_ = wndCount;
+    otherPooCount2_ = wndCount;
+    for (i = 0; i < otherPooCount_; i += 1) {
+        SendMessage(hOtherPooWnd_[i], WM_USER, (WPARAM)1, (LPARAM)hWnd);
     }
     return TRUE;
 }
@@ -2112,8 +2141,8 @@ void sub_3D12(HWND arg_0)
 {
     int var_2;
     for (var_2 = 0; var_2 < 8; var_2 += 1) {
-        if (word_CA60[var_2] != NULL) {
-            SendMessage(word_CA60[var_2], WM_USER, (WPARAM)2, (LPARAM)arg_0);
+        if (hOtherPooWnd_[var_2] != NULL) {
+            SendMessage(hOtherPooWnd_[var_2], WM_USER, (WPARAM)2, (LPARAM)arg_0);
         }
     }
 }
@@ -2121,24 +2150,24 @@ void sub_3D12(HWND arg_0)
 /* Add window into known instance list. */
 void sub_3D5F(HWND arg_0)
 {
-    int var_2;
-    for (var_2 = 0; var_2 < 8; var_2 += 1) {
-        if (word_CA60[var_2] == NULL) {
-            word_CA40 += 1;
-            word_CA60[var_2] = arg_0;
+    int i;
+    for (i = 0; i < 8; i += 1) {
+        if (hOtherPooWnd_[i] == NULL) {
+            otherPooCount_ += 1;
+            hOtherPooWnd_[i] = arg_0;
             break;
         }
     }
 }
 
 /* Remove window from known instance list. */
-void sub_3DA7(HWND arg_0)
+void sub_3DA7(HWND hWnd)
 {
-    int var_2;
-    for (var_2 = 0; var_2 < 8; var_2 += 1) {
-        if (word_CA60[var_2] == arg_0) {
-            word_CA40 -= 1;
-            word_CA60[var_2] = NULL;
+    int i;
+    for (i = 0; i < 8; i += 1) {
+        if (hOtherPooWnd_[i] == hWnd) {
+            otherPooCount_ -= 1;
+            hOtherPooWnd_[i] = NULL;
             break;
         }
     }
@@ -2155,7 +2184,7 @@ void sub_3DF0(void)
     var_6 = 0;
     while ((var_2 = GetWindow(var_2, var_4)) != NULL && var_6 < 32) {
         var_4 = GW_HWNDNEXT;
-        if (var_2 == word_C0B0) {
+        if (var_2 == hPooWnd_) {
             continue;
         }
         if ((GetWindowLong(var_2, GWL_STYLE) & WS_VISIBLE) != 0) {
@@ -2231,9 +2260,9 @@ int sub_408C(HWND * arg_0, int arg_2, int arg_4, int arg_6, int arg_8)
             }
         }
     }
-    if (arg_2 >= word_CA52 && arg_4 <= word_CA52) {
+    if (arg_2 >= screenHeight_ && arg_4 <= screenHeight_) {
         *arg_0 = NULL;
-        return word_CA52;
+        return screenHeight_;
     }
     return 0;
 }
@@ -2248,7 +2277,7 @@ int sub_419E(HWND arg_0, int arg_2, int arg_4, int arg_6, int arg_8)
             return var_8.top;
         }
     }
-    if (arg_2 > word_CA52) {
+    if (arg_2 > screenHeight_) {
         return -1;
     }
     return 0;
@@ -2264,75 +2293,76 @@ void sub_4210(int arg_0, UINT arg_2, WORD arg_4)
         FreeResource(word_A82E);
         word_A82E = NULL;
     }
-    word_A82E = LoadResource(word_CA58, FindResource(word_CA58, MAKEINTRESOURCE(arg_0), "WAVE"));
+    word_A82E = LoadResource(hSelfInst_, FindResource(hSelfInst_, MAKEINTRESOURCE(arg_0), "WAVE"));
     lpszSoundName = LockResource(word_A82E);
     sndPlaySound(lpszSoundName, arg_2 | (SND_ASYNC | SND_MEMORY));
 }
 
 /* Stop playing sound. */
-void sub_428E(void)
+void stopPlaySound(void)
 {
     sndPlaySound(NULL, SND_SYNC);
 }
 
 /* Play sound by name. */
-void sub_42AA(LPCSTR lpszSoundName)
+void asyncPlaySound(LPCSTR path)
 {
-    sndPlaySound(lpszSoundName, SND_ASYNC);
+    sndPlaySound(path, SND_ASYNC);
 }
 
 /* Play sound by resource ID and additional flags (when option "Cry" enabled). */
 void sub_42C8(int arg_0, UINT arg_2, WORD arg_4)
 {
-    if (word_CA5A != 0U) {
+    if (confSound_ != 0U) {
         sub_4210(arg_0, arg_2, arg_4);
     }
 }
 
 /* Generate sprites from loaded resource images. */
-BOOL sub_42F3(HDC arg_0)
+BOOL initResources(HDC hdc)
 {
-    int var_2;
-    int var_4;
-    for (var_2 = 0; var_2 < 16; var_2 += 1) {
-        if (stru_9EE2[var_2].resource == 0) {
+    int i;
+    int j;
+    for (i = 0; i < 16; i += 1) {
+        if (originalRes_[i].resId == 0) {
             break;
         }
-        if (!sub_2B30(arg_0, &stru_9EE2[var_2].info, stru_9EE2[var_2].resource, -1)) {
+        if (!loadSprite(hdc, &originalRes_[i].info, originalRes_[i].resId, -1)) {
             return FALSE;
         }
-        if (!sub_2B30(arg_0, &stru_9FE2[var_2].info, stru_9EE2[var_2].resource, -3)) {
+        if (!loadSprite(hdc, &hFlipRes_[i].info, originalRes_[i].resId, -3)) {
             return FALSE;
         }
-        for (var_4 = 0; var_4 < 16; var_4 += 1) {
-            stru_A8A2[var_2 * 16 + var_4].bitmaps[0] = stru_9EE2[var_2].info.bitmaps[0];
-            stru_A8A2[var_2 * 16 + var_4].bitmaps[1] = stru_9EE2[var_2].info.bitmaps[1];
-            stru_A8A2[var_2 * 16 + var_4].width = 40;
-            stru_A8A2[var_2 * 16 + var_4].height = 40;
-            stru_A8A2[var_2 * 16 + var_4].x = var_4 * 40;
-            stru_A8A2[var_2 * 16 + var_4].y = 0;
-            stru_A8A2[var_2 * 16 + var_4 + 256].bitmaps[0] = stru_9FE2[var_2].info.bitmaps[0];
-            stru_A8A2[var_2 * 16 + var_4 + 256].bitmaps[1] = stru_9FE2[var_2].info.bitmaps[1];
-            stru_A8A2[var_2 * 16 + var_4 + 256].width = 40;
-            stru_A8A2[var_2 * 16 + var_4 + 256].height = 40;
-            stru_A8A2[var_2 * 16 + var_4 + 256].x = (15 - var_4) * 40;
-            stru_A8A2[var_2 * 16 + var_4 + 256].y = 0;
+        /// what is 16, 256 mean?
+        for (j = 0; j < 16; j += 1) {
+            sprites_[i * 16 + j].bitmaps[0] = originalRes_[i].info.bitmaps[0];
+            sprites_[i * 16 + j].bitmaps[1] = originalRes_[i].info.bitmaps[1];
+            sprites_[i * 16 + j].width = 40;
+            sprites_[i * 16 + j].height = 40;
+            sprites_[i * 16 + j].x = j * 40;
+            sprites_[i * 16 + j].y = 0;
+            sprites_[i * 16 + j + 256].bitmaps[0] = hFlipRes_[i].info.bitmaps[0];
+            sprites_[i * 16 + j + 256].bitmaps[1] = hFlipRes_[i].info.bitmaps[1];
+            sprites_[i * 16 + j + 256].width = 40;
+            sprites_[i * 16 + j + 256].height = 40;
+            sprites_[i * 16 + j + 256].x = (15 - j) * 40;
+            sprites_[i * 16 + j + 256].y = 0;
         }
     }
     return TRUE;
 }
 
 /* Release resource images. */
-void sub_44ED(void)
+void releaseResources(void)
 {
-    int var_2;
-    for (var_2 = 0; var_2 < 16; var_2 += 1) {
-        if (stru_9EE2[var_2].resource == 0) {
+    int i;
+    for (i = 0; i < 16; i += 1) {
+        if (originalRes_[i].resId == 0) {
             break;
         }
-        sub_2EEC(&stru_9EE2[var_2].info);
-        if (stru_9EE2[var_2].flags == 1) {
-            sub_2EEC(&stru_9FE2[var_2].info);
+        releaseSprite(&originalRes_[i].info);
+        if (originalRes_[i].flags == 1) {
+            releaseSprite(&hFlipRes_[i].info);
         }
     }
 }
@@ -2340,17 +2370,17 @@ void sub_44ED(void)
 /* Turn around when approaching screen border or otherwise with 1/20 probability.  */
 void sub_4559(void)
 {
-    if (word_A2AA > 0 && word_A800 < 0) {
-        word_A8A0 = 24;
+    if (word_A2AA > 0 && posx_A800 < 0) {
+        state_A8A0 = 24;
     }
-    if (word_A2AA < 0 && word_CA50 - stru_A8A2[word_A804].width < word_A800) {
-        word_A8A0 = 24;
+    if (word_A2AA < 0 && screenWidth_ - sprites_[index_A804].width < posx_A800) {
+        state_A8A0 = 24;
     }
-    if (word_A2AA > 0 && word_CA50 - stru_A8A2[word_A804].width > word_A800 && rand() % 20 == 0) {
-        word_A8A0 = 24;
+    if (word_A2AA > 0 && screenWidth_ - sprites_[index_A804].width > posx_A800 && rand() % 20 == 0) {
+        state_A8A0 = 24;
     }
-    if (word_A2AA < 0 && word_A800 > 0 && rand() % 20 == 0) {
-        word_A8A0 = 24;
+    if (word_A2AA < 0 && posx_A800 > 0 && rand() % 20 == 0) {
+        state_A8A0 = 24;
     }
 }
 
@@ -2358,19 +2388,19 @@ void sub_4559(void)
 void sub_4614(BOOL arg_0)
 {
     if (word_A7FC == 0) {
-        if (word_A2AA > 0 && word_A800 < 0) {
-            word_A8A0 = 30;
+        if (word_A2AA > 0 && posx_A800 < 0) {
+            state_A8A0 = 30;
         }
-        if (word_A2AA < 0 && word_CA50 - stru_A8A2[word_A804].width < word_A800) {
-            word_A8A0 = 30;
+        if (word_A2AA < 0 && screenWidth_ - sprites_[index_A804].width < posx_A800) {
+            state_A8A0 = 30;
         }
     }
     if (arg_0) {
-        if (word_A2AA > 0 && word_CA50 - 80 > word_A800 && rand() % 20 == 0) {
-            word_A8A0 = 24;
+        if (word_A2AA > 0 && screenWidth_ - 80 > posx_A800 && rand() % 20 == 0) {
+            state_A8A0 = 24;
         }
-        if (word_A2AA < 0 && word_A800 > 40 && rand() % 20 == 0) {
-            word_A8A0 = 24;
+        if (word_A2AA < 0 && posx_A800 > 40 && rand() % 20 == 0) {
+            state_A8A0 = 24;
         }
     }
 }
@@ -2379,7 +2409,7 @@ void sub_4614(BOOL arg_0)
 void sub_46D2(void)
 {
     if (word_A826-- <= 0) {
-        word_A8A0 = 42;
+        state_A8A0 = 42;
     }
 }
 
@@ -2398,9 +2428,9 @@ void sub_46F7(void)
             if (word_A832 != 0) {
                 sub_4210(108, 0U, 0);
             } else if (word_CA76 != 0) {
-                word_A8A0 = 113;
+                state_A8A0 = 113;
             } else {
-                word_A8A0 = 1;
+                state_A8A0 = 1;
             }
         }
     } else {
@@ -2415,26 +2445,26 @@ void sub_46F7(void)
             var_C = 12;
         }
         if (var_2->tm_min == 0 && var_C != word_A830) {
-            sub_2A96();
+            destroySubPooWnd();
             dword_A834 = 0;
             word_A830 = var_C;
             word_A832 = word_A830 + 1;
-            word_A8A0 = 81;
+            state_A8A0 = 81;
         }
     }
 }
 
 /* Update window position and sprite to be painted. */
-void sub_4807(int arg_0, int arg_2, int arg_4)
+void sub_4807(int x, int y, int sprite)
 {
-    SetWindowWord(word_C0B0, 0, (short)word_A800);
-    SetWindowWord(word_C0B0, 2, (short)word_A802);
-    if (arg_4 >= 9 && arg_4 <= 14) {
-        sub_31A8(arg_0, arg_2, arg_4);
+    SetWindowWord(hPooWnd_, 0, (short)posx_A800);
+    SetWindowWord(hPooWnd_, 2, (short)posy_A802);
+    if (sprite >= 9 && sprite <= 14) {
+        sub_31A8(x, y, sprite);
     } else if (word_A2AA > 0) {
-        sub_31A8(arg_0, arg_2, arg_4);
+        sub_31A8(x, y, sprite);
     } else {
-        sub_31A8(arg_0, arg_2, arg_4 + 256);
+        sub_31A8(x, y, sprite + 256);
     }
 }
 
@@ -2465,9 +2495,9 @@ void sub_491D(HWND arg_0, LPRECT arg_2)
 {
     if (arg_0 == NULL) {
         arg_2->left = 0;
-        arg_2->right = word_CA50;
-        arg_2->top = word_CA52;
-        arg_2->bottom = word_CA52 * 2;
+        arg_2->right = screenWidth_;
+        arg_2->top = screenHeight_;
+        arg_2->bottom = screenHeight_ * 2;
     } else {
         GetWindowRect(arg_0, arg_2);
     }
@@ -2483,55 +2513,55 @@ void sub_496F(int arg_0)
     if (word_A81C != NULL) {
         if (!sub_48F3(word_A81C)) {
             if (arg_0 == 2) {
-                word_A8A0 = 94;
+                state_A8A0 = 94;
             } else {
-                word_A8A0 = 102;
+                state_A8A0 = 102;
             }
             return;
         }
         sub_491D(word_A81C, &var_8);
-        if (var_8.top > stru_A81E.top || word_A800 + 40 < var_8.left || var_8.right < word_A800) {
+        if (var_8.top > stru_A81E.top || posx_A800 + 40 < var_8.left || var_8.right < posx_A800) {
             if (arg_0 == 2) {
-                word_A8A0 = 94;
+                state_A8A0 = 94;
             } else {
-                word_A8A0 = 102;
+                state_A8A0 = 102;
             }
             return;
         }
         if (var_8.top < stru_A81E.top) {
-            word_A802 = var_8.top - stru_A8A2[word_A804].height;
+            posy_A802 = var_8.top - sprites_[index_A804].height;
             stru_A81E.top = var_8.top;
             stru_A81E.bottom = var_8.bottom;
             stru_A81E.left = var_8.left;
             stru_A81E.right = var_8.right;
-            sub_4807(word_A800, word_A802, word_A804);
+            sub_4807(posx_A800, posy_A802, index_A804);
             return;
         }
         if (arg_0 == 1) {
-            if (word_A800 + 8 < var_8.left && word_A2AA > 0) {
-                word_A8A0 = 105;
-                word_A800 = var_8.left - 10;
+            if (posx_A800 + 8 < var_8.left && word_A2AA > 0) {
+                state_A8A0 = 105;
+                posx_A800 = var_8.left - 10;
                 return;
             }
-            if (word_A800 + 32 >= var_8.right && word_A2AA < 0) {
-                word_A8A0 = 105;
-                word_A800 = var_8.right - 30;
+            if (posx_A800 + 32 >= var_8.right && word_A2AA < 0) {
+                state_A8A0 = 105;
+                posx_A800 = var_8.right - 30;
                 return;
             }
-            if (rand() % 20 - 1 == 0 && word_CA52 - word_A802 > 100) {
-                word_A8A0 = 104;
+            if (rand() % 20 - 1 == 0 && screenHeight_ - posy_A802 > 100) {
+                state_A8A0 = 104;
                 return;
             }
         }
         if (arg_0 == 2) {
-            if (word_A800 + 32 < var_8.left || word_A800 + 8 > var_8.right) {
-                word_A8A0 = 94;
+            if (posx_A800 + 32 < var_8.left || posx_A800 + 8 > var_8.right) {
+                state_A8A0 = 94;
                 return;
             }
         }
     }
-    if (stru_A8A2[word_A804].width + word_A800 < 0 || word_A800 > word_CA50) {
-        word_A8A0 = 0;
+    if (sprites_[index_A804].width + posx_A800 < 0 || posx_A800 > screenWidth_) {
+        state_A8A0 = 0;
         return;
     }
 }
@@ -2545,42 +2575,42 @@ void sub_4B3B(void)
     }
     if (word_A81C != NULL) {
         if (!sub_48F3(word_A81C)) {
-            word_A8A0 = 102;
+            state_A8A0 = 102;
             return;
         }
         sub_491D(word_A81C, &var_8);
         if (var_8.right < stru_A81E.right && word_A2AA > 0 || var_8.left > stru_A81E.left && word_A2AA < 0) {
-            word_A8A0 = 102;
+            state_A8A0 = 102;
             return;
         }
         if (var_8.right > stru_A81E.right && word_A2AA > 0 || var_8.left < stru_A81E.left && word_A2AA < 0) {
             if (word_A2AA > 0) {
-                word_A800 = var_8.right + 10;
+                posx_A800 = var_8.right + 10;
             } else {
-                word_A800 = var_8.left - 50;
+                posx_A800 = var_8.left - 50;
             }
-            sub_4807(word_A800, word_A802, word_A804);
-            word_A8A0 = 102;
+            sub_4807(posx_A800, posy_A802, index_A804);
+            state_A8A0 = 102;
             return;
         }
     }
 }
 
 /* Detect collision with other instances, action controlled by a flag. */
-void sub_4C21(int arg_0, int arg_2, int arg_4)
+void sub_4C21(int posx_0, int posx_2, int arg_4)
 {
-    if (arg_2 < arg_0) {
-        arg_0 += 40;
-        arg_2 = arg_0 - 80;
+    if (posx_2 < posx_0) {
+        posx_0 += 40;
+        posx_2 = posx_0 - 80;
     } else {
-        arg_2 = arg_0 + 80;
+        posx_2 = posx_0 + 80;
     }
-    if (sub_3A36(arg_0, arg_2, word_A802, word_A802 + 40) != 0) {
+    if (sub_3A36(posx_0, posx_2, posy_A802, posy_A802 + 40) != 0) {
         if (arg_4 == 1) {
-            word_A8A0 = 24;
+            state_A8A0 = 24;
         }
         if (arg_4 == 2) {
-            word_A8A0 = 30;
+            state_A8A0 = 30;
         }
     }
 }
@@ -2594,13 +2624,13 @@ int sub_4C91(int arg_0, int arg_2)
     } else {
         arg_2 = arg_0 + 80;
     }
-    return sub_3A36(arg_0, arg_2, word_A802, word_A802 + 40);
+    return sub_3A36(arg_0, arg_2, posy_A802, posy_A802 + 40);
 }
 
 /* Reinitialize state. */
-void sub_4CE1(void)
+void resetState(void)
 {
-    word_A8A0 = 0;
+    state_A8A0 = 0;
 }
 
 /* Process state change on each timer expiration. */
@@ -2613,134 +2643,134 @@ void sub_4CF8(void)
     RECT var_10;
     POINT var_14;
     if (word_A84A++ > 100) {
-        sub_3B4C(word_C0B0);
+        checkOtherPoo_3B4C(hPooWnd_);
         word_A84A = 0;
     }
-    if (word_C0AC != 0) {
+    if (confChime_ != 0) {
         sub_46F7();
     }
 loc_4D33:
-    switch (word_A8A0) {
+    switch (state_A8A0) {
     case 0:
         word_A7FC = 0;
         srand((unsigned int)GetTickCount());
-        word_A800 = -80;
-        word_A802 = -80;
-        word_A8A0 = 1;
+        posx_A800 = -80;
+        posy_A802 = -80;
+        state_A8A0 = 1;
     case 1:
         word_A844 = 0;
-        if (word_CA42 != 0U) {
-            word_A8A0 = 2;
+        if (confGForce_ != 0U) {
+            state_A8A0 = 2;
             goto loc_4D33;
         }
         word_CA72 = 0;
-        sub_2A96();
+        destroySubPooWnd();
         if (word_CA54 != 0) {
-            word_A8A0 = word_CA54;
+            state_A8A0 = word_CA54;
             word_CA54 = 0;
             break;
         }
         if (rand() % 20 == 5 && word_A7FC == 0) {
-            word_A8A0 = 85;
+            state_A8A0 = 85;
             break;
         }
-        if (rand() % 40 == 5 && word_A7FC == 0 && word_CA3C == 0) {
-            word_A8A0 = 4;
+        if (rand() % 40 == 5 && word_A7FC == 0 && hasOtherPoo_ == 0) {
+            state_A8A0 = 4;
             break;
         }
-        word_A8A0 = word_A15A[rand() % 80];
-        if (word_A800 > word_CA50 || word_A800 < -40 || word_A802 < -40 || word_A802 > word_CA52) {
+        state_A8A0 = word_A15A[rand() % 80];
+        if (posx_A800 > screenWidth_ || posx_A800 < -40 || posy_A802 < -40 || posy_A802 > screenHeight_) {
             if ((rand() & 1) == 0) {
                 word_A2AA = 1;
-                word_A800 = word_CA50 + word_CA4C;
-                word_A802 = rand() % (word_CA52 - 64) + word_CA4E;
+                posx_A800 = screenWidth_ + word_CA4C;
+                posy_A802 = rand() % (screenHeight_ - 64) + word_CA4E;
             } else {
                 word_A2AA = -1;
-                word_A800 = -40;
-                word_A802 = rand() % (word_CA52 - 64) + word_CA4E;
+                posx_A800 = -40;
+                posy_A802 = rand() % (screenHeight_ - 64) + word_CA4E;
             }
-            word_A8A0 = 11;
+            state_A8A0 = 11;
         }
         break;
     case 2:
         word_A7FC = 1;
         word_CA72 = 0;
-        sub_2A96();
+        destroySubPooWnd();
         if (word_CA54 != 0) {
-            word_A8A0 = word_CA54;
+            state_A8A0 = word_CA54;
             word_CA54 = 0;
             break;
         }
-        word_A8A0 = word_A1FA[rand() % 80];
-        if (word_A800 > word_CA50 || word_A800 < -40 || word_A802 < -40 || word_A802 > word_CA52) {
-            if (rand() % 10 == 0 && word_CA3C == 0) {
-                word_A8A0 = 6;
+        state_A8A0 = word_A1FA[rand() % 80];
+        if (posx_A800 > screenWidth_ || posx_A800 < -40 || posy_A802 < -40 || posy_A802 > screenHeight_) {
+            if (rand() % 10 == 0 && hasOtherPoo_ == 0) {
+                state_A8A0 = 6;
                 break;
             }
             word_A81C = GetActiveWindow();
-            if (word_A81C == word_C0B0 || word_A81C == word_CA60[8] || word_A81C == NULL || sub_39D6(word_A81C)) {
-                word_A8A0 = 3;
+            if (word_A81C == hPooWnd_ || word_A81C == hOtherPooWnd_[8] || word_A81C == NULL || sub_39D6(word_A81C)) {
+                state_A8A0 = 3;
                 goto loc_4D33;
             }
             sub_491D(word_A81C, &stru_A81E);
             if (stru_A81E.top < 10) {
-                word_A8A0 = 3;
+                state_A8A0 = 3;
                 goto loc_4D33;
             }
-            word_A800 = (rand() % stru_A81E.right - stru_A81E.left) / 3 + (stru_A81E.right - stru_A81E.left) / 2 + stru_A81E.left - 20;
-            word_A802 = -40;
+            posx_A800 = (rand() % stru_A81E.right - stru_A81E.left) / 3 + (stru_A81E.right - stru_A81E.left) / 2 + stru_A81E.left - 20;
+            posy_A802 = -40;
             word_A840 = 0;
             word_A806 = 0;
             word_A808 = 0;
             word_A842 = rand() % 2;
-            word_A8A0 = 92;
+            state_A8A0 = 92;
             if (rand() % 3 == 0) {
-                word_A8A0 = 3;
+                state_A8A0 = 3;
                 goto loc_4D33;
             }
         }
         break;
     case 3:
         word_A7FC = 1;
-        word_A800 = rand() % (word_CA50 - 40);
-        word_A802 = -(rand() % 20 - (-40));
+        posx_A800 = rand() % (screenWidth_ - 40);
+        posy_A802 = -(rand() % 20 - (-40));
         word_A840 = 0;
         word_A806 = 0;
         word_A808 = 0;
         word_A842 = rand() % 2;
         if (rand() % 3 == 0) {
-            sub_2ABF(word_C0B0);
+            putWndToTop(hPooWnd_);
         }
-        word_A8A0 = 97;
+        state_A8A0 = 97;
         break;
     case 153:
         break;
     case 154:
         break;
     case 4:
-        if (word_CA50 / 2 - 20 > word_A800) {
+        if (screenWidth_ / 2 - 20 > posx_A800) {
             word_A2AA = 1;
         } else {
             word_A2AA = -1;
         }
-        word_A804 = 4;
-        sub_4807(word_A800, word_A802, word_A804);
-        word_A8A0 = 5;
+        index_A804 = 4;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        state_A8A0 = 5;
         break;
     case 5:
         if (word_A83A++ < 1) {
             break;
         }
         word_A83A = 0;
-        word_A800 -= word_A2AA * 16;
-        word_A804 = word_A804 == 4 ? 5 : 4;
-        sub_4807(word_A800, word_A802, word_A804);
-        if (word_A800 < -40 || word_A800 > word_CA50) {
-            word_A8A0 = 6;
+        posx_A800 -= word_A2AA * 16;
+        index_A804 = index_A804 == 4 ? 5 : 4;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        if (posx_A800 < -40 || posx_A800 > screenWidth_) {
+            state_A8A0 = 6;
         }
         break;
     case 6:
-        word_A8A0 = word_A29A[rand() % 8];
+        state_A8A0 = word_A29A[rand() % 8];
         break;
     case 7:
         word_A7FE = 0;
@@ -2750,10 +2780,10 @@ loc_4D33:
         if (word_A7FE != 0) {
             sub_3DF0();
         }
-        word_A804 = 4;
-        sub_4807(word_A800, word_A802, word_A804);
+        index_A804 = 4;
+        sub_4807(posx_A800, posy_A802, index_A804);
         word_A826 = rand() % 10 + 10;
-        word_A8A0 = 8;
+        state_A8A0 = 8;
         break;
     case 8:
         if (word_A83A++ < 1) {
@@ -2762,59 +2792,59 @@ loc_4D33:
         word_A83A = 0;
         if (word_A7FE != 0) {
             if (word_A2AA > 0) {
-                var_2 = sub_3E7C(&var_6, word_A802, word_A802 + 40, -(word_A2AA * 16 - word_A800), word_A800);
+                var_2 = sub_3E7C(&var_6, posy_A802, posy_A802 + 40, -(word_A2AA * 16 - posx_A800), posx_A800);
             } else {
-                var_2 = sub_3E7C(&var_6, word_A802, word_A802 + 40, -(word_A2AA * 16 - word_A800) + 40, word_A800 + 40);
+                var_2 = sub_3E7C(&var_6, posy_A802, posy_A802 + 40, -(word_A2AA * 16 - posx_A800) + 40, posx_A800 + 40);
             }
             if (var_2 != 0) {
                 if (word_A2AA > 0) {
-                    word_A800 = var_2;
+                    posx_A800 = var_2;
                 } else {
-                    word_A800 = var_2 - 40;
+                    posx_A800 = var_2 - 40;
                 }
-                sub_4807(word_A800, word_A802, word_A804);
-                word_A8A0 = 30;
+                sub_4807(posx_A800, posy_A802, index_A804);
+                state_A8A0 = 30;
                 break;
             }
         }
         if (word_A82C == 0) {
-            word_A800 -= word_A2AA * 16;
+            posx_A800 -= word_A2AA * 16;
         }
-        word_A804 = word_A804 == 4 ? 5 : 4;
-        sub_4807(word_A800, word_A802, word_A804);
+        index_A804 = index_A804 == 4 ? 5 : 4;
+        sub_4807(posx_A800, posy_A802, index_A804);
         if (rand() % 50 == 0 && word_A7FC != 0) {
-            word_A8A0 = 9;
+            state_A8A0 = 9;
         }
         sub_4614(TRUE);
         sub_46D2();
         sub_496F(2);
-        sub_4C21(-(word_A2AA * 16 - word_A800), word_A2AA * 16 + word_A800, 2);
+        sub_4C21(-(word_A2AA * 16 - posx_A800), word_A2AA * 16 + posx_A800, 2);
         break;
     case 9:
         word_A806 = -11;
         word_A808 = -(word_A2AA * 8);
-        word_A80C = word_A802;
-        word_A8A0 = 10;
+        word_A80C = posy_A802;
+        state_A8A0 = 10;
     case 10:
-        word_A800 += word_A808;
-        word_A802 += word_A806;
+        posx_A800 += word_A808;
+        posy_A802 += word_A806;
         word_A806 += 2;
         if (word_A806 >= -1 && word_A806 <= 1) {
-            word_A804 = 23;
+            index_A804 = 23;
         } else if (word_A806 < -1) {
-            word_A804 = 30;
+            index_A804 = 30;
         } else {
-            word_A804 = 24;
+            index_A804 = 24;
         }
-        if (word_A80C <= word_A802) {
-            word_A802 = word_A80C;
-            word_A8A0 = 7;
+        if (word_A80C <= posy_A802) {
+            posy_A802 = word_A80C;
+            state_A8A0 = 7;
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         sub_4614(FALSE);
-        sub_4C21(word_A808 + word_A800, word_A800 - word_A808, 2);
-        if (word_A8A0 == 30 && word_A80C != word_A802) {
-            word_A844 = word_A802 - word_A80C;
+        sub_4C21(word_A808 + posx_A800, posx_A800 - word_A808, 2);
+        if (state_A8A0 == 30 && word_A80C != posy_A802) {
+            word_A844 = posy_A802 - word_A80C;
         }
         break;
     case 11:
@@ -2826,9 +2856,9 @@ loc_4D33:
             sub_3DF0();
         }
         word_A826 = rand() % 10 + 10;
-        word_A804 = 2;
-        sub_4807(word_A800, word_A802, word_A804);
-        word_A8A0 = 12;
+        index_A804 = 2;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        state_A8A0 = 12;
         break;
     case 12:
         if (word_A83A++ < 1) {
@@ -2837,47 +2867,47 @@ loc_4D33:
         word_A83A = 0;
         if (word_A7FE != 0) {
             if (word_A2AA > 0) {
-                var_2 = sub_3E7C(&var_6, word_A802, word_A802 + 40, -(word_A2AA * 6 - word_A800), word_A800);
+                var_2 = sub_3E7C(&var_6, posy_A802, posy_A802 + 40, -(word_A2AA * 6 - posx_A800), posx_A800);
             } else {
-                var_2 = sub_3E7C(&var_6, word_A802, word_A802 + 40, -(word_A2AA * 6 - word_A800) + 40, word_A800 + 40);
+                var_2 = sub_3E7C(&var_6, posy_A802, posy_A802 + 40, -(word_A2AA * 6 - posx_A800) + 40, posx_A800 + 40);
             }
             if (var_2 != 0) {
                 if (word_A2AA > 0) {
-                    word_A800 = var_2;
+                    posx_A800 = var_2;
                 } else {
-                    word_A800 = var_2 - 40;
+                    posx_A800 = var_2 - 40;
                 }
                 word_A81C = var_6;
                 sub_491D(word_A81C, &stru_A81E);
                 word_A83E = stru_A81E.top - 12;
                 word_A7FC = 1;
-                word_A83C = word_A800;
-                word_A804 = 30;
-                sub_2B01(word_C0B0, word_A81C);
-                word_A8A0 = 89;
+                word_A83C = posx_A800;
+                index_A804 = 30;
+                sub_2B01(hPooWnd_, word_A81C);
+                state_A8A0 = 89;
                 break;
             }
         }
         if (word_A82C == 0) {
-            word_A800 -= word_A2AA * 6;
+            posx_A800 -= word_A2AA * 6;
         }
-        word_A804 = word_A804 == 2 ? 3 : 2;
-        sub_4807(word_A800, word_A802, word_A804);
+        index_A804 = index_A804 == 2 ? 3 : 2;
+        sub_4807(posx_A800, posy_A802, index_A804);
         sub_4559();
         sub_46D2();
         sub_496F(1);
-        sub_4C21(-(word_A2AA * 6 - word_A800), word_A2AA * 6 + word_A800, 1);
+        sub_4C21(-(word_A2AA * 6 - posx_A800), word_A2AA * 6 + posx_A800, 1);
         break;
     case 13:
         word_A82A = rand() % 2;
         word_A826 = rand() % 4 + 4;
         if (word_A82A != 0) {
-            word_A804 = 88;
+            index_A804 = 88;
         } else {
-            word_A804 = 86;
+            index_A804 = 86;
         }
-        sub_4807(word_A800, word_A802, word_A804);
-        word_A8A0 = 14;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        state_A8A0 = 14;
         break;
     case 14:
         if (word_A83A++ < 3) {
@@ -2885,14 +2915,14 @@ loc_4D33:
         }
         word_A83A = 0;
         if (word_A82C == 0) {
-            word_A800 -= word_A2AA * 6;
+            posx_A800 -= word_A2AA * 6;
         }
         if (word_A82A != 0) {
-            word_A804 = word_A804 == 88 ? 89 : 88;
+            index_A804 = index_A804 == 88 ? 89 : 88;
         } else {
-            word_A804 = word_A804 == 86 ? 87 : 86;
+            index_A804 = index_A804 == 86 ? 87 : 86;
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         sub_4559();
         sub_46D2();
         sub_496F(1);
@@ -2901,12 +2931,12 @@ loc_4D33:
         word_A82A = rand() % 2;
         word_A826 = rand() % 3 + 3;
         if (word_A82A != 0) {
-            word_A804 = 54;
+            index_A804 = 54;
         } else {
-            word_A804 = 52;
+            index_A804 = 52;
         }
-        sub_4807(word_A800, word_A802, word_A804);
-        word_A8A0 = 16;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        state_A8A0 = 16;
         break;
     case 16:
         if (word_A83A++ < 3) {
@@ -2914,30 +2944,30 @@ loc_4D33:
         }
         word_A83A = 0;
         if (word_A82A != 0) {
-            word_A804 = word_A804 == 54 ? 55 : 54;
+            index_A804 = index_A804 == 54 ? 55 : 54;
         } else {
-            word_A804 = word_A804 == 52 ? 53 : 52;
+            index_A804 = index_A804 == 52 ? 53 : 52;
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         sub_4559();
         sub_46D2();
         sub_496F(0);
         break;
     case 17:
-        word_A804 = 6;
-        sub_4807(word_A800, word_A802, word_A804);
-        word_A8A0 = 18;
+        index_A804 = 6;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        state_A8A0 = 18;
         break;
     case 18:
         if (word_A83A++ < 1) {
             break;
         }
         word_A83A = 0;
-        word_A804 += 1;
-        sub_4807(word_A800, word_A802, word_A804);
-        if (word_A804 == 8) {
-            word_A804 = 0;
-            word_A8A0 = 19;
+        index_A804 += 1;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        if (index_A804 == 8) {
+            index_A804 = 0;
+            state_A8A0 = 19;
             word_A826 = rand() % 8 + 8;
         }
         sub_496F(0);
@@ -2947,22 +2977,22 @@ loc_4D33:
             break;
         }
         word_A83A = 0;
-        word_A804 = word_A804 == 0 ? 1 : 0;
-        sub_4807(word_A800, word_A802, word_A804);
+        index_A804 = index_A804 == 0 ? 1 : 0;
+        sub_4807(posx_A800, posy_A802, index_A804);
         sub_46D2();
         sub_496F(0);
         break;
     case 20:
         word_A82A = rand() % 3;
         if (word_A82A == 0) {
-            word_A804 = 6;
+            index_A804 = 6;
         } else if (word_A82A == 1) {
-            word_A804 = 31;
+            index_A804 = 31;
         } else {
-            word_A804 = 73;
+            index_A804 = 73;
         }
-        sub_4807(word_A800, word_A802, word_A804);
-        word_A8A0 = 21;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        state_A8A0 = 21;
         word_A83A = rand() % 15 + rand() % 15;
         sub_496F(0);
         break;
@@ -2971,15 +3001,15 @@ loc_4D33:
         if (word_A83A-- > 0) {
             break;
         }
-        word_A8A0 = 22;
+        state_A8A0 = 22;
         word_A826 = 0;
         break;
     case 22:
-        word_A804 = word_A2B4[word_A82A][word_A826];
-        sub_4807(word_A800, word_A802, word_A804);
+        index_A804 = word_A2B4[word_A82A][word_A826];
+        sub_4807(posx_A800, posy_A802, index_A804);
         word_A826 += 1;
         if (word_A826 > 7) {
-            word_A8A0 = 23;
+            state_A8A0 = 23;
             word_A83A = rand() % 15 + rand() % 15;
         }
         sub_496F(0);
@@ -2989,21 +3019,21 @@ loc_4D33:
         if (word_A83A-- > 0) {
             break;
         }
-        word_A8A0 = 1;
+        state_A8A0 = 1;
         break;
     case 24:
         if (word_A83A++ < 1) {
             break;
         }
         word_A83A = 0;
-        word_A804 = 3;
-        sub_4807(word_A800, word_A802, word_A804);
+        index_A804 = 3;
+        sub_4807(posx_A800, posy_A802, index_A804);
         if ((rand() & 1) != 0) {
             word_A82A = 0;
         } else {
             word_A82A = 1;
         }
-        word_A8A0 = 25;
+        state_A8A0 = 25;
         word_A826 = 0;
         break;
     case 25:
@@ -3013,22 +3043,22 @@ loc_4D33:
         word_A83A = 0;
         if (word_A82A != 0) {
             if (word_A2AA > 0) {
-                word_A804 = word_A826 + 9;
+                index_A804 = word_A826 + 9;
             } else {
-                word_A804 = 11 - word_A826;
+                index_A804 = 11 - word_A826;
             }
         } else {
             if (word_A2AA > 0) {
-                word_A804 = word_A826 + 12;
+                index_A804 = word_A826 + 12;
             } else {
-                word_A804 = 14 - word_A826;
+                index_A804 = 14 - word_A826;
             }
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         word_A826 += 1;
         if (word_A826 > 2) {
             word_A2AA = -word_A2AA;
-            word_A8A0 = 26;
+            state_A8A0 = 26;
         }
         sub_496F(0);
         break;
@@ -3037,27 +3067,27 @@ loc_4D33:
             break;
         }
         word_A83A = 0;
-        word_A804 = 3;
-        sub_4807(word_A800, word_A802, word_A804);
-        word_A8A0 = 1;
+        index_A804 = 3;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        state_A8A0 = 1;
         sub_496F(0);
         break;
     case 27:
         word_A806 = -10;
         word_A808 = word_A2AA * 8;
-        word_A80C = word_A802;
+        word_A80C = posy_A802;
         word_A848 = 0;
-        word_A8A0 = 28;
+        state_A8A0 = 28;
     case 28:
-        word_A800 += word_A808;
-        word_A802 += word_A806;
+        posx_A800 += word_A808;
+        posy_A802 += word_A806;
         word_A806 += 2;
-        word_A804 = word_A324[word_A848];
+        index_A804 = word_A324[word_A848];
         word_A848 += 1;
-        sub_4807(word_A800, word_A802, word_A804);
-        if (word_A804 == 64) {
+        sub_4807(posx_A800, posy_A802, index_A804);
+        if (index_A804 == 64) {
             word_A842 = 3;
-            word_A8A0 = 99;
+            state_A8A0 = 99;
             break;
         }
         break;
@@ -3071,17 +3101,17 @@ loc_4D33:
         if (rand() % 5 == 0) {
             word_A82A = 2;
         }
-        word_A8A0 = 32;
+        state_A8A0 = 32;
         if (word_A82A != 0) {
-            word_A8A0 = 34;
+            state_A8A0 = 34;
         }
         goto loc_4D33;
     case 30:
         if (word_A7FC != 0) {
-            word_A8A0 = 27;
+            state_A8A0 = 27;
             goto loc_4D33;
         } else {
-            word_A8A0 = 24;
+            state_A8A0 = 24;
             goto loc_4D33;
         }
         word_A83A = 0;
@@ -3093,33 +3123,33 @@ loc_4D33:
         if (rand() % 5 == 0) {
             word_A82A = 2;
         }
-        word_A8A0 = 31;
+        state_A8A0 = 31;
     case 31:
-        sub_4C21(word_A2AA * 10 + word_A800, word_A800, 2);
-        if (word_A8A0 == 30) {
+        sub_4C21(word_A2AA * 10 + posx_A800, posx_A800, 2);
+        if (state_A8A0 == 30) {
             if (word_A826 != 0) {
                 word_A844 -= word_A324[word_A826 + 9];
             }
             break;
         }
-        word_A804 = word_A324[word_A826];
-        sub_4807(word_A800, word_A802 - word_A324[word_A826 + 10], word_A804);
+        index_A804 = word_A324[word_A826];
+        sub_4807(posx_A800, posy_A802 - word_A324[word_A826 + 10], index_A804);
         word_A826 += 1;
-        if (word_A82A != 0 && word_A804 == 66) {
+        if (word_A82A != 0 && index_A804 == 66) {
             if (word_A844 != 0) {
-                word_A802 -= word_A844;
-                word_A800 += word_A2AA * 10;
-                sub_4807(word_A800, word_A802, word_A804);
+                posy_A802 -= word_A844;
+                posx_A800 += word_A2AA * 10;
+                sub_4807(posx_A800, posy_A802, index_A804);
             }
             word_A846 = 3;
-            word_A8A0 = 34;
+            state_A8A0 = 34;
             break;
         }
         if (word_A826 > 8) {
-            word_A8A0 = 32;
+            state_A8A0 = 32;
             break;
         }
-        word_A800 += word_A2AA * 10;
+        posx_A800 += word_A2AA * 10;
         break;
     case 32:
         sub_496F(0);
@@ -3128,9 +3158,9 @@ loc_4D33:
         }
         word_A83A = 0;
         word_A2AA = -word_A2AA;
-        word_A804 = 93;
-        sub_4807(word_A800, word_A802, word_A804);
-        word_A8A0 = 33;
+        index_A804 = 93;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        state_A8A0 = 33;
         break;
     case 33:
         sub_496F(0);
@@ -3138,30 +3168,30 @@ loc_4D33:
             break;
         }
         word_A83A = 0;
-        word_A8A0 = 1;
+        state_A8A0 = 1;
         break;
     case 34:
-        word_A800 += word_A2AA * 8;
-        if (word_A804 == 70) {
-            word_A804 = 63;
+        posx_A800 += word_A2AA * 8;
+        if (index_A804 == 70) {
+            index_A804 = 63;
         } else {
-            word_A804 += 1;
+            index_A804 += 1;
         }
-        sub_4807(word_A800, word_A802, word_A804);
-        if (word_A82A == 2 && word_A804 == 70) {
-            word_A8A0 = 69;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        if (word_A82A == 2 && index_A804 == 70) {
+            state_A8A0 = 69;
             break;
         }
-        if (word_A800 > word_CA50 || word_A800 < -40) {
-            word_A8A0 = 1;
+        if (posx_A800 > screenWidth_ || posx_A800 < -40) {
+            state_A8A0 = 1;
         }
-        sub_4C21(word_A2AA * 8 + word_A800, -(word_A2AA * 8 - word_A800), 2);
-        if (word_A8A0 == 30) {
+        sub_4C21(word_A2AA * 8 + posx_A800, -(word_A2AA * 8 - posx_A800), 2);
+        if (state_A8A0 == 30) {
             if (word_A846-- > 0) {
                 word_A2AA = -word_A2AA;
-                word_A8A0 = 34;
+                state_A8A0 = 34;
             } else {
-                word_A8A0 = 34;
+                state_A8A0 = 34;
             }
         }
         sub_496F(2);
@@ -3171,9 +3201,9 @@ loc_4D33:
             break;
         }
         word_A83A = 0;
-        word_A804 = 3;
-        sub_4807(word_A800, word_A802, word_A804);
-        word_A8A0 = 37;
+        index_A804 = 3;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        state_A8A0 = 37;
         word_A826 = 0;
         break;
     case 36:
@@ -3184,15 +3214,15 @@ loc_4D33:
         }
         word_A83A = 0;
         if (word_A2AA > 0) {
-            word_A804 = word_A826 + 12;
+            index_A804 = word_A826 + 12;
         } else {
-            word_A804 = 14 - word_A826;
+            index_A804 = 14 - word_A826;
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         word_A826 += 1;
         if (word_A826 > 1) {
-            word_A804 = 103;
-            word_A8A0 = 38;
+            index_A804 = 103;
+            state_A8A0 = 38;
         }
         sub_496F(0);
         break;
@@ -3201,11 +3231,11 @@ loc_4D33:
             break;
         }
         word_A83A = 0;
-        sub_4807(word_A800, word_A802, word_A804);
-        word_A804 += 1;
-        if (word_A804 > 104) {
+        sub_4807(posx_A800, posy_A802, index_A804);
+        index_A804 += 1;
+        if (index_A804 > 104) {
             word_A826 = 0;
-            word_A8A0 = 39;
+            state_A8A0 = 39;
             break;
         }
         sub_496F(0);
@@ -3223,14 +3253,14 @@ loc_4D33:
             word_A83A = 0;
         }
         if (word_A826 <= 8 || word_A826 >= 12 && word_A826 <= 12) {
-            word_A804 = word_A804 == 105 ? 106 : 105;
+            index_A804 = index_A804 == 105 ? 106 : 105;
         } else {
-            word_A804 = 104;
+            index_A804 = 104;
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         if (word_A826++ > 15) {
-            word_A8A0 = 40;
-            word_A804 = 104;
+            state_A8A0 = 40;
+            index_A804 = 104;
         }
         sub_496F(0);
         break;
@@ -3239,10 +3269,10 @@ loc_4D33:
             break;
         }
         word_A83A = 0;
-        sub_4807(word_A800, word_A802, word_A804);
-        if (--word_A804 < 103) {
+        sub_4807(posx_A800, posy_A802, index_A804);
+        if (--index_A804 < 103) {
             word_A826 = 0;
-            word_A8A0 = 41;
+            state_A8A0 = 41;
             break;
         }
         sub_496F(0);
@@ -3253,14 +3283,14 @@ loc_4D33:
         }
         word_A83A = 0;
         if (word_A2AA > 0) {
-            word_A804 = 13 - word_A826;
+            index_A804 = 13 - word_A826;
         } else {
-            word_A804 = word_A826 + 13;
+            index_A804 = word_A826 + 13;
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         word_A826 += 1;
         if (word_A826 > 1) {
-            word_A8A0 = 42;
+            state_A8A0 = 42;
         }
         sub_496F(0);
         break;
@@ -3270,50 +3300,50 @@ loc_4D33:
             break;
         }
         word_A83A = 0;
-        word_A804 = 3;
-        sub_4807(word_A800, word_A802, word_A804);
-        word_A8A0 = 1;
+        index_A804 = 3;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        state_A8A0 = 1;
         word_A826 = 0;
         break;
     case 43:
         sub_42C8(109, 0U, 0);
         word_A826 = 0;
-        word_A8A0 = 44;
+        state_A8A0 = 44;
     case 44:
         if (word_A83A++ < 1) {
             break;
         }
         word_A83A = 0;
-        word_A804 = word_A34C[word_A826];
+        index_A804 = word_A34C[word_A826];
         word_A826 += 1;
-        if (word_A804 == 0) {
-            word_A8A0 = 1;
+        if (index_A804 == 0) {
+            state_A8A0 = 1;
             break;
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         sub_496F(0);
         break;
     case 45:
         sub_42C8(108, 0U, 0);
         word_A826 = 0;
-        word_A8A0 = 46;
+        state_A8A0 = 46;
     case 46:
         if (word_A83A++ < 0) {
             break;
         }
         word_A83A = 0;
-        word_A804 = word_A362[word_A826];
+        index_A804 = word_A362[word_A826];
         word_A826 += 1;
-        if (word_A804 == 0) {
-            word_A8A0 = 1;
+        if (index_A804 == 0) {
+            state_A8A0 = 1;
             break;
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         sub_496F(0);
         break;
     case 47:
         word_A826 = 0;
-        word_A8A0 = 48;
+        state_A8A0 = 48;
     case 48:
         if (word_A83A++ < 0) {
             break;
@@ -3322,91 +3352,91 @@ loc_4D33:
         if (word_A826 == 2) {
             sub_42C8(110, 0U, 0);
         }
-        word_A804 = word_A372[word_A826];
+        index_A804 = word_A372[word_A826];
         word_A826 += 1;
-        if (word_A804 == 0) {
-            word_A8A0 = 1;
+        if (index_A804 == 0) {
+            state_A8A0 = 1;
             break;
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         sub_496F(0);
         break;
     case 49:
         word_A826 = 0;
-        word_A8A0 = 50;
+        state_A8A0 = 50;
     case 50:
         if (word_A83A++ < 1) {
             break;
         }
         word_A83A = 0;
-        word_A804 = word_A38C[word_A826];
+        index_A804 = word_A38C[word_A826];
         word_A826 += 1;
-        if (word_A804 == 0) {
-            word_A8A0 = 1;
+        if (index_A804 == 0) {
+            state_A8A0 = 1;
             break;
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         sub_496F(0);
         break;
     case 51:
         word_A826 = 0;
-        word_A8A0 = 52;
+        state_A8A0 = 52;
     case 52:
         if (word_A83A++ < 0) {
             break;
         }
         word_A83A = 0;
-        word_A804 = word_A804 == 56 ? 57 : 56;
+        index_A804 = index_A804 == 56 ? 57 : 56;
         if (word_A826++ > 30) {
-            word_A804 = 3;
-            word_A8A0 = 1;
+            index_A804 = 3;
+            state_A8A0 = 1;
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         sub_496F(0);
         break;
     case 53:
         word_A826 = 0;
-        word_A8A0 = 54;
-        sub_2A21();
+        state_A8A0 = 54;
+        showSubPoo();
         word_A2AC = word_A2AA;
-        word_A810 = word_A802;
+        word_A810 = posy_A802;
         word_A812 = 149;
         if (word_A2AA > 0) {
-            word_A80E = word_A800 - 40;
+            word_A80E = posx_A800 - 40;
         } else {
-            word_A80E = word_A800 + 40;
+            word_A80E = posx_A800 + 40;
         }
         sub_488C(word_A80E, word_A810, word_A812);
         word_C0AE = 1;
-        sub_2B01(word_CA60[8], word_C0B0);
+        sub_2B01(hOtherPooWnd_[8], hPooWnd_);
         break;
     case 54:
         if (word_A83A++ < 2) {
             break;
         }
         word_A83A = 0;
-        word_A804 = word_A398[word_A826];
+        index_A804 = word_A398[word_A826];
         word_A826 += 1;
-        if (word_A804 == 2) {
-            word_A800 -= word_A2AA * 8;
-            sub_4807(word_A800, word_A802, word_A804);
+        if (index_A804 == 2) {
+            posx_A800 -= word_A2AA * 8;
+            sub_4807(posx_A800, posy_A802, index_A804);
             break;
         }
-        if (word_A804 >= 149 && word_A804 <= 153) {
-            word_A812 = word_A804;
+        if (index_A804 >= 149 && index_A804 <= 153) {
+            word_A812 = index_A804;
             if (word_A812 == 153) {
                 word_A812 = 173;
             }
             sub_488C(word_A80E, word_A810, word_A812);
-            word_A804 = word_A398[word_A826];
+            index_A804 = word_A398[word_A826];
             word_A826 += 1;
         }
-        if (word_A804 == 0) {
-            sub_2A96();
-            word_A8A0 = 1;
+        if (index_A804 == 0) {
+            destroySubPooWnd();
+            state_A8A0 = 1;
             break;
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         break;
     case 55:
         break;
@@ -3414,34 +3444,34 @@ loc_4D33:
             break;
         }
         word_A83A = 0;
-        word_A800 -= word_A2AA * 6;
-        word_A804 = 2;
-        sub_4807(word_A800, word_A802, word_A804);
+        posx_A800 -= word_A2AA * 6;
+        index_A804 = 2;
+        sub_4807(posx_A800, posy_A802, index_A804);
         sub_4559();
         sub_46D2();
         sub_496F(1);
-        sub_4C21(-(word_A2AA * 6 - word_A800), word_A2AA * 6 + word_A800, 1);
-        word_A8A0 = 54;
+        sub_4C21(-(word_A2AA * 6 - posx_A800), word_A2AA * 6 + posx_A800, 1);
+        state_A8A0 = 54;
         break;
     case 56:
         word_A826 = 0;
-        word_A8A0 = 57;
+        state_A8A0 = 57;
     case 57:
         if (word_A83A++ < 2) {
             break;
         }
         word_A83A = 0;
-        word_A804 = word_A398[word_A826];
+        index_A804 = word_A398[word_A826];
         word_A826 += 1;
-        if (word_A804 >= 149 && word_A804 <= 153) {
-            word_A804 = word_A398[word_A826];
+        if (index_A804 >= 149 && index_A804 <= 153) {
+            index_A804 = word_A398[word_A826];
             word_A826 += 1;
         }
         if (word_A826 >= 16) {
-            word_A8A0 = 42;
+            state_A8A0 = 42;
             break;
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         sub_496F(0);
         break;
     case 58:
@@ -3449,9 +3479,9 @@ loc_4D33:
             break;
         }
         word_A83A = 0;
-        word_A804 = 3;
-        sub_4807(word_A800, word_A802, word_A804);
-        word_A8A0 = 59;
+        index_A804 = 3;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        state_A8A0 = 59;
         word_A826 = 0;
         break;
     case 59:
@@ -3460,18 +3490,18 @@ loc_4D33:
         }
         word_A83A = 0;
         if (word_A2AA > 0) {
-            word_A804 = word_A826 + 9;
+            index_A804 = word_A826 + 9;
         } else {
-            word_A804 = 11 - word_A826;
+            index_A804 = 11 - word_A826;
         }
         word_A826 += 1;
         if (word_A826 > 2) {
-            word_A804 = 34;
+            index_A804 = 34;
             word_A83A = -10;
-            word_A8A0 = 60;
+            state_A8A0 = 60;
             word_A826 = 0;
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         sub_496F(0);
         break;
     case 60:
@@ -3479,12 +3509,12 @@ loc_4D33:
             break;
         }
         word_A83A = 0;
-        word_A804 = word_A2B4[5][word_A826];
-        sub_4807(word_A800, word_A802, word_A804);
+        index_A804 = word_A2B4[5][word_A826];
+        sub_4807(posx_A800, posy_A802, index_A804);
         word_A826 += 1;
         if (word_A826 > 7) {
             word_A826 = 0;
-            word_A8A0 = 61;
+            state_A8A0 = 61;
             word_A83A = -5;
         }
         sub_496F(0);
@@ -3495,24 +3525,24 @@ loc_4D33:
         }
         word_A83A = 0;
         if (word_A2AA > 0) {
-            word_A804 = 10 - word_A826;
+            index_A804 = 10 - word_A826;
         } else {
-            word_A804 = word_A826 + 10;
+            index_A804 = word_A826 + 10;
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         word_A826 += 1;
         if (word_A826 > 1) {
-            word_A8A0 = 42;
+            state_A8A0 = 42;
         }
         sub_496F(0);
         break;
     case 64:
         break;
     case 65:
-        word_A804 = 3;
-        sub_4807(word_A800, word_A802, word_A804);
+        index_A804 = 3;
+        sub_4807(posx_A800, posy_A802, index_A804);
         word_A826 = 0;
-        word_A8A0 = 66;
+        state_A8A0 = 66;
         break;
     case 66:
         if (word_A83A++ < 1) {
@@ -3521,16 +3551,16 @@ loc_4D33:
         word_A83A = 0;
         if (word_A826 == 0) {
             if (word_A2AA > 0) {
-                word_A804 = 9;
+                index_A804 = 9;
             } else {
-                word_A804 = 11;
+                index_A804 = 11;
             }
         } else {
-            word_A804 = 10;
+            index_A804 = 10;
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         if (word_A826++ > 0) {
-            word_A8A0 = 67;
+            state_A8A0 = 67;
             word_A828 = (rand() % 4 + 4) * 8;
             word_A826 = 0;
             break;
@@ -3541,21 +3571,21 @@ loc_4D33:
         if (--word_A826 < 0) {
             word_A826 = 79;
         }
-        word_A800 -= word_A2AA * 8;
-        word_A804 = word_A524[word_A826 % 8];
-        sub_4807(word_A800, word_A802, word_A804);
-        if (word_A2AA > 0 && word_A800 < 0) {
-            word_A8A0 = 30;
+        posx_A800 -= word_A2AA * 8;
+        index_A804 = word_A524[word_A826 % 8];
+        sub_4807(posx_A800, posy_A802, index_A804);
+        if (word_A2AA > 0 && posx_A800 < 0) {
+            state_A8A0 = 30;
         }
-        if (word_A2AA < 0 && word_CA50 - stru_A8A2[word_A804].width < word_A800) {
-            word_A8A0 = 30;
+        if (word_A2AA < 0 && screenWidth_ - sprites_[index_A804].width < posx_A800) {
+            state_A8A0 = 30;
         }
         if (--word_A828 <= 0) {
-            word_A8A0 = 68;
+            state_A8A0 = 68;
             word_A826 = 0;
         }
         sub_496F(2);
-        sub_4C21(-(word_A2AA * 8 - word_A800), word_A2AA * 8 + word_A800, 2);
+        sub_4C21(-(word_A2AA * 8 - posx_A800), word_A2AA * 8 + posx_A800, 2);
         break;
     case 68:
         if (word_A83A++ < 1) {
@@ -3564,24 +3594,24 @@ loc_4D33:
         word_A83A = 0;
         if (word_A826 == 1) {
             if (word_A2AA > 0) {
-                word_A804 = 9;
+                index_A804 = 9;
             } else {
-                word_A804 = 11;
+                index_A804 = 11;
             }
         } else if (word_A826 == 0) {
-            word_A804 = 10;
+            index_A804 = 10;
         } else {
-            word_A804 = 3;
+            index_A804 = 3;
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         if (word_A826++ > 1) {
-            word_A8A0 = 1;
+            state_A8A0 = 1;
             break;
         }
         sub_496F(0);
         break;
     case 62:
-        word_A8A0 = 63;
+        state_A8A0 = 63;
         word_A826 = 0;
         break;
     case 63:
@@ -3589,55 +3619,55 @@ loc_4D33:
             break;
         }
         word_A83A = 0;
-        word_A804 = word_A50C[word_A826];
-        if (word_A804 == 0) {
-            word_A8A0 = 1;
+        index_A804 = word_A50C[word_A826];
+        if (index_A804 == 0) {
+            state_A8A0 = 1;
             break;
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         word_A826 += 1;
         sub_496F(0);
         break;
     case 75:
         word_A826 = rand() % 8 + 8;
         word_A828 = word_A826;
-        word_A804 = 131;
+        index_A804 = 131;
         if (word_A2AA > 0) {
-            word_A804 = 12;
+            index_A804 = 12;
         } else {
-            word_A804 = 14;
+            index_A804 = 14;
         }
-        sub_4807(word_A800, word_A802, word_A804);
-        word_A8A0 = 76;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        state_A8A0 = 76;
         break;
     case 76:
         if (word_A83A++ < 1) {
             break;
         }
         word_A83A = 0;
-        word_A804 = 13;
-        sub_4807(word_A800, word_A802, word_A804);
-        word_A8A0 = 77;
+        index_A804 = 13;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        state_A8A0 = 77;
         break;
     case 77:
         if (word_A83A++ < 2) {
             break;
         }
         word_A83A = 0;
-        word_A804 = word_A804 == 131 ? 132 : 131;
-        word_A802 -= 8;
-        sub_4807(word_A800, word_A802, word_A804);
+        index_A804 = index_A804 == 131 ? 132 : 131;
+        posy_A802 -= 8;
+        sub_4807(posx_A800, posy_A802, index_A804);
         if (word_A826-- <= 0) {
             word_A826 = word_A828;
-            word_A8A0 = 78;
+            state_A8A0 = 78;
         }
         break;
     case 78:
-        word_A804 = 133;
-        word_A802 += 8;
-        sub_4807(word_A800, word_A802, word_A804);
+        index_A804 = 133;
+        posy_A802 += 8;
+        sub_4807(posx_A800, posy_A802, index_A804);
         if (word_A826-- <= 0) {
-            word_A8A0 = 79;
+            state_A8A0 = 79;
         }
         break;
     case 79:
@@ -3645,7 +3675,7 @@ loc_4D33:
             break;
         }
         word_A83A = 0;
-        word_A8A0 = 80;
+        state_A8A0 = 80;
         word_A826 = 3;
         break;
     case 80:
@@ -3654,52 +3684,52 @@ loc_4D33:
         }
         word_A83A = 0;
         if (word_A2AA > 0) {
-            word_A804 = word_A43C[word_A826];
+            index_A804 = word_A43C[word_A826];
             word_A826 += 1;
         } else {
-            word_A804 = word_A44C[word_A826];
+            index_A804 = word_A44C[word_A826];
             word_A826 += 1;
         }
-        if (word_A804 == 0) {
-            word_A8A0 = 1;
+        if (index_A804 == 0) {
+            state_A8A0 = 1;
             break;
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         break;
     case 69:
         word_A83A = 0;
         word_A826 = 0;
-        word_A8A0 = 70;
+        state_A8A0 = 70;
     case 70:
         if (word_A2AA > 0) {
-            word_A804 = word_A536[word_A826 % 8];
+            index_A804 = word_A536[word_A826 % 8];
         } else {
-            word_A804 = word_A536[(word_A826 + 4) % 8];
+            index_A804 = word_A536[(word_A826 + 4) % 8];
         }
-        if (word_A804 == 2) {
-            word_A804 = 3;
+        if (index_A804 == 2) {
+            index_A804 = 3;
             if (word_A2AA > 0) {
                 word_A2AA = -word_A2AA;
-                sub_4807(word_A800, word_A802, word_A804);
+                sub_4807(posx_A800, posy_A802, index_A804);
                 word_A2AA = -word_A2AA;
             } else {
-                sub_4807(word_A800, word_A802, word_A804);
+                sub_4807(posx_A800, posy_A802, index_A804);
             }
-        } else if (word_A804 == 3) {
+        } else if (index_A804 == 3) {
             if (word_A2AA < 0) {
                 word_A2AA = -word_A2AA;
-                sub_4807(word_A800, word_A802, word_A804);
+                sub_4807(posx_A800, posy_A802, index_A804);
                 word_A2AA = -word_A2AA;
             } else {
-                sub_4807(word_A800, word_A802, word_A804);
+                sub_4807(posx_A800, posy_A802, index_A804);
             }
         } else {
-            sub_4807(word_A800, word_A802, word_A804);
+            sub_4807(posx_A800, posy_A802, index_A804);
         }
         if (word_A826++ >= 16) {
-            word_A804 = 70;
-            sub_4807(word_A800, word_A802, word_A804);
-            word_A8A0 = 71;
+            index_A804 = 70;
+            sub_4807(posx_A800, posy_A802, index_A804);
+            state_A8A0 = 71;
         }
         sub_496F(0);
         break;
@@ -3709,9 +3739,9 @@ loc_4D33:
             break;
         }
         word_A83A = 0;
-        word_A804 = 96;
-        sub_4807(word_A800, word_A802, word_A804);
-        word_A8A0 = 72;
+        index_A804 = 96;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        state_A8A0 = 72;
         break;
     case 72:
         sub_496F(0);
@@ -3719,101 +3749,101 @@ loc_4D33:
             break;
         }
         word_A83A = 0;
-        word_A804 = 3;
-        sub_4807(word_A800, word_A802, word_A804);
-        word_A8A0 = 1;
+        index_A804 = 3;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        state_A8A0 = 1;
         break;
     case 73:
         word_A826 = 0;
-        word_A8A0 = 74;
+        state_A8A0 = 74;
     case 74:
         if (word_A83A++ < 2) {
             break;
         }
         word_A83A = 0;
-        word_A804 = word_A422[word_A826];
+        index_A804 = word_A422[word_A826];
         word_A826 += 1;
-        if (word_A804 == 0) {
-            word_A8A0 = 1;
+        if (index_A804 == 0) {
+            state_A8A0 = 1;
             break;
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         sub_496F(0);
         break;
     case 81:
-        word_A804 = 4;
-        sub_4807(word_A800, word_A802, word_A804);
-        word_A8A0 = 82;
+        index_A804 = 4;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        state_A8A0 = 82;
         break;
     case 82:
         word_A83A = 0;
-        word_A804 = word_A804 == 4 ? 5 : 4;
-        sub_4807(word_A800, word_A802, word_A804);
+        index_A804 = index_A804 == 4 ? 5 : 4;
+        sub_4807(posx_A800, posy_A802, index_A804);
         break;
     case 83:
         break;
     case 84:
-        word_A8A0 = 0;
+        state_A8A0 = 0;
         break;
     case 85:
         word_A81C = GetActiveWindow();
-        if (word_A81C == word_C0B0 || word_A81C == word_CA60[8] || word_A81C == NULL || sub_39D6(word_A81C)) {
-            word_A8A0 = 1;
+        if (word_A81C == hPooWnd_ || word_A81C == hOtherPooWnd_[8] || word_A81C == NULL || sub_39D6(word_A81C)) {
+            state_A8A0 = 1;
             break;
         }
         sub_491D(word_A81C, &stru_A81E);
         if (stru_A81E.top < 10) {
-            word_A8A0 = 1;
+            state_A8A0 = 1;
             break;
         }
-        if (word_A2AA > 0 && stru_A81E.right < word_A800 && stru_A81E.top < word_A802 && word_A802 + 40 < stru_A81E.bottom || word_A2AA < 0 && word_A800 + 40 < stru_A81E.left && stru_A81E.top < word_A802 && word_A802 + 40 < stru_A81E.bottom) {
-            word_A8A0 = 87;
+        if (word_A2AA > 0 && stru_A81E.right < posx_A800 && stru_A81E.top < posy_A802 && posy_A802 + 40 < stru_A81E.bottom || word_A2AA < 0 && posx_A800 + 40 < stru_A81E.left && stru_A81E.top < posy_A802 && posy_A802 + 40 < stru_A81E.bottom) {
+            state_A8A0 = 87;
             break;
         }
         word_A83C = (rand() % stru_A81E.right - stru_A81E.left) / 3 + (stru_A81E.right - stru_A81E.left) / 2 + stru_A81E.left - 20;
         word_A83E = stru_A81E.top - 40;
-        if (word_CA50 / 2 - 20 > word_A800) {
+        if (screenWidth_ / 2 - 20 > posx_A800) {
             word_A2AA = 1;
         } else {
             word_A2AA = -1;
         }
-        word_A804 = 4;
-        sub_4807(word_A800, word_A802, word_A804);
-        word_A8A0 = 86;
+        index_A804 = 4;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        state_A8A0 = 86;
         break;
     case 86:
         if (word_A83A++ < 1) {
             break;
         }
         word_A83A = 0;
-        word_A800 -= word_A2AA * 16;
-        word_A804 = word_A804 == 4 ? 5 : 4;
-        sub_4807(word_A800, word_A802, word_A804);
-        if (word_A800 < -40 || word_A800 > word_CA50) {
+        posx_A800 -= word_A2AA * 16;
+        index_A804 = index_A804 == 4 ? 5 : 4;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        if (posx_A800 < -40 || posx_A800 > screenWidth_) {
             if (!sub_48F3(word_A81C)) {
-                word_A8A0 = 1;
+                state_A8A0 = 1;
                 break;
             }
             if (rand() % 3 == 0) {
-                word_A8A0 = 3;
+                state_A8A0 = 3;
                 goto loc_4D33;
             }
             word_A840 = 0;
-            word_A8A0 = 92;
+            state_A8A0 = 92;
             word_A7FC = 1;
-            word_A800 = word_A83C;
-            word_A802 = -40;
+            posx_A800 = word_A83C;
+            posy_A802 = -40;
             word_A806 = 0;
             word_A808 = 0;
             word_A842 = rand() % 2;
             if (word_A842 != 0) {
                 word_A808 = -(word_A2AA * 3);
             }
-            sub_2B01(word_C0B0, word_A81C);
+            sub_2B01(hPooWnd_, word_A81C);
         }
         break;
     case 87:
-        sub_2B01(word_C0B0, word_A81C);
+        sub_2B01(hPooWnd_, word_A81C);
         if (word_A2AA > 0) {
             word_A83C = stru_A81E.right;
             word_A83E = stru_A81E.top;
@@ -3821,44 +3851,44 @@ loc_4D33:
             word_A83C = stru_A81E.left - 40;
             word_A83E = stru_A81E.top;
         }
-        word_A8A0 = 88;
+        state_A8A0 = 88;
     case 88:
         if (word_A83A++ < 1) {
             break;
         }
         word_A83A = 0;
-        word_A800 -= word_A2AA * 16;
-        word_A804 = word_A804 == 4 ? 5 : 4;
-        if (word_A83C >= word_A800 && word_A2AA > 0 || word_A83C <= word_A800 && word_A2AA < 0) {
+        posx_A800 -= word_A2AA * 16;
+        index_A804 = index_A804 == 4 ? 5 : 4;
+        if (word_A83C >= posx_A800 && word_A2AA > 0 || word_A83C <= posx_A800 && word_A2AA < 0) {
             if (!sub_48F3(word_A81C)) {
-                word_A8A0 = 1;
+                state_A8A0 = 1;
                 break;
             }
             sub_491D(word_A81C, &var_10);
-            if (var_10.left == stru_A81E.left && var_10.right == stru_A81E.right && var_10.top < word_A802 && word_A802 + 40 < var_10.bottom) {
+            if (var_10.left == stru_A81E.left && var_10.right == stru_A81E.right && var_10.top < posy_A802 && posy_A802 + 40 < var_10.bottom) {
                 word_A83E = var_10.top - 12;
                 word_A7FC = 1;
-                word_A800 = word_A83C;
-                word_A804 = 30;
-                word_A8A0 = 89;
+                posx_A800 = word_A83C;
+                index_A804 = 30;
+                state_A8A0 = 89;
                 break;
             } else {
-                word_A8A0 = 1;
+                state_A8A0 = 1;
                 break;
             }
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         break;
     case 89:
         if (word_A83A++ < 1) {
             break;
         }
         word_A83A = 0;
-        sub_4807(word_A800, word_A802, word_A804);
-        word_A802 -= 6;
-        word_A804 = word_A804 == 15 ? 16 : 15;
-        if (word_A83E >= word_A802) {
-            word_A8A0 = 90;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        posy_A802 -= 6;
+        index_A804 = index_A804 == 15 ? 16 : 15;
+        if (word_A83E >= posy_A802) {
+            state_A8A0 = 90;
             break;
         }
         sub_4B3B();
@@ -3868,52 +3898,52 @@ loc_4D33:
             break;
         }
         word_A83A = 0;
-        word_A800 -= word_A2AA * 8;
-        word_A802 = word_A83E - 20;
-        word_A804 = 76;
-        sub_4807(word_A800, word_A802, word_A804);
-        word_A8A0 = 91;
+        posx_A800 -= word_A2AA * 8;
+        posy_A802 = word_A83E - 20;
+        index_A804 = 76;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        state_A8A0 = 91;
         break;
     case 91:
         if (word_A83A++ < 2) {
             break;
         }
         word_A83A = 0;
-        word_A800 += word_A2AA * -24;
-        word_A802 -= 8;
-        word_A804 = 3;
-        sub_4807(word_A800, word_A802, word_A804);
-        word_A8A0 = 11;
+        posx_A800 += word_A2AA * -24;
+        posy_A802 -= 8;
+        index_A804 = 3;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        state_A8A0 = 11;
         break;
     case 92:
         word_A806 += 4;
-        word_A80C = word_A802;
-        word_A800 += word_A808;
-        word_A802 += word_A806;
-        if ((var_4 = sub_419E(word_A81C, stru_A8A2[word_A804].height + word_A802, stru_A8A2[word_A804].height + word_A80C, word_A800, stru_A8A2[word_A804].width + word_A800)) != 0) {
+        word_A80C = posy_A802;
+        posx_A800 += word_A808;
+        posy_A802 += word_A806;
+        if ((var_4 = sub_419E(word_A81C, sprites_[index_A804].height + posy_A802, sprites_[index_A804].height + word_A80C, posx_A800, sprites_[index_A804].width + posx_A800)) != 0) {
             if (var_4 == -1) {
-                sub_4807(word_A800, word_A802, word_A804);
-                word_A8A0 = 0;
+                sub_4807(posx_A800, posy_A802, index_A804);
+                state_A8A0 = 0;
                 break;
             }
-            word_A802 = var_4 - stru_A8A2[word_A804].height;
+            posy_A802 = var_4 - sprites_[index_A804].height;
             if (word_A806 < 64 && word_A840 == 0 || word_A806 < 8) {
-                SetWindowPos(word_C0B0, word_A81C, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
+                SetWindowPos(hPooWnd_, word_A81C, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
                 word_A840 = 0;
                 word_A826 = 0;
-                word_A8A0 = 93;
+                state_A8A0 = 93;
                 if (word_A806 < 36) {
-                    word_A804 = 49;
+                    index_A804 = 49;
                     word_A83A = -4;
                 } else {
                     if ((rand() & 3) == 0) {
-                        word_A804 = 48;
+                        index_A804 = 48;
                     } else {
-                        word_A804 = 42;
+                        index_A804 = 42;
                     }
                     word_A83A = -12;
                 }
-                sub_4807(word_A800, word_A802, word_A804);
+                sub_4807(posx_A800, posy_A802, index_A804);
                 break;
             } else {
                 word_A806 = word_A806 * 2 / -3;
@@ -3921,11 +3951,11 @@ loc_4D33:
             }
         }
         if (word_A842 != 0) {
-            word_A804 = word_A804 == 4 ? 5 : 4;
+            index_A804 = index_A804 == 4 ? 5 : 4;
         } else {
-            word_A804 = 42;
+            index_A804 = 42;
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         break;
     case 93:
         if (word_A83A++ < 1) {
@@ -3933,24 +3963,24 @@ loc_4D33:
         }
         word_A83A = 0;
         if (word_A842 != 0) {
-            word_A8A0 = 11;
-            word_A804 = 2;
+            state_A8A0 = 11;
+            index_A804 = 2;
             break;
         }
         if (word_A826 == 0) {
-            word_A804 = 13;
+            index_A804 = 13;
         } else if (word_A826 == 1) {
             if (word_A2AA > 0) {
-                word_A804 = 12;
+                index_A804 = 12;
             } else {
-                word_A804 = 14;
+                index_A804 = 14;
             }
         } else if (word_A826 == 2) {
-            word_A804 = 3;
+            index_A804 = 3;
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         if (word_A826++ >= 2) {
-            word_A8A0 = 11;
+            state_A8A0 = 11;
         }
         break;
     case 94:
@@ -3958,99 +3988,99 @@ loc_4D33:
         word_A806 = 0;
         word_A808 = -(word_A2AA * 8);
         word_A842 = 1;
-        word_A8A0 = 99;
+        state_A8A0 = 99;
         goto loc_4D33;
     case 95:
         word_A7FC = 1;
         word_A806 = 0;
         word_A808 = -(word_A2AA * 3);
         word_A842 = 1;
-        word_A8A0 = 99;
+        state_A8A0 = 99;
         goto loc_4D33;
     case 96:
         word_A7FC = 1;
         word_A806 = 0;
         word_A808 = 0;
         word_A842 = 0;
-        word_A8A0 = 99;
+        state_A8A0 = 99;
         goto loc_4D33;
     case 97:
         word_A7FC = 1;
         word_A806 = 0;
         word_A808 = 0;
         word_A842 = 1;
-        word_A8A0 = 99;
+        state_A8A0 = 99;
         goto loc_4D33;
     case 98:
         word_A7FC = 1;
         word_A806 = 0;
         word_A808 = 0;
         word_A842 = 2;
-        word_A8A0 = 99;
+        state_A8A0 = 99;
         goto loc_4D33;
     case 99:
         sub_3DF0();
         word_A806 += 4;
-        word_A80C = word_A802;
-        word_A800 += word_A808;
-        word_A802 += word_A806;
-        if (word_A80C > word_CA52) {
-            sub_4807(word_A800, word_A802, word_A804);
-            word_A8A0 = 0;
+        word_A80C = posy_A802;
+        posx_A800 += word_A808;
+        posy_A802 += word_A806;
+        if (word_A80C > screenHeight_) {
+            sub_4807(posx_A800, posy_A802, index_A804);
+            state_A8A0 = 0;
             break;
         }
-        if ((var_4 = sub_408C(&word_A81C, stru_A8A2[word_A804].height + word_A802, stru_A8A2[word_A804].height + word_A80C, word_A800, stru_A8A2[word_A804].width + word_A800)) != 0) {
+        if ((var_4 = sub_408C(&word_A81C, sprites_[index_A804].height + posy_A802, sprites_[index_A804].height + word_A80C, posx_A800, sprites_[index_A804].width + posx_A800)) != 0) {
             if (!sub_48F3(word_A81C)) {
-                sub_4807(word_A800, word_A802, word_A804);
-                word_A8A0 = 0;
+                sub_4807(posx_A800, posy_A802, index_A804);
+                state_A8A0 = 0;
                 break;
             }
             sub_491D(word_A81C, &stru_A81E);
-            word_A802 = var_4 - stru_A8A2[word_A804].height;
+            posy_A802 = var_4 - sprites_[index_A804].height;
             if (word_A842 == 3) {
-                word_A804 = 66;
-                sub_4807(word_A800, word_A802, word_A804);
-                word_A8A0 = 29;
+                index_A804 = 66;
+                sub_4807(posx_A800, posy_A802, index_A804);
+                state_A8A0 = 29;
                 break;
             }
             if (word_A806 < 64 && word_A840 == 0 || word_A806 < 8) {
                 if (word_A81C != NULL) {
-                    SetWindowPos(word_C0B0, word_A81C, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
+                    SetWindowPos(hPooWnd_, word_A81C, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
                 }
                 word_A840 = 0;
                 word_A826 = 0;
-                word_A8A0 = 100;
+                state_A8A0 = 100;
                 if (word_A806 < 36) {
-                    word_A804 = 49;
+                    index_A804 = 49;
                     word_A83A = -4;
                 } else {
                     if ((rand() & 3) == 0) {
-                        word_A804 = 48;
+                        index_A804 = 48;
                     } else {
-                        word_A804 = 42;
+                        index_A804 = 42;
                     }
                     word_A83A = -10;
                 }
                 if (word_A842 == 2) {
                     if (word_A806 < 36) {
-                        word_A804 = 41;
+                        index_A804 = 41;
                     } else {
-                        word_A804 = 45;
+                        index_A804 = 45;
                     }
                 }
-                sub_4807(word_A800, word_A802, word_A804);
+                sub_4807(posx_A800, posy_A802, index_A804);
                 break;
             } else {
                 if ((rand() & 7) == 0 && word_A840 == 0) {
                     word_A840 = 0;
                     word_A826 = 0;
-                    word_A8A0 = 100;
-                    word_A804 = 48;
+                    state_A8A0 = 100;
+                    index_A804 = 48;
                     word_A83A = -12;
                     if (word_A842 == 2) {
-                        word_A804 = 45;
+                        index_A804 = 45;
                     }
-                    sub_4807(word_A800, word_A802, word_A804);
+                    sub_4807(posx_A800, posy_A802, index_A804);
                     break;
                 }
                 word_A806 = word_A806 * 2 / -3;
@@ -4058,24 +4088,24 @@ loc_4D33:
             }
         }
         if (word_A842 == 2) {
-            word_A804 = word_A804 == 40 ? 41 : 40;
+            index_A804 = index_A804 == 40 ? 41 : 40;
         } else if (word_A842 == 1) {
-            word_A804 = word_A804 == 4 ? 5 : 4;
+            index_A804 = index_A804 == 4 ? 5 : 4;
         } else if (word_A842 == 0) {
-            word_A804 = 42;
+            index_A804 = 42;
         } else {
-            word_A804 = word_A324[word_A848];
+            index_A804 = word_A324[word_A848];
             word_A848 += 1;
-            if (word_A804 == 66) {
+            if (index_A804 == 66) {
                 word_A848 -= 1;
             }
         }
-        if (word_A842 == 3 && sub_4C91(word_A800, word_A800 - word_A808) != 0) {
+        if (word_A842 == 3 && sub_4C91(posx_A800, posx_A800 - word_A808) != 0) {
             word_A2AA = -word_A2AA;
-            word_A8A0 = 30;
+            state_A8A0 = 30;
             break;
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         break;
     case 100:
         if (word_A83A++ < 1) {
@@ -4083,29 +4113,29 @@ loc_4D33:
         }
         word_A83A = 0;
         if (word_A842 == 1) {
-            word_A8A0 = 11;
-            word_A804 = 2;
+            state_A8A0 = 11;
+            index_A804 = 2;
             break;
         }
         if (word_A842 == 2) {
             word_A826 = 0;
-            word_A8A0 = 101;
+            state_A8A0 = 101;
             break;
         }
         if (word_A826 == 0) {
-            word_A804 = 13;
+            index_A804 = 13;
         } else if (word_A826 == 1) {
             if (word_A2AA > 0) {
-                word_A804 = 12;
+                index_A804 = 12;
             } else {
-                word_A804 = 14;
+                index_A804 = 14;
             }
         } else if (word_A826 == 2) {
-            word_A804 = 3;
+            index_A804 = 3;
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         if (word_A826++ >= 2) {
-            word_A8A0 = 11;
+            state_A8A0 = 11;
         }
         break;
     case 101:
@@ -4114,82 +4144,82 @@ loc_4D33:
         }
         word_A83A = 0;
         if (word_A826 == 0) {
-            word_A804 = 31;
+            index_A804 = 31;
             word_A83A = -8;
         } else if (word_A826 == 2) {
-            word_A804 = 3;
+            index_A804 = 3;
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         if (word_A826++ >= 6) {
-            word_A8A0 = 11;
+            state_A8A0 = 11;
         }
         break;
     case 102:
-        sub_428E();
+        stopPlaySound();
         word_A826 = 6;
-        word_A804 = 3;
+        index_A804 = 3;
         word_A82A = 0;
         if (rand() % 3 == 0) {
             word_A82A = 1;
         }
-        word_A8A0 = 103;
+        state_A8A0 = 103;
     case 103:
         if (word_A82A != 0) {
-            word_A804 = word_A804 == 50 ? 51 : 50;
+            index_A804 = index_A804 == 50 ? 51 : 50;
         } else {
-            word_A804 = word_A804 == 4 ? 5 : 4;
+            index_A804 = index_A804 == 4 ? 5 : 4;
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         if (word_A826-- <= 0) {
-            word_A8A0 = 97;
+            state_A8A0 = 97;
         }
         break;
     case 104:
         word_A842 = 0;
-        word_A8A0 = 106;
+        state_A8A0 = 106;
         goto loc_4D33;
     case 105:
         word_A842 = 1;
-        word_A8A0 = 106;
+        state_A8A0 = 106;
         goto loc_4D33;
     case 106:
         if (word_A842 == 0) {
-            var_14.x = word_A800;
-            var_14.y = word_A802 + 39;
+            var_14.x = posx_A800;
+            var_14.y = posy_A802 + 39;
             *(HWND *)&var_10 = WindowFromPoint(var_14);
-            var_14.x = word_A800 + 39;
+            var_14.x = posx_A800 + 39;
             var_8 = WindowFromPoint(var_14);
-            if (*(HWND *)&var_10 == word_C0B0 && var_8 == word_C0B0) {
-                sub_2ABF(word_C0B0);
-            } else if (*(HWND *)&var_10 == word_C0B0) {
-                sub_2B01(word_C0B0, var_8);
+            if (*(HWND *)&var_10 == hPooWnd_ && var_8 == hPooWnd_) {
+                putWndToTop(hPooWnd_);
+            } else if (*(HWND *)&var_10 == hPooWnd_) {
+                sub_2B01(hPooWnd_, var_8);
             } else {
-                sub_2B01(word_C0B0, *(HWND *)&var_10);
+                sub_2B01(hPooWnd_, *(HWND *)&var_10);
             }
-            word_A804 = 81;
+            index_A804 = 81;
         } else {
-            word_A804 = 78;
+            index_A804 = 78;
         }
-        sub_4807(word_A800, word_A802, word_A804);
-        word_A8A0 = 107;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        state_A8A0 = 107;
         word_A826 = 0;
         break;
     case 107:
-        word_A804 = word_A2B4[4 - word_A842][word_A826];
-        sub_4807(word_A800, word_A802, word_A804);
+        index_A804 = word_A2B4[4 - word_A842][word_A826];
+        sub_4807(posx_A800, posy_A802, index_A804);
         word_A826 += 1;
         if (word_A826 > 7) {
             if (word_A842 != 0) {
                 if ((rand() & 1) == 0) {
-                    word_A8A0 = 111;
+                    state_A8A0 = 111;
                 } else {
-                    word_A8A0 = 109;
+                    state_A8A0 = 109;
                 }
             } else {
                 if ((rand() & 1) == 0) {
-                    word_A8A0 = 111;
+                    state_A8A0 = 111;
                 } else {
-                    word_A8A0 = 108;
+                    state_A8A0 = 108;
                 }
             }
         }
@@ -4199,41 +4229,41 @@ loc_4D33:
             break;
         }
         word_A83A = 0;
-        word_A804 = 3;
-        sub_4807(word_A800, word_A802, word_A804);
-        word_A8A0 = 1;
+        index_A804 = 3;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        state_A8A0 = 1;
         break;
     case 109:
         word_A808 = -(word_A2AA * 14);
-        word_A804 = 23;
-        word_A800 += word_A808;
-        sub_4807(word_A800, word_A802, word_A804);
-        word_A8A0 = 95;
+        index_A804 = 23;
+        posx_A800 += word_A808;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        state_A8A0 = 95;
         word_A826 = 0;
         break;
     case 110:
-        word_A800 += word_A808;
+        posx_A800 += word_A808;
         word_A808 += word_A2AA;
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         if (word_A826++ > 3) {
-            word_A8A0 = 95;
+            state_A8A0 = 95;
         }
         break;
     case 111:
         if (word_A842 != 0) {
-            word_A800 += word_A2AA * -26;
-            word_A802 += 35;
+            posx_A800 += word_A2AA * -26;
+            posy_A802 += 35;
             word_A2AA = -word_A2AA;
         } else {
             word_A82A = rand() % 2;
             if (word_A82A != 0) {
-                word_A802 += 36;
+                posy_A802 += 36;
             } else {
-                word_A802 += 20;
+                posy_A802 += 20;
             }
         }
         word_A826 = 0;
-        word_A8A0 = 112;
+        state_A8A0 = 112;
     case 112:
         if (word_A826 == 0) {
             if (word_A83A++ < 10) {
@@ -4247,36 +4277,36 @@ loc_4D33:
             word_A83A = 0;
         }
         if (word_A842 != 0) {
-            word_A804 = word_A804 == 40 ? 41 : 40;
+            index_A804 = index_A804 == 40 ? 41 : 40;
         } else {
-            word_A804 = word_A314[word_A82A][word_A826 % 4];
+            index_A804 = word_A314[word_A82A][word_A826 % 4];
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         word_A826 += 1;
         if (word_A826 > 12) {
             if (word_A842 != 0) {
-                word_A8A0 = 98;
+                state_A8A0 = 98;
             } else {
-                word_A8A0 = 96;
+                state_A8A0 = 96;
             }
         }
         break;
     case 113:
         word_CA76 = 1;
-        word_A804 = 6;
-        sub_4807(word_A800, word_A802, word_A804);
-        word_A8A0 = 114;
+        index_A804 = 6;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        state_A8A0 = 114;
         break;
     case 114:
         if (word_A83A++ < 1) {
             break;
         }
         word_A83A = 0;
-        word_A804 += 1;
-        sub_4807(word_A800, word_A802, word_A804);
-        if (word_A804 == 8) {
-            word_A804 = 0;
-            word_A8A0 = 115;
+        index_A804 += 1;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        if (index_A804 == 8) {
+            index_A804 = 0;
+            state_A8A0 = 115;
         }
         sub_496F(0);
         break;
@@ -4286,52 +4316,52 @@ loc_4D33:
             break;
         }
         word_A83A = 0;
-        word_A804 = word_A804 == 0 ? 1 : 0;
-        sub_4807(word_A800, word_A802, word_A804);
+        index_A804 = index_A804 == 0 ? 1 : 0;
+        sub_4807(posx_A800, posy_A802, index_A804);
         break;
     case 116:
-        word_A800 = word_CA50;
-        word_A802 = word_CA52 * 7 / 8;
-        word_A804 = 4;
+        posx_A800 = screenWidth_;
+        posy_A802 = screenHeight_ * 7 / 8;
+        index_A804 = 4;
         word_A2AA = 1;
-        sub_4807(word_A800, word_A802, word_A804);
-        word_A8A0 = 117;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        state_A8A0 = 117;
         break;
     case 117:
         if (word_A83A++ < 1) {
             break;
         }
         word_A83A = 0;
-        word_A800 -= word_A2AA * 16;
-        word_A804 = word_A804 == 4 ? 5 : 4;
-        sub_4807(word_A800, word_A802, word_A804);
-        if (word_CA50 / 2 - 20 >= word_A800) {
-            word_A8A0 = 118;
+        posx_A800 -= word_A2AA * 16;
+        index_A804 = index_A804 == 4 ? 5 : 4;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        if (screenWidth_ / 2 - 20 >= posx_A800) {
+            state_A8A0 = 118;
         }
         break;
     case 118:
-        sub_2A21();
+        showSubPoo();
         word_A2AC = -1;
         word_A80E = -40;
-        word_A810 = word_CA52 / 8;
+        word_A810 = screenHeight_ / 8;
         word_A812 = 154;
         word_A826 = 0;
-        word_A8A0 = 119;
+        state_A8A0 = 119;
         word_C0AE = 0;
-        sub_2ABF(word_C0B0);
-        sub_2ABF(word_CA60[8]);
+        putWndToTop(hPooWnd_);
+        putWndToTop(hOtherPooWnd_[8]);
         break;
     case 119:
         if (word_A826 != 0) {
-            word_A804 = word_A2B4[2][word_A826];
-            sub_4807(word_A800, word_A802, word_A804);
+            index_A804 = word_A2B4[2][word_A826];
+            sub_4807(posx_A800, posy_A802, index_A804);
             word_A826 += 1;
             if (word_A826 > 7) {
                 word_A826 = 0;
             }
         } else {
-            word_A804 = 73;
-            sub_4807(word_A800, word_A802, word_A804);
+            index_A804 = 73;
+            sub_4807(posx_A800, posy_A802, index_A804);
             if (rand() % 20 == 0) {
                 word_A826 = 1;
             }
@@ -4343,13 +4373,13 @@ loc_4D33:
         word_A80E -= word_A2AC * 16;
         word_A812 = word_A812 == 154 ? 155 : 154;
         sub_488C(word_A80E, word_A810, word_A812);
-        if (word_A80E > word_A800) {
+        if (word_A80E > posx_A800) {
             word_A2AA = -1;
-            sub_4807(word_A800, word_A802, word_A804);
+            sub_4807(posx_A800, posy_A802, index_A804);
         }
-        if (word_A80E > word_CA50) {
-            sub_2A96();
-            word_A8A0 = 120;
+        if (word_A80E > screenWidth_) {
+            destroySubPooWnd();
+            state_A8A0 = 120;
         }
         break;
     case 120:
@@ -4357,50 +4387,50 @@ loc_4D33:
             break;
         }
         word_A83A = 0;
-        word_A800 -= word_A2AA * 16;
-        word_A804 = word_A804 == 4 ? 5 : 4;
-        sub_4807(word_A800, word_A802, word_A804);
-        if (word_A800 > word_CA50) {
-            word_A8A0 = 1;
+        posx_A800 -= word_A2AA * 16;
+        index_A804 = index_A804 == 4 ? 5 : 4;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        if (posx_A800 > screenWidth_) {
+            state_A8A0 = 1;
         }
         break;
     case 121:
-        word_A800 = word_CA50;
-        word_A802 = word_CA52 * 7 / 8;
-        word_A804 = 4;
+        posx_A800 = screenWidth_;
+        posy_A802 = screenHeight_ * 7 / 8;
+        index_A804 = 4;
         word_A2AA = 1;
-        sub_2A21();
+        showSubPoo();
         word_A2AC = -1;
         word_A80E = -40;
-        word_A810 = word_CA52 * 7 / 8;
+        word_A810 = screenHeight_ * 7 / 8;
         word_A812 = 154;
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         sub_488C(word_A80E, word_A810, word_A812);
-        word_A8A0 = 122;
+        state_A8A0 = 122;
         word_C0AE = 0;
-        sub_2ABF(word_C0B0);
-        sub_2ABF(word_CA60[8]);
+        putWndToTop(hPooWnd_);
+        putWndToTop(hOtherPooWnd_[8]);
         break;
     case 122:
         if (word_A83A++ < 1) {
             break;
         }
         word_A83A = 0;
-        word_A800 -= word_A2AA * 16;
-        word_A804 = word_A804 == 4 ? 5 : 4;
+        posx_A800 -= word_A2AA * 16;
+        index_A804 = index_A804 == 4 ? 5 : 4;
         word_A80E -= word_A2AC * 16;
         word_A812 = word_A812 == 154 ? 155 : 154;
-        if (word_A800 - word_A80E <= 46) {
-            word_A800 = word_CA50 / 2 + 3;
-            word_A80E = word_CA50 / 2 - 43;
-            word_A804 = 3;
+        if (posx_A800 - word_A80E <= 46) {
+            posx_A800 = screenWidth_ / 2 + 3;
+            word_A80E = screenWidth_ / 2 - 43;
+            index_A804 = 3;
             word_A812 = 157;
-            sub_4807(word_A800, word_A802, word_A804);
+            sub_4807(posx_A800, posy_A802, index_A804);
             sub_488C(word_A80E, word_A810, word_A812);
             word_A826 = 0;
-            word_A8A0 = 123;
+            state_A8A0 = 123;
         } else {
-            sub_4807(word_A800, word_A802, word_A804);
+            sub_4807(posx_A800, posy_A802, index_A804);
             sub_488C(word_A80E, word_A810, word_A812);
         }
         break;
@@ -4409,11 +4439,11 @@ loc_4D33:
             break;
         }
         word_A83A = 0;
-        word_A804 = word_A826 + 127;
+        index_A804 = word_A826 + 127;
         word_A826 += 1;
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         if (word_A826 >= 4) {
-            word_A8A0 = 124;
+            state_A8A0 = 124;
         }
         break;
     case 124:
@@ -4423,97 +4453,97 @@ loc_4D33:
         word_A83A = 0;
         word_CA46 += 1;
         if (word_CA46 > 8) {
-            sub_2A96();
+            destroySubPooWnd();
             word_A826 = 0;
-            word_A8A0 = 125;
+            state_A8A0 = 125;
         }
         break;
     case 125:
-        word_A804 = word_A45C[word_A826];
+        index_A804 = word_A45C[word_A826];
         word_A826 += 1;
-        if (word_A804 == 0) {
-            word_A8A0 = 1;
+        if (index_A804 == 0) {
+            state_A8A0 = 1;
             break;
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         break;
     case 126:
-        word_A800 = word_CA50;
-        word_A802 = word_CA52 * 7 / 8;
-        word_A804 = 4;
+        posx_A800 = screenWidth_;
+        posy_A802 = screenHeight_ * 7 / 8;
+        index_A804 = 4;
         word_A2AA = 1;
-        sub_2A21();
+        showSubPoo();
         word_A2AC = 1;
-        word_A80E = word_CA50 + 46;
-        word_A810 = word_CA52 * 7 / 8;
+        word_A80E = screenWidth_ + 46;
+        word_A810 = screenHeight_ * 7 / 8;
         word_A812 = 154;
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         sub_488C(word_A80E, word_A810, word_A812);
-        word_A8A0 = 127;
+        state_A8A0 = 127;
         word_C0AE = 0;
-        sub_2ABF(word_C0B0);
-        sub_2ABF(word_CA60[8]);
+        putWndToTop(hPooWnd_);
+        putWndToTop(hOtherPooWnd_[8]);
         break;
     case 127:
         if (word_A83A++ < 1) {
             break;
         }
         word_A83A = 0;
-        word_A800 -= word_A2AA * 16;
-        word_A804 = word_A804 == 4 ? 5 : 4;
+        posx_A800 -= word_A2AA * 16;
+        index_A804 = index_A804 == 4 ? 5 : 4;
         word_A80E -= word_A2AC * 16;
         word_A812 = word_A812 == 154 ? 155 : 154;
         if (word_A80E < -40) {
-            sub_2A96();
-            word_A8A0 = 1;
+            destroySubPooWnd();
+            state_A8A0 = 1;
         } else {
-            sub_4807(word_A800, word_A802, word_A804);
+            sub_4807(posx_A800, posy_A802, index_A804);
             sub_488C(word_A80E, word_A810, word_A812);
         }
         break;
     case 128:
-        word_A800 = word_CA50;
-        word_A802 = word_CA52 * 7 / 8;
-        word_A804 = 4;
+        posx_A800 = screenWidth_;
+        posy_A802 = screenHeight_ * 7 / 8;
+        index_A804 = 4;
         word_A2AA = 1;
-        sub_4807(word_A800, word_A802, word_A804);
-        word_A8A0 = 129;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        state_A8A0 = 129;
         break;
     case 129:
         if (word_A83A++ < 1) {
             break;
         }
         word_A83A = 0;
-        word_A800 -= word_A2AA * 16;
-        word_A804 = word_A804 == 4 ? 5 : 4;
-        sub_4807(word_A800, word_A802, word_A804);
-        if (word_CA50 / 2 - 20 >= word_A800) {
-            word_A8A0 = 130;
+        posx_A800 -= word_A2AA * 16;
+        index_A804 = index_A804 == 4 ? 5 : 4;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        if (screenWidth_ / 2 - 20 >= posx_A800) {
+            state_A8A0 = 130;
         }
         break;
     case 130:
-        sub_2A21();
+        showSubPoo();
         word_A2AC = -1;
         word_A80E = -40;
-        word_A810 = word_CA52 / 8;
+        word_A810 = screenHeight_ / 8;
         word_A812 = 158;
         word_A826 = 0;
-        word_A8A0 = 131;
+        state_A8A0 = 131;
         word_C0AE = 0;
-        sub_2ABF(word_C0B0);
-        sub_2ABF(word_CA60[8]);
+        putWndToTop(hPooWnd_);
+        putWndToTop(hOtherPooWnd_[8]);
         break;
     case 131:
         if (word_A826 != 0) {
-            word_A804 = word_A2B4[2][word_A826];
-            sub_4807(word_A800, word_A802, word_A804);
+            index_A804 = word_A2B4[2][word_A826];
+            sub_4807(posx_A800, posy_A802, index_A804);
             word_A826 += 1;
             if (word_A826 > 7) {
                 word_A826 = 0;
             }
         } else {
-            word_A804 = 73;
-            sub_4807(word_A800, word_A802, word_A804);
+            index_A804 = 73;
+            sub_4807(posx_A800, posy_A802, index_A804);
             if (rand() % 20 == 0) {
                 word_A826 = 1;
             }
@@ -4524,21 +4554,21 @@ loc_4D33:
         } else {
             word_A812 += 1;
         }
-        if (word_A80E > word_A800) {
-            word_A80E = word_A800;
+        if (word_A80E > posx_A800) {
+            word_A80E = posx_A800;
             word_A812 = 162;
-            word_A8A0 = 132;
+            state_A8A0 = 132;
         }
         sub_488C(word_A80E, word_A810, word_A812);
         break;
     case 132:
-        word_A804 = 73;
-        sub_4807(word_A800, word_A802, word_A804);
+        index_A804 = 73;
+        sub_4807(posx_A800, posy_A802, index_A804);
         word_CA5C += 40;
-        if (word_A802 - word_A810 - 40 <= word_CA5C) {
-            word_CA5C = word_A802 - word_A810 - 40;
+        if (posy_A802 - word_A810 - 40 <= word_CA5C) {
+            word_CA5C = posy_A802 - word_A810 - 40;
             word_CA5C -= 20;
-            word_A8A0 = 133;
+            state_A8A0 = 133;
         }
         sub_488C(word_A80E, word_A810, word_A812);
         if (word_A83A++ < 1) {
@@ -4555,18 +4585,18 @@ loc_4D33:
         word_CA5C -= 20;
         if (word_CA5C <= 0) {
             word_CA5C = 0;
-            word_A802 = word_A810 + 40;
-            word_A8A0 = 134;
-            word_A804 = word_A804 == 4 ? 5 : 4;
-            sub_4807(word_A800, word_A802, word_A804);
+            posy_A802 = word_A810 + 40;
+            state_A8A0 = 134;
+            index_A804 = index_A804 == 4 ? 5 : 4;
+            sub_4807(posx_A800, posy_A802, index_A804);
             word_A812 = 158;
             sub_488C(word_A80E, word_A810, word_A812);
             break;
         }
         sub_488C(word_A80E, word_A810, word_A812);
-        word_A804 = word_A804 == 4 ? 5 : 4;
-        word_A802 -= 20;
-        sub_4807(word_A800, word_A802, word_A804);
+        index_A804 = index_A804 == 4 ? 5 : 4;
+        posy_A802 -= 20;
+        sub_4807(posx_A800, posy_A802, index_A804);
         if (word_A83A++ < 1) {
             break;
         }
@@ -4578,60 +4608,60 @@ loc_4D33:
         }
         break;
     case 134:
-        word_A800 = -80;
-        sub_4807(word_A800, word_A802, word_A804);
+        posx_A800 = -80;
+        sub_4807(posx_A800, posy_A802, index_A804);
         word_A80E -= word_A2AC * 16;
         if (word_A812 == 161) {
             word_A812 = 158;
         } else {
             word_A812 += 1;
         }
-        if (word_A80E > word_CA50) {
-            sub_2A96();
-            sub_428E();
-            word_A8A0 = 1;
+        if (word_A80E > screenWidth_) {
+            destroySubPooWnd();
+            stopPlaySound();
+            state_A8A0 = 1;
             break;
         }
         sub_488C(word_A80E, word_A810, word_A812);
         break;
     case 135:
-        word_A810 = word_CA52 * 7 / 8;
+        word_A810 = screenHeight_ * 7 / 8;
         word_A2AA = -1;
-        word_A800 = -40;
-        word_A802 = word_CA52 / 8;
-        word_A804 = 158;
+        posx_A800 = -40;
+        posy_A802 = screenHeight_ / 8;
+        index_A804 = 158;
         word_A826 = 0;
-        word_A8A0 = 136;
+        state_A8A0 = 136;
         break;
     case 136:
-        word_A800 -= word_A2AA * 16;
-        if (word_A804 == 161) {
-            word_A804 = 158;
+        posx_A800 -= word_A2AA * 16;
+        if (index_A804 == 161) {
+            index_A804 = 158;
         } else {
-            word_A804 += 1;
+            index_A804 += 1;
         }
-        if (word_CA50 / 2 - 20 < word_A800) {
-            word_A800 = word_CA50 / 2 - 20;
-            word_A804 = 162;
-            word_A8A0 = 137;
+        if (screenWidth_ / 2 - 20 < posx_A800) {
+            posx_A800 = screenWidth_ / 2 - 20;
+            index_A804 = 162;
+            state_A8A0 = 137;
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         break;
     case 137:
         word_CA72 += 40;
-        if (word_A810 - word_A802 - 40 <= word_CA72) {
-            word_CA72 = word_A810 - word_A802 - 40;
-            word_A8A0 = 138;
+        if (word_A810 - posy_A802 - 40 <= word_CA72) {
+            word_CA72 = word_A810 - posy_A802 - 40;
+            state_A8A0 = 138;
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         if (word_A83A++ < 1) {
             break;
         }
         word_A83A = 0;
-        if (word_A804 == 165) {
-            word_A804 = 162;
+        if (index_A804 == 165) {
+            index_A804 = 162;
         } else {
-            word_A804 += 1;
+            index_A804 += 1;
         }
         break;
     case 138:
@@ -4639,40 +4669,40 @@ loc_4D33:
             break;
         }
         word_A83A = 0;
-        sub_2A21();
-        word_A80E = word_A800;
+        showSubPoo();
+        word_A80E = posx_A800;
         word_A812 = 167;
         sub_488C(word_A80E, word_A810, word_A812);
-        sub_4807(word_A800, word_A802, word_A804);
-        word_A8A0 = 139;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        state_A8A0 = 139;
         word_C0AE = 0;
-        sub_2ABF(word_C0B0);
-        sub_2ABF(word_CA60[8]);
+        putWndToTop(hPooWnd_);
+        putWndToTop(hOtherPooWnd_[8]);
         break;
     case 139:
         if (word_CA72 != 0) {
             word_CA72 -= 40;
             if (word_CA72 <= 0) {
-                word_A804 = 158;
+                index_A804 = 158;
                 word_CA72 = 0;
             }
-            if (word_A804 == 165) {
-                word_A804 = 162;
+            if (index_A804 == 165) {
+                index_A804 = 162;
             } else {
-                word_A804 += 1;
+                index_A804 += 1;
             }
         } else {
-            word_A800 -= word_A2AA * 16;
-            if (word_A804 == 161) {
-                word_A804 = 158;
+            posx_A800 -= word_A2AA * 16;
+            if (index_A804 == 161) {
+                index_A804 = 158;
             } else {
-                word_A804 += 1;
+                index_A804 += 1;
             }
         }
-        if (word_A800 > word_CA50) {
-            word_A8A0 = 140;
+        if (posx_A800 > screenWidth_) {
+            state_A8A0 = 140;
         }
-        sub_4807(word_A800, word_A802, word_A804);
+        sub_4807(posx_A800, posy_A802, index_A804);
         if (word_A83A++ < 1) {
             break;
         }
@@ -4689,27 +4719,27 @@ loc_4D33:
         word_A83A = 0;
         word_CA46 += 1;
         if (word_CA46 > 8) {
-            sub_2A96();
-            sub_428E();
-            word_A8A0 = 1;
+            destroySubPooWnd();
+            stopPlaySound();
+            state_A8A0 = 1;
         }
         break;
     case 141:
         break;
     case 142:
-        word_A800 = -80;
-        word_A802 = word_CA52 / 8;
-        sub_4807(word_A800, word_A802, word_A804);
-        sub_2A21();
+        posx_A800 = -80;
+        posy_A802 = screenHeight_ / 8;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        showSubPoo();
         word_A2AC = -1;
         word_A80E = -40;
-        word_A810 = word_CA52 * 7 / 8;
+        word_A810 = screenHeight_ * 7 / 8;
         word_A812 = 158;
         word_A826 = 0;
-        word_A8A0 = 143;
+        state_A8A0 = 143;
         word_C0AE = 0;
-        sub_2ABF(word_C0B0);
-        sub_2ABF(word_CA60[8]);
+        putWndToTop(hPooWnd_);
+        putWndToTop(hOtherPooWnd_[8]);
         break;
     case 143:
         word_A80E -= word_A2AC * 16;
@@ -4718,13 +4748,13 @@ loc_4D33:
         } else {
             word_A812 += 1;
         }
-        if (word_CA52 / 8 < word_A80E) {
-            word_A80E = word_CA52 / 8;
-            word_A800 = word_CA50;
-            word_A802 = word_A810;
-            word_A804 = 4;
+        if (screenHeight_ / 8 < word_A80E) {
+            word_A80E = screenHeight_ / 8;
+            posx_A800 = screenWidth_;
+            posy_A802 = word_A810;
+            index_A804 = 4;
             word_A2AA = 1;
-            word_A8A0 = 144;
+            state_A8A0 = 144;
         }
         sub_488C(word_A80E, word_A810, word_A812);
         break;
@@ -4739,13 +4769,13 @@ loc_4D33:
             word_A812 += 1;
         }
         sub_488C(word_A80E, word_A810, word_A812);
-        word_A800 -= word_A2AA * 16;
-        word_A804 = word_A804 == 4 ? 5 : 4;
-        sub_4807(word_A800, word_A802, word_A804);
-        if (word_A80E + 40 >= word_A800) {
-            word_A800 = -80;
-            sub_4807(word_A800, word_A802, word_A804);
-            word_A8A0 = 145;
+        posx_A800 -= word_A2AA * 16;
+        index_A804 = index_A804 == 4 ? 5 : 4;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        if (word_A80E + 40 >= posx_A800) {
+            posx_A800 = -80;
+            sub_4807(posx_A800, posy_A802, index_A804);
+            state_A8A0 = 145;
         }
         break;
     case 145:
@@ -4756,9 +4786,9 @@ loc_4D33:
             word_A812 += 1;
         }
         if (word_A810 < -40) {
-            sub_2A96();
-            sub_428E();
-            word_A8A0 = 1;
+            destroySubPooWnd();
+            stopPlaySound();
+            state_A8A0 = 1;
             break;
         }
         sub_488C(word_A80E, word_A810, word_A812);
@@ -4766,47 +4796,47 @@ loc_4D33:
     case 146:
         break;
     case 147:
-        sub_2A21();
+        showSubPoo();
         word_CA56 = 1;
         word_A2AC = 1;
         word_A812 = 146;
         word_A826 = 0;
-        word_A800 = word_CA50;
-        word_A802 = -40;
+        posx_A800 = screenWidth_;
+        posy_A802 = -40;
         word_A2AA = 1;
-        word_A808 = word_CA50 / -96;
-        word_A806 = word_CA52 / 96;
-        word_A80E = word_A808 * 92 + word_CA50;
+        word_A808 = screenWidth_ / -96;
+        word_A806 = screenHeight_ / 96;
+        word_A80E = word_A808 * 92 + screenWidth_;
         word_A810 = word_A806 * 92 - 20;
-        word_A8A0 = 148;
+        state_A8A0 = 148;
         word_C0AE = 1;
-        sub_2ABF(word_CA60[8]);
-        sub_2ABF(word_C0B0);
+        putWndToTop(hOtherPooWnd_[8]);
+        putWndToTop(hPooWnd_);
     case 148:
         if (word_A83A++ < 0) {
             break;
         }
         word_A83A = 0;
         sub_488C(word_A80E, word_A810, word_A812);
-        word_A800 += word_A808;
-        word_A802 += word_A806;
-        word_A804 = word_A3DE[word_A826 / 3];
+        posx_A800 += word_A808;
+        posy_A802 += word_A806;
+        index_A804 = word_A3DE[word_A826 / 3];
         word_A826 += 1;
-        if (word_A804 == 0) {
+        if (index_A804 == 0) {
             word_A826 -= 1;
         }
-        if (word_A804 == 0 || word_A804 == 144 || word_A804 == 145) {
-            word_A804 = word_A804 == 144 ? 145 : 144;
+        if (index_A804 == 0 || index_A804 == 144 || index_A804 == 145) {
+            index_A804 = index_A804 == 144 ? 145 : 144;
         }
-        if (word_A804 == 137 || word_A804 == 138) {
-            word_A804 = word_A804 == 137 ? 138 : 137;
+        if (index_A804 == 137 || index_A804 == 138) {
+            index_A804 = index_A804 == 137 ? 138 : 137;
         }
-        sub_4807(word_A800, word_A802, word_A804);
-        if (word_A80E + 10 > word_A800 || word_A810 + 20 < word_A802) {
+        sub_4807(posx_A800, posy_A802, index_A804);
+        if (word_A80E + 10 > posx_A800 || word_A810 + 20 < posy_A802) {
             word_A826 = 0;
-            word_A8A0 = 149;
-            word_A804 = 173;
-            sub_4807(word_A800, word_A802, word_A804);
+            state_A8A0 = 149;
+            index_A804 = 173;
+            sub_4807(posx_A800, posy_A802, index_A804);
             break;
         }
         break;
@@ -4815,33 +4845,33 @@ loc_4D33:
             break;
         }
         word_A83A = 0;
-        word_A800 = -80;
-        sub_4807(word_A800, word_A802, word_A804);
+        posx_A800 = -80;
+        sub_4807(posx_A800, posy_A802, index_A804);
         word_A812 = word_A494[word_A826];
         word_A826 += 1;
         if (word_A812 == 0) {
-            word_A800 = word_A80E;
-            word_A802 = word_A810;
+            posx_A800 = word_A80E;
+            posy_A802 = word_A810;
             word_A826 = 0;
             sub_42C8(108, 0U, 0);
-            word_A8A0 = 150;
+            state_A8A0 = 150;
             break;
         }
         sub_488C(word_A80E, word_A810, word_A812);
         break;
     case 150:
-        word_A804 = 169;
-        word_A804 = word_A49E[word_A826];
+        index_A804 = 169;
+        index_A804 = word_A49E[word_A826];
         word_A826 += 1;
-        if (word_A804 == 0) {
-            word_A804 = 3;
-            word_A8A0 = 151;
+        if (index_A804 == 0) {
+            index_A804 = 3;
+            state_A8A0 = 151;
             break;
         }
-        if (word_A804 >= 81 && word_A804 <= 83) {
-            sub_4807(word_A800, word_A802 - 20, word_A804);
+        if (index_A804 >= 81 && index_A804 <= 83) {
+            sub_4807(posx_A800, posy_A802 - 20, index_A804);
         } else {
-            sub_4807(word_A800, word_A802, word_A804);
+            sub_4807(posx_A800, posy_A802, index_A804);
         }
         break;
     case 151:
@@ -4849,12 +4879,12 @@ loc_4D33:
             break;
         }
         word_A83A = 0;
-        word_A800 -= word_A2AA * 6;
-        word_A804 = word_A804 == 2 ? 3 : 2;
-        sub_4807(word_A800, word_A802, word_A804);
-        if (word_A800 < -40) {
-            sub_2A96();
-            word_A8A0 = 1;
+        posx_A800 -= word_A2AA * 6;
+        index_A804 = index_A804 == 2 ? 3 : 2;
+        sub_4807(posx_A800, posy_A802, index_A804);
+        if (posx_A800 < -40) {
+            destroySubPooWnd();
+            state_A8A0 = 1;
             break;
         }
         break;
@@ -4866,26 +4896,26 @@ loc_4D33:
 }
 
 /* Environment-affected action change, controlled by a flag. */
-void sub_8FD7(int arg_0)
+void event_8FD7(int arg_0)
 {
     switch (arg_0) {
     case 0:
-        word_A8A0 = 1;
+        state_A8A0 = 1;
         if (word_A7FC != 0) {
-            word_A8A0 = 97;
+            state_A8A0 = 97;
         }
         break;
     case 1:
-        word_A8A0 = 81;
+        state_A8A0 = 81;
         break;
     case 2:
-        word_A8A0 = 97;
+        state_A8A0 = 97;
         break;
     case 3:
         word_CA54 = 113;
         break;
     case 4:
-        word_A8A0 = 56;
+        state_A8A0 = 56;
         break;
     default:
         break;
@@ -4893,101 +4923,101 @@ void sub_8FD7(int arg_0)
 }
 
 /* Process debug window action change. */
-void sub_904A(WPARAM arg_0)
+void debugAction(WPARAM action)
 {
     word_CA72 = 0;
-    sub_428E();
-    sub_2A96();
-    switch (arg_0) {
+    stopPlaySound();
+    destroySubPooWnd();
+    switch (action) {
     case 0:
-        word_A8A0 = 1;
+        state_A8A0 = 1;
         break;
     case 1:
-        word_A8A0 = 7;
+        state_A8A0 = 7;
         break;
     case 2:
-        word_A8A0 = 11;
+        state_A8A0 = 11;
         break;
     case 3:
-        word_A8A0 = 13;
+        state_A8A0 = 13;
         break;
     case 4:
-        word_A8A0 = 15;
+        state_A8A0 = 15;
         break;
     case 5:
-        word_A8A0 = 17;
+        state_A8A0 = 17;
         break;
     case 6:
-        word_A8A0 = 20;
+        state_A8A0 = 20;
         break;
     case 7:
-        word_A8A0 = 24;
+        state_A8A0 = 24;
         break;
     case 8:
-        word_A8A0 = 30;
+        state_A8A0 = 30;
         break;
     case 9:
-        word_A8A0 = 35;
+        state_A8A0 = 35;
         break;
     case 10:
-        word_A8A0 = 43;
+        state_A8A0 = 43;
         break;
     case 11:
-        word_A8A0 = 45;
+        state_A8A0 = 45;
         break;
     case 12:
-        word_A8A0 = 49;
+        state_A8A0 = 49;
         break;
     case 13:
-        word_A8A0 = 51;
+        state_A8A0 = 51;
         break;
     case 14:
-        word_A8A0 = 53;
+        state_A8A0 = 53;
         break;
     case 15:
-        word_A8A0 = 58;
+        state_A8A0 = 58;
         break;
     case 16:
-        word_A8A0 = 47;
+        state_A8A0 = 47;
         break;
     case 17:
-        word_A8A0 = 147;
+        state_A8A0 = 147;
         break;
     case 18:
-        word_A8A0 = 116;
+        state_A8A0 = 116;
         break;
     case 19:
-        word_A8A0 = 121;
+        state_A8A0 = 121;
         break;
     case 20:
-        word_A8A0 = 126;
+        state_A8A0 = 126;
         break;
     case 21:
-        word_A8A0 = 128;
+        state_A8A0 = 128;
         break;
     case 22:
-        word_A8A0 = 135;
+        state_A8A0 = 135;
         break;
     case 23:
-        word_A8A0 = 142;
+        state_A8A0 = 142;
         break;
     case 24:
-        word_A8A0 = 65;
+        state_A8A0 = 65;
         break;
     case 25:
-        word_A8A0 = 62;
+        state_A8A0 = 62;
         break;
     case 26:
-        word_A8A0 = 75;
+        state_A8A0 = 75;
         break;
     case 27:
-        word_A8A0 = 96;
+        state_A8A0 = 96;
         break;
     case 28:
-        word_A8A0 = 9;
+        state_A8A0 = 9;
         break;
     case 29:
-        word_A8A0 = 69;
+        state_A8A0 = 69;
         break;
     default:
         break;
@@ -4995,43 +5025,43 @@ void sub_904A(WPARAM arg_0)
 }
 
 /* Move window by offset. */
-void sub_91CD(int arg_0, int arg_2)
+void movePooWnd(int offsX, int offsY)
 {
-    word_A800 += arg_0;
-    word_A802 += arg_2;
-    sub_4807(word_A800, word_A802, word_A804);
+    posx_A800 += offsX;
+    posy_A802 += offsY;
+    sub_4807(posx_A800, posy_A802, index_A804);
 }
 
 /* Initialize bitmaps (sub). */
-BOOL sub_9200(HWND arg_0)
+BOOL initSubWnd(HWND hWnd)
 {
-    HDC var_2;
-    var_2 = GetDC(arg_0);
-    word_A850[0] = CreateCompatibleBitmap(var_2, 100, 100);
+    HDC hdc;
+    hdc = GetDC(hWnd);
+    word_A850[0] = CreateCompatibleBitmap(hdc, 100, 100);
     if (word_A850[0] == NULL) {
-        goto loc_92FA;
+        goto failed;
     }
-    word_A850[1] = CreateCompatibleBitmap(var_2, 100, 100);
+    word_A850[1] = CreateCompatibleBitmap(hdc, 100, 100);
     if (word_A850[1] == NULL) {
-        goto loc_92FA;
+        goto failed;
     }
-    word_A854 = CreateCompatibleBitmap(var_2, 100, 100);
+    word_A854 = CreateCompatibleBitmap(hdc, 100, 100);
     if (word_A854 == NULL) {
-        goto loc_92FA;
+        goto failed;
     }
-    word_A85A = CreateCompatibleBitmap(var_2, 40, 40);
+    word_A85A = CreateCompatibleBitmap(hdc, 40, 40);
     if (word_A85A == NULL) {
-        goto loc_92FA;
+        goto failed;
     }
-    word_A85C = CreateCompatibleBitmap(var_2, 40, 40);
+    word_A85C = CreateCompatibleBitmap(hdc, 40, 40);
     if (word_A85C == NULL) {
-        goto loc_92FA;
+        goto failed;
     }
     word_CA4C = 0;
     word_CA4E = 0;
-    word_CA50 = GetSystemMetrics(SM_CXSCREEN);
-    word_CA52 = GetSystemMetrics(SM_CYSCREEN);
-    ReleaseDC(arg_0, var_2);
+    screenWidth_ = GetSystemMetrics(SM_CXSCREEN);
+    screenHeight_ = GetSystemMetrics(SM_CYSCREEN);
+    ReleaseDC(hWnd, hdc);
     word_CA46 = 0;
     word_CA5C = 0;
     word_CA56 = 0;
@@ -5040,13 +5070,13 @@ BOOL sub_9200(HWND arg_0)
     word_A894 = 0;
     word_A896 = 0;
     return TRUE;
-loc_92FA:
-    ReleaseDC(arg_0, var_2);
+failed:
+    ReleaseDC(hWnd, hdc);
     return FALSE;
 }
 
 /* Release bitmaps (sub). */
-void sub_930F()
+void releaseSubWnd()
 {
     DeleteObject(word_A85C);
     DeleteObject(word_A85A);
@@ -5060,12 +5090,12 @@ void sub_9350(int arg_0, int arg_2, int arg_4)
 {
     word_A878 = arg_0;
     word_A87A = arg_2;
-    word_A856 = stru_A8A2[arg_4].bitmaps[0];
-    word_A858 = stru_A8A2[arg_4].bitmaps[1];
-    word_A85E = stru_A8A2[arg_4].x;
-    word_A860 = stru_A8A2[arg_4].y;
-    word_A87C = stru_A8A2[arg_4].width;
-    word_A87E = stru_A8A2[arg_4].height;
+    word_A856 = sprites_[arg_4].bitmaps[0];
+    word_A858 = sprites_[arg_4].bitmaps[1];
+    word_A85E = sprites_[arg_4].x;
+    word_A860 = sprites_[arg_4].y;
+    word_A87C = sprites_[arg_4].width;
+    word_A87E = sprites_[arg_4].height;
 }
 
 /* Clear window (sub). */
@@ -5108,11 +5138,11 @@ void sub_9438(HWND arg_0)
     }
     word_A86E ^= 1;
     var_2 = GetDC(NULL);
-    SelectPalette(var_2, word_CA4A, FALSE);
+    SelectPalette(var_2, hPalette_, FALSE);
     var_4 = CreateCompatibleDC(var_2);
     var_6 = CreateCompatibleDC(var_2);
-    SelectPalette(var_6, word_CA4A, FALSE);
-    SelectPalette(var_4, word_CA4A, FALSE);
+    SelectPalette(var_6, hPalette_, FALSE);
+    SelectPalette(var_4, hPalette_, FALSE);
     var_16 = max(word_A878, word_A890);
     var_14 = max(word_A87A, word_A892);
     var_12 = min(word_A87C + word_A878, word_A894 + word_A890) - var_16;
@@ -5165,11 +5195,11 @@ void sub_9438(HWND arg_0)
                     BitBlt(var_6, 0, 0, 40, 40, var_4, word_A85E, word_A860, SRCCOPY);
                 }
                 SelectObject(var_4, word_A85C);
-                SelectObject(var_6, stru_A8A2[172].bitmaps[0]);
-                BitBlt(var_4, word_CA46 - 1, word_CA46 - 1, 41 - word_CA46, 40, var_6, stru_A8A2[172].x, 0, SRCPAINT);
+                SelectObject(var_6, sprites_[172].bitmaps[0]);
+                BitBlt(var_4, word_CA46 - 1, word_CA46 - 1, 41 - word_CA46, 40, var_6, sprites_[172].x, 0, SRCPAINT);
                 SelectObject(var_4, word_A85A);
-                SelectObject(var_6, stru_A8A2[172].bitmaps[1]);
-                BitBlt(var_4, word_CA46 - 1, word_CA46 - 1, 41 - word_CA46, 40, var_6, stru_A8A2[172].x, 0, SRCAND);
+                SelectObject(var_6, sprites_[172].bitmaps[1]);
+                BitBlt(var_4, word_CA46 - 1, word_CA46 - 1, 41 - word_CA46, 40, var_6, sprites_[172].x, 0, SRCAND);
                 SelectObject(var_6, word_A854);
                 SelectObject(var_4, word_A85C);
                 BitBlt(var_6, var_16, var_14, word_A87C, word_A87E, var_4, 0, 0, SRCAND);
@@ -5221,21 +5251,21 @@ BOOL sub_9A49(HWND arg_0)
     }
     word_A870 = 0;
     var_2 = GetDC(arg_0);
-    SelectPalette(var_2, word_CA4A, FALSE);
+    SelectPalette(var_2, hPalette_, FALSE);
     RealizePalette(var_2);
     var_4 = CreateCompatibleDC(var_2);
-    SelectPalette(var_4, word_CA4A, FALSE);
+    SelectPalette(var_4, hPalette_, FALSE);
     SelectObject(var_4, word_A854);
     BitBlt(var_2, 0, 0, word_A884, word_A886, var_4, 0, 0, SRCCOPY);
     if (word_CA5C != 0) {
         if (word_C0B8 == NULL) {
-            word_C0B8 = CreateCompatibleBitmap(var_2, 40, word_CA52 * 4 / 5);
+            word_C0B8 = CreateCompatibleBitmap(var_2, 40, screenHeight_ * 4 / 5);
             if (word_C0B8 == NULL) {
                 goto loc_9CC3;
             }
         }
         if (word_C0B2 == NULL) {
-            word_C0B2 = CreateCompatibleBitmap(var_2, 40, word_CA52 * 4 / 5);
+            word_C0B2 = CreateCompatibleBitmap(var_2, 40, screenHeight_ * 4 / 5);
             if (word_C0B2 == NULL) {
                 goto loc_9CC3;
             }
