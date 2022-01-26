@@ -11,6 +11,8 @@
 #include <MMSystem.h>
 #include <ShellAPI.h>
 
+#include "resources.h"
+
 /* GetActiveWindow is made local to current thread in 32-bit Windows. The function of global scope is now GetForegroundWindow. */
 #ifdef _WIN32
 #define GetActiveWindow GetForegroundWindow
@@ -44,18 +46,19 @@ typedef struct windowinfo {
 
 int word_9CF0 = 245; /* Palette search maximum index (unused). */
 resourceinfo originalRes_[16] = { /* Resource list. */
-    {101, 1, {{NULL, NULL}, 0, 0, 0, 0}},
-    {102, 1, {{NULL, NULL}, 0, 0, 0, 0}},
-    {103, 1, {{NULL, NULL}, 0, 0, 0, 0}},
-    {104, 1, {{NULL, NULL}, 0, 0, 0, 0}},
-    {105, 1, {{NULL, NULL}, 0, 0, 0, 0}},
-    {106, 1, {{NULL, NULL}, 0, 0, 0, 0}},
-    {107, 1, {{NULL, NULL}, 0, 0, 0, 0}},
-    {108, 1, {{NULL, NULL}, 0, 0, 0, 0}},
-    {109, 1, {{NULL, NULL}, 0, 0, 0, 0}},
-    {110, 1, {{NULL, NULL}, 0, 0, 0, 0}},
-    {111, 1, {{NULL, NULL}, 0, 0, 0, 0}}
+    {IDB_SPRITE1, 1, {{NULL, NULL}, 0, 0, 0, 0}},
+    {IDB_SPRITE2, 1, {{NULL, NULL}, 0, 0, 0, 0}},
+    {IDB_SPRITE3, 1, {{NULL, NULL}, 0, 0, 0, 0}},
+    {IDB_SPRITE4, 1, {{NULL, NULL}, 0, 0, 0, 0}},
+    {IDB_SPRITE5, 1, {{NULL, NULL}, 0, 0, 0, 0}},
+    {IDB_SPRITE6, 1, {{NULL, NULL}, 0, 0, 0, 0}},
+    {IDB_SPRITE7, 1, {{NULL, NULL}, 0, 0, 0, 0}},
+    {IDB_SPRITE8, 1, {{NULL, NULL}, 0, 0, 0, 0}},
+    {IDB_SPRITE9, 1, {{NULL, NULL}, 0, 0, 0, 0}},
+    {IDB_SPRITEA, 1, {{NULL, NULL}, 0, 0, 0, 0}},
+    {IDB_SPRITEB, 1, {{NULL, NULL}, 0, 0, 0, 0}}
 };
+
 resourceinfo hFlipRes_[16] = {0}; /* Resource list storing flipped images. */
 WORD word_A15A[80] = { /* Normal action table (option "Gravity always on" disabled). */
     11, 11, 7, 7,
@@ -224,7 +227,7 @@ int word_A826 = 0; /* Animation frame counter. */
 int word_A828 = 0; /* Random duration period counter. */
 int word_A82A = 0; /* Random case number for action. */
 WORD word_A82C = 0; /* Unused. */
-HGLOBAL word_A82E = NULL; /* Global handle for holding WAVE resource in memory. */
+HGLOBAL hPlaySoundData_ = NULL; /* Global handle for holding WAVE resource in memory. */
 int word_A830 = 0; /* Current time hour. */
 int word_A832 = 0; /* Remaining times for chime. */
 DWORD dword_A834 = 0; /* Tick count. */
@@ -353,10 +356,10 @@ void sub_3DF0(void);
 int sub_3E7C(HWND *, int, int, int, int);
 int sub_408C(HWND *, int, int, int, int);
 int sub_419E(HWND, int, int, int, int);
-void sub_4210(int, UINT, WORD);
+void playSoundRes(int, UINT, WORD);
 void stopPlaySound(void);
 void asyncPlaySound(LPCSTR path);
-void sub_42C8(int, UINT, WORD);
+void sound_42C8(int, UINT, WORD);
 BOOL initResources(HDC hdc);
 void releaseResources(void);
 void sub_4559(void);
@@ -1060,7 +1063,7 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         wndClass.cbWndExtra = 8;
         wndClass.hInstance = hInstance;
         wndClass.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(100));
-        wndClass.hCursor = LoadCursor(hInstance, MAKEINTRESOURCE(106));
+        wndClass.hCursor = LoadCursor(hInstance, MAKEINTRESOURCE(IDC_CURSOR1));
         wndClass.hbrBackground = NULL;
         wndClass.lpszMenuName = NULL;
         wndClass.lpszClassName = "ScreenMatePoo";
@@ -1393,10 +1396,10 @@ LRESULT CALLBACK pooWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         if ((HIBYTE(GetKeyState(VK_SHIFT)) & 0x80) != 0 &&
             (HIBYTE(GetKeyState(VK_CONTROL)) & 0x80) != 0) {
             proc = MakeProcInstance((FARPROC)debugDlgProc, hSelfInst_);
-            DialogBox(hSelfInst_, MAKEINTRESOURCE(108), hWnd, (DLGPROC)proc);
+            DialogBox(hSelfInst_, MAKEINTRESOURCE(IDD_DEBUG), hWnd, (DLGPROC)proc);
         } else {
             proc = MakeProcInstance((FARPROC)configDlgProc, hSelfInst_);
-            DialogBox(hSelfInst_, MAKEINTRESOURCE(107), hWnd, (DLGPROC)proc);
+            DialogBox(hSelfInst_, MAKEINTRESOURCE(IDD_CONFIG), hWnd, (DLGPROC)proc);
         }
         FreeProcInstance(proc);
         reset_3237(hWnd);
@@ -1483,10 +1486,10 @@ BOOL CALLBACK configDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg) {
     case WM_INITDIALOG:
-        SendDlgItemMessage(hDlg, 1001, BM_SETCHECK, (WPARAM)confChime_, 0);
-        SendDlgItemMessage(hDlg, 1002, BM_SETCHECK, (WPARAM)confSound_, 0);
-        SendDlgItemMessage(hDlg, 1003, BM_SETCHECK, (WPARAM)confNoSleep_, 0);
-        SendDlgItemMessage(hDlg, 1004, BM_SETCHECK, (WPARAM)confGForce_, 0);
+        SendDlgItemMessage(hDlg, IDC_CONFIG_CHIME, BM_SETCHECK, (WPARAM)confChime_, 0);
+        SendDlgItemMessage(hDlg, IDC_CONFIG_SOUND, BM_SETCHECK, (WPARAM)confSound_, 0);
+        SendDlgItemMessage(hDlg, IDC_CONFIG_NOSLEEP, BM_SETCHECK, (WPARAM)confNoSleep_, 0);
+        SendDlgItemMessage(hDlg, IDC_CONFIG_GFORCE, BM_SETCHECK, (WPARAM)confGForce_, 0);
         return TRUE;
     case WM_COMMAND:
         if (wParam == IDRETRY) {
@@ -1494,10 +1497,10 @@ BOOL CALLBACK configDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             return TRUE;
         }
         if (wParam == IDOK) {
-            confChime_ = IsDlgButtonChecked(hDlg, 1001);
-            confSound_ = IsDlgButtonChecked(hDlg, 1002);
-            confNoSleep_ = IsDlgButtonChecked(hDlg, 1003);
-            confGForce_ = IsDlgButtonChecked(hDlg, 1004);
+            confChime_ = IsDlgButtonChecked(hDlg, IDC_CONFIG_CHIME);
+            confSound_ = IsDlgButtonChecked(hDlg, IDC_CONFIG_SOUND);
+            confNoSleep_ = IsDlgButtonChecked(hDlg, IDC_CONFIG_NOSLEEP);
+            confGForce_ = IsDlgButtonChecked(hDlg, IDC_CONFIG_GFORCE);
             saveConfig();
         }
         if (wParam == IDABORT) {
@@ -1518,27 +1521,28 @@ BOOL CALLBACK debugDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg) {
     case WM_INITDIALOG:
-        CheckRadioButton(hDlg, 1002, 1019, 1002);
+        CheckRadioButton(hDlg, IDC_DEBUG_NORMAL, IDC_DEBUG_BURN, IDC_DEBUG_NORMAL);
         return TRUE;
     case WM_COMMAND:
         if (wParam == IDOK || wParam == IDCANCEL) {
             EndDialog(hDlg, (int)wParam);
         }
-        if (wParam >= 1002 && wParam <= 1031 && IsDlgButtonChecked(hDlg, (int)wParam) != 0U) {
+        if (wParam >= IDC_DEBUG_NORMAL && wParam <= IDC_DEBUG_ROTATE &&
+            IsDlgButtonChecked(hDlg, (int)wParam)) {
             /// set Action(0~29)
-            debugAction(wParam - 1002);
+            debugAction(wParam - IDC_DEBUG_NORMAL);
         }
         switch (wParam) {
-        case 1032:      ///Up
+        case IDC_DEBUG_UP:
             movePooWnd(0, -20);
             break;
-        case 1033:      ///Dn
+        case IDC_DEBUG_DOWN:
             movePooWnd(0, 20);
             break;
-        case 1034:      ///L
+        case IDC_DEBUG_LEFT:
             movePooWnd(-20, 0);
             break;
-        case 1035:      ///R
+        case IDC_DEBUG_RIGHT:
             movePooWnd(20, 0);
             break;
         default:
@@ -2294,18 +2298,18 @@ int sub_419E(HWND arg_0, int arg_2, int arg_4, int arg_6, int arg_8)
 }
 
 /* Play sound by resource ID and additional flags. */
-void sub_4210(int arg_0, UINT arg_2, WORD arg_4)
+void playSoundRes(int resId, UINT flags, WORD arg_4)
 {
     LPCSTR lpszSoundName;
-    if (word_A82E != NULL) {
+    if (hPlaySoundData_ != NULL) {
         sndPlaySound(NULL, SND_SYNC);
-        GlobalUnlock(word_A82E);
-        FreeResource(word_A82E);
-        word_A82E = NULL;
+        GlobalUnlock(hPlaySoundData_);
+        FreeResource(hPlaySoundData_);
+        hPlaySoundData_ = NULL;
     }
-    word_A82E = LoadResource(hSelfInst_, FindResource(hSelfInst_, MAKEINTRESOURCE(arg_0), "WAVE"));
-    lpszSoundName = LockResource(word_A82E);
-    sndPlaySound(lpszSoundName, arg_2 | (SND_ASYNC | SND_MEMORY));
+    hPlaySoundData_ = LoadResource(hSelfInst_, FindResource(hSelfInst_, MAKEINTRESOURCE(resId), "WAVE"));
+    lpszSoundName = LockResource(hPlaySoundData_);
+    sndPlaySound(lpszSoundName, flags | (SND_ASYNC | SND_MEMORY));
 }
 
 /* Stop playing sound. */
@@ -2321,10 +2325,10 @@ void asyncPlaySound(LPCSTR path)
 }
 
 /* Play sound by resource ID and additional flags (when option "Cry" enabled). */
-void sub_42C8(int arg_0, UINT arg_2, WORD arg_4)
+void sound_42C8(int resId, UINT flags, WORD arg_4)
 {
-    if (confSound_ != 0U) {
-        sub_4210(arg_0, arg_2, arg_4);
+    if (confSound_) {
+        playSoundRes(resId, flags, arg_4);
     }
 }
 
@@ -2428,15 +2432,15 @@ void sub_46F7(void)
 {
     struct tm * var_2;
     time_t var_6;
-    DWORD var_A;
+    DWORD tick;
     int var_C;
     if (word_A832 != 0) {
-        var_A = GetTickCount();
-        if (dword_A834 + 1000 < var_A) {
-            dword_A834 = var_A;
+        tick = GetTickCount();
+        if (dword_A834 + 1000 < tick) {
+            dword_A834 = tick;
             word_A832 -= 1;
             if (word_A832 != 0) {
-                sub_4210(108, 0U, 0);
+                playSoundRes(IDW_BAA, 0U, 0);
             } else if (word_CA76 != 0) {
                 state_A8A0 = 113;
             } else {
@@ -3316,7 +3320,7 @@ loc_4D33:
         word_A826 = 0;
         break;
     case 43:
-        sub_42C8(109, 0U, 0);
+        sound_42C8(IDW_YAWN, 0U, 0);
         word_A826 = 0;
         state_A8A0 = 44;
     case 44:
@@ -3334,7 +3338,7 @@ loc_4D33:
         sub_496F(0);
         break;
     case 45:
-        sub_42C8(108, 0U, 0);
+        sound_42C8(IDW_BAA, 0U, 0);
         word_A826 = 0;
         state_A8A0 = 46;
     case 46:
@@ -3360,7 +3364,7 @@ loc_4D33:
         }
         word_A83A = 0;
         if (word_A826 == 2) {
-            sub_42C8(110, 0U, 0);
+            sound_42C8(IDW_SNEEZE, 0U, 0);
         }
         index_A804 = word_A372[word_A826];
         word_A826 += 1;
@@ -4863,7 +4867,7 @@ loc_4D33:
             posx_A800 = word_A80E;
             posy_A802 = word_A810;
             word_A826 = 0;
-            sub_42C8(108, 0U, 0);
+            sound_42C8(IDW_BAA, 0U, 0);
             state_A8A0 = 150;
             break;
         }

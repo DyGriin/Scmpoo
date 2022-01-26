@@ -21,3 +21,6 @@ win32 {
     QMAKE_RC = rc /c 932 /l 0x0411
     RC_FILE += Scmpoo.rc
 }
+
+HEADERS += \
+    resources.h
