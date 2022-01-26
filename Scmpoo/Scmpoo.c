@@ -25,6 +25,22 @@ enum
     kISubPooHwnd = kMaxPooCount,
 };
 
+enum    ///Paint param
+{
+    kPooW = 40,
+    kPooH = 40,
+
+    kBeamMaskColor = RGB(0xFF, 0xFF, 0),
+    kBeamBaseColor = RGB(0x80, 0x80, 0),    ///color in black bg
+};
+
+enum
+{
+    //timer info for both wnd
+    kTimerUpdate = 1,
+    kUpdatePeriod = 108,
+};
+
 enum
 {
     kWinkStand = 0,
@@ -314,6 +330,7 @@ enum SpriteId
     kSprAlien0 = 166,
     kSprAlien1 = 167,
     kSprAlien2 = 168,
+    kSprFadeGrid = 172,
 };
 
 typedef struct SpriteInfo {
@@ -476,18 +493,18 @@ RECT lastWndRect_ = {0, 0, 0, 0}; /* Screen Mate window rectangle. */
 WORD skipNextPaintMsg_ = 0; /* Not to clear window on WM_PAINT? */
 POINT lastCursorPos_ = {0, 0}; /* Current cursor position. */
 WORD skipNextSubPaintMsg_ = 0; /* Not to clear window on WM_PAINT? (sub) */
-HBITMAP paintBmpBuf_[2] = {NULL, NULL}; /* Double buffer. */
-HBITMAP bmp_A7BA = NULL; /* Sprite render target. */
+HBITMAP scrCaptBuf_[2] = {NULL, NULL}; /* Double buffer. */
+HBITMAP pooBmp_ = NULL; /* Sprite render target. */
 HBITMAP curSpriteBmp0_ = NULL; /* Sprite colour image for current frame. */
 HBITMAP curSpriteBmp1_ = NULL; /* Sprite mask image for current frame. */
 int curSpriteBmpX_ = 0; /* Sprite X-coordinate on resource image for current frame. */
 int curSpriteBmpY_ = 0; /* Sprite Y-coordinate on resource image for current frame. */
-int lastPaintBmpX_ = 0; /* Sprite X-coordinate on resource image for previous frame. */
-int lastPaintBmpY_ = 0; /* Sprite Y-coordinate on resource image for previous frame (unused). */
-WORD iPaintBmp_ = 0; /* Current framebuffer index. */
-WORD bool_A7D2 = 0; /* 0 to render sprite; 1 to update window. */
-WORD bool_A7D4 = 0; /* Unused. */
-HBITMAP lastPaintBmp_ = NULL; /* Sprite colour image for previous frame. */
+int lastSpriteBmpX_ = 0; /* Sprite X-coordinate on resource image for previous frame. */
+int lastSpriteBmpY_ = 0; /* Sprite Y-coordinate on resource image for previous frame (unused). */
+WORD iScrCaptBuf_ = 0; /* Current framebuffer index. */
+WORD bool_mainA7D2 = 0; /* 0 to render sprite; 1 to update window. */
+WORD unused_A7D4 = 0; /* Unused. */
+HBITMAP lastSpriteBmp_ = NULL; /* Sprite colour image for previous frame. */
 int curSpriteX_ = 0; /* Screen X-coordinate for current frame. */
 int curSpriteY_ = 0; /* Screen Y-coordinate for current frame. */
 int curSpriteBmpW_ = 0; /* Sprite width for current frame. */
@@ -500,11 +517,11 @@ int lastPaintRectX_ = 0; /* Update area rectangle X-coordinate for previous fram
 int lastPaintRectY_ = 0; /* Update area rectangle Y-coordinate for previous frame. */
 int lastPaintRectW_ = 0; /* Update area rectangle width for previous frame. */
 int lastPaintRectH_ = 0; /* Update area rectangle height for previous frame. */
-int lastPaintX_ = 0; /* Screen X-coordinate for previous frame. */
-int lastPaintY_ = 0; /* Screen Y-coordinate for previous frame. */
-int lastPaintBmpW_ = 0; /* Sprite width for previous frame. */
-int lastPaintBmpH_ = 0; /* Sprite height for previous frame. */
-WORD word_A7FA = 0; /* Current frame rectangle and previous frame rectangle have no intersecion? (unused) */
+int lastSpriteX_ = 0; /* Screen X-coordinate for previous frame. */
+int lastSpriteY_ = 0; /* Screen Y-coordinate for previous frame. */
+int lastSpriteBmpW_ = 0; /* Sprite width for previous frame. */
+int lastSpriteBmpH_ = 0; /* Sprite height for previous frame. */
+WORD unused_A7FA = 0; /* Current frame rectangle and previous frame rectangle have no intersecion? (unused) */
 WORD bool_A7FC = 0; /* Is gravity enabled? */
 WORD canHit_ = 0; /* Is collision with visible window enabled? */
 int xPoo_ = 0; /* Current X-coordinate. */
@@ -537,7 +554,7 @@ int word_A846 = 0; /* Collision spin frame counter (unused). */
 WORD iAniHitFrame_ = 0; /* Collision animation frame index. */
 int word_A84A = 0; /* Known instance list update period counter. */
 HBITMAP paintSubBmpBuf_[2] = {NULL, NULL}; /* Double buffer (sub). */
-HBITMAP bmp_A854 = NULL; /* Sprite render target (sub). */
+HBITMAP subPooBmp_ = NULL; /* Sprite render target (sub). */
 HBITMAP curSubSpriteBmp0_ = NULL; /* Sprite colour image for current frame (sub). */
 HBITMAP curSubSpriteBmp1_ = NULL; /* Sprite mask image for current frame (sub). */
 HBITMAP bmp_A85A = NULL; /* Fade out processed colour image (sub). */
@@ -547,7 +564,7 @@ int curSubSpriteBmpY_ = 0; /* Sprite Y-coordinate on resource image for current 
 int lastSubSpriteBmpX_ = 0; /* Sprite X-coordinate on resource image for previous frame (sub). */
 int lastSubSpriteBmpY_ = 0; /* Sprite Y-coordinate on resource image for previous frame (sub) (unused). */
 WORD iPaintSubBmp_ = 0; /* Current framebuffer index (sub). */
-WORD bool_A870 = 0; /* 0 to render sprite; 1 to update window (sub). */
+WORD bool_subA870 = 0; /* 0 to render sprite; 1 to update window (sub). */
 WORD bool_A872 = 0; /* Unused. */
 HBITMAP lastSubSpriteBmp0_ = NULL; /* Sprite colour image for previous frame (sub). */
 int curSubSpriteX_ = 0; /* Screen X-coordinate for current frame (sub). */
@@ -573,17 +590,17 @@ int cursorIdleCount_ = 0; /* No mouse action consecutive period counter. */
 UINT confChime_ = 0U; /* Configuration: Chime */
 WORD bool_C0AE = 0; /* Screen Mate window on top of subwindow? (unused) */
 HWND hPooWnd_ = NULL; /* Self instance window handle. */
-HBITMAP bmp_C0B2 = NULL; /* UFO beam render target. */
-HBRUSH brush_C0B4 = NULL; /* UFO beam paint colour brush. */
+HBITMAP beamBufBmp_ = NULL; /* UFO beam render target. */
+HBRUSH beamOrBrush_ = NULL; /* UFO beam paint colour brush. */
 UINT confNoSleep_ = 0U; /* Configuration: Always moving */
-HBITMAP bmp_C0B8 = NULL; /* UFO beam colour rectangle image. */
-WORD word_C0BA = 0; /* Remaining no-update periods after clearing windows. */
+HBITMAP beamRectBmp_ = NULL; /* UFO beam colour rectangle image. */
+WORD skipTimerMsgCount_ = 0; /* Remaining no-update periods after clearing windows. */
 WindowInfo otherVWnds_[32] = {{NULL, {0, 0, 0, 0}, {0}}}; /* Currently visible window list. */
 WORD hasOtherPoo_ = 0; /* Prevent special actions? */
 WORD confTopMost__ = 0; /* Always on top? (unused) */
 int otherPooCount_ = 0; /* Known instance count. */
 UINT confGForce_ = 0U; /* Configuration: Gravity always on */
-HBRUSH brush_CA44 = NULL; /* UFO beam mask colour brush. */
+HBRUSH beamAndBrush_ = NULL; /* UFO beam mask colour brush. */
 int subPooFade_ = 0; /* Fade out frame counter. */
 int otherPooCount2_ = 0; /* Unused. */
 HPALETTE hPalette_ = NULL; /* Palette being used by window. */
@@ -595,13 +612,13 @@ WORD pooSleepState_ = 0; /* Temporarily holds sleep timeout action. */
 WORD keepSubPoo_ = 0; /* Not to clear subwindow? */
 HINSTANCE hSelfInst_ = NULL; /* Current instance. */
 UINT confSound_ = 0U; /* Configuration: Cry */
-int height_CA5C = 0; /* UFO beam height (sub). */
-WORD word_CA5E = 0; /* Unused. */
+int subBeamHeight_ = 0; /* UFO beam height (sub). */
+WORD unused_CA5E = 0; /* Unused. */
 HWND hOtherPooWnd_[kMaxPooCount+1] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}; /* Known instance list. When no other instance exists, [8] is used to store subwindow handle. */
 int ufoBeamHeight_ = 0; /* UFO beam height. */
 int otherVWndCount_ = 0; /* Number of currently visible windows. */
 WORD needSleepAfterChime_ = 0; /* Sleeping after timeout? */
-WORD word_CA78 = 0; /* Unused. */
+WORD unused_CA78 = 0; /* Unused. */
 #ifdef _WIN32
 HWND hOwnerWnd_ = NULL;
 #endif
@@ -637,8 +654,8 @@ BOOL initBitmaps(HWND);
 void releaseWndBmp();
 void setSpriteInfo(int, int, int index);
 void repaintPoo(HWND);
-void paint_3284(HWND hWnd);
-void paint_3717(HWND hWnd);
+void renderPooBmp(HWND hWnd);
+void paintPoo(HWND hWnd);
 void unused_399D(HWND, int, int, int, int);
 BOOL isOtherPoo(HWND);
 int calcPooHitX(int, int, int, int);
@@ -678,11 +695,11 @@ BOOL initSubWnd(HWND);
 void releaseSubWnd();
 void setSubSpriteInfo(int, int, int);
 void repaintSubPoo(HWND);
-void paint_9438(HWND);
-BOOL paint_9A49(HWND);
+void renderSubPooBmp(HWND);
+BOOL paintSubPoo(HWND);
 
 /* Make mask bitmap image out of the first pixel (by simulating x86 assembly). */
-void PASCAL sub_10(void FAR * arg_4, void FAR * arg_0)
+void PASCAL sub_10(void FAR * dest, void FAR * src)
 {
 #define ax (LOWORD(eax))
 #define cx (LOWORD(ecx))
@@ -705,8 +722,8 @@ void PASCAL sub_10(void FAR * arg_4, void FAR * arg_0)
     al = 0; /* xor eax, eax */
     ecx = 0; /* xor ecx, ecx */
     dx = 0; /* xor edx, edx */
-    source = arg_0; /* lds si, [bp+arg_0] */
-    destination = arg_4; /* les di, [bp+arg_4] */
+    source = src; /* lds si, [bp+arg_0] */
+    destination = dest; /* les di, [bp+arg_4] */
     eax = (WORD)BICOLORCOUNT(source); /* call BICOLORCOUNT */
     sp -= sizeof(WORD); /* push ax */
     *(WORD *)sp = ax;
@@ -1411,7 +1428,7 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     /* Set the visible window to be owned by the hidden top-level window. */
     hPooWnd = CreateWindowEx(0L, "ScreenMatePoo", "Screen Mate", WS_POPUP, 0, 0, 0, 0, hOwnerWnd_, NULL, hInstance, NULL);
 #else
-    hPooWnd = CreateWindowEx(0L, "ScreenMatePoo", "Screen Mate", WS_POPUP, 0, 0, 0, 0, NULL, NULL, hInstance, NULL);
+    hPooWnd = CreateWindowEx(WS_EX_TOOLWINDOW, "ScreenMatePoo", "Screen Mate", WS_POPUP, 0, 0, 0, 0, NULL, NULL, hInstance, NULL);
 #endif
     if (hPooWnd == NULL) {
         return 0;
@@ -1477,7 +1494,7 @@ LRESULT CALLBACK pooWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         DragAcceptFiles(hWnd, TRUE);
         hPooWnd_ = hWnd;
         readConfig();
-        if (confTopMost__ != 0) {
+        if (confTopMost__) {
             SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
         }
         hdc = GetDC(hWnd);
@@ -1499,7 +1516,7 @@ LRESULT CALLBACK pooWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             MessageBox(hWnd, "Insufficient memory", "Screen Mate", MB_ICONHAND | MB_OK);
             return -1;
         }
-        SetTimer(hWnd, 1U, 108U, NULL);
+        SetTimer(hWnd, kTimerUpdate, kUpdatePeriod, NULL);
         break;
     case WM_DROPFILES:
         if (hOtherPooWnd_[kISubPooHwnd] == NULL) {
@@ -1548,8 +1565,8 @@ LRESULT CALLBACK pooWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_WINDOWPOSCHANGED:
         return 0;
     case WM_TIMER:
-        if (word_C0BA != 0) {
-            word_C0BA -= 1;
+        if (skipTimerMsgCount_ != 0) {
+            skipTimerMsgCount_ -= 1;
             return 0;
         }
         if (confNoSleep_ == 0) {
@@ -1579,8 +1596,8 @@ LRESULT CALLBACK pooWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         skipNextPaintMsg_ = 0;
         hPooWnd_ = hWnd;
         stateUpdate();
-        paint_3284(hWnd);
-        paint_3717(hWnd);
+        renderPooBmp(hWnd);
+        paintPoo(hWnd);
         hasTimerMsgEver_ = 1;
         return 0;
     case kWmPeerPoo:
@@ -1601,7 +1618,8 @@ LRESULT CALLBACK pooWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         ValidateRect(hWnd, NULL);
         return 0;
         GetWindowRect(hWnd, &rect);
-        if (lastWndRect_.top == rect.top && lastWndRect_.bottom == rect.bottom && lastWndRect_.left == rect.left && lastWndRect_.right == rect.right) {
+        if (lastWndRect_.top == rect.top && lastWndRect_.bottom == rect.bottom &&
+                lastWndRect_.left == rect.left && lastWndRect_.right == rect.right) {
             repaintPoo(hWnd);
             ValidateRect(hWnd, NULL);
             return 0;
@@ -1639,8 +1657,8 @@ LRESULT CALLBACK pooWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         posy_A79C = (short)HIWORD(lParam) + rect.top;
         isMouseBtnDown_ = 1;
         postAction(1);
-        paint_3284(hWnd);
-        paint_3717(hWnd);
+        renderPooBmp(hWnd);
+        paintPoo(hWnd);
         break;
     case WM_MOUSEMOVE:
         if (!isMouseBtnDown_) {
@@ -1655,8 +1673,8 @@ LRESULT CALLBACK pooWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         movePooWnd(posx_10 - posx_A79A, posy_12 - posy_A79C);
         posx_A79A = posx_10;
         posy_A79C = posy_12;
-        paint_3284(hWnd);
-        paint_3717(hWnd);
+        renderPooBmp(hWnd);
+        paintPoo(hWnd);
         break;
     case WM_RBUTTONUP:
         if (isRBtnDbClicked_ != 0) {
@@ -1674,8 +1692,8 @@ LRESULT CALLBACK pooWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             if (uMsg == WM_RBUTTONUP) {
                 postAction(2);
             }
-            paint_3284(hWnd);
-            paint_3717(hWnd);
+            renderPooBmp(hWnd);
+            paintPoo(hWnd);
             ReleaseCapture();
             isMouseBtnDown_ = 0;
         }
@@ -1699,7 +1717,7 @@ LRESULT CALLBACK pooWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         FreeProcInstance(proc);
         repaintPoo(hWnd);
         if (oldTopMostConf != confTopMost__) {
-            if (confTopMost__ != 0) {
+            if (confTopMost__) {
                 SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
             } else {
                 SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
@@ -1738,7 +1756,7 @@ LRESULT CALLBACK pooSubWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
             DestroyWindow(hWnd);
             return 1;
         }
-        SetTimer(hWnd, 1U, 108U, NULL);
+        SetTimer(hWnd, kTimerUpdate, kUpdatePeriod, NULL);
         break;
     case WM_WINDOWPOSCHANGING:
         wndPos = (LPWINDOWPOS)lParam;
@@ -1749,8 +1767,8 @@ LRESULT CALLBACK pooSubWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
         return 0;
     case WM_TIMER:
         skipNextSubPaintMsg_ = 0;
-        paint_9438(hWnd);
-        if (!paint_9A49(hWnd)) {
+        renderSubPooBmp(hWnd);
+        if (!paintSubPoo(hWnd)) {
             hasOtherPoo_ = 1;
             resetState();
         }
@@ -1887,7 +1905,7 @@ void destroySubPooWnd(void)
 /* Place window to topmost position. */
 void putWndToTop(HWND hWnd)
 {
-    if (confTopMost__ == 0) {
+    if (!confTopMost__) {
         SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
         SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
     }
@@ -1896,7 +1914,7 @@ void putWndToTop(HWND hWnd)
 /* Place a window on top of another. */
 void setWndOnto(HWND hWnd, HWND hPeerWnd)
 {
-    if (confTopMost__ == 0) {
+    if (!confTopMost__) {
         SetWindowPos(hWnd, hPeerWnd, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
     }
 }
@@ -1968,6 +1986,7 @@ BOOL loadSprite(HDC hdc, SpriteInfo * pSprite, int resId, int flag)
         hBmpData = NULL;
         return TRUE;
     } else {
+        /// unused route
         pBmpPixels = (void FAR *)((BYTE FAR *)pResData + *(WORD FAR *)pResData + readBmpPaletteSize(pResData));
         pSprite->bitmaps[0] = CreateDIBitmap(hdc, pResData, CBM_INIT, pBmpPixels, pResData, DIB_RGB_COLORS);
         if (pSprite->bitmaps[0] == NULL) {
@@ -2025,7 +2044,7 @@ void releaseSprite(SpriteInfo * sprite)
 /* Read configuration from file. */
 void readConfig(void)
 {
-    word_CA78 = 1;
+    unused_CA78 = 1;
     confTopMost__ = 0;
     confChime_ = 0U;
     confSound_ = 0U;
@@ -2057,16 +2076,16 @@ BOOL initBitmaps(HWND hWnd)
 {
     HDC hdc;
     hdc = GetDC(hWnd);
-    paintBmpBuf_[0] = CreateCompatibleBitmap(hdc, 100, 100);
-    if (paintBmpBuf_[0] == NULL) {
+    scrCaptBuf_[0] = CreateCompatibleBitmap(hdc, 100, 100);
+    if (scrCaptBuf_[0] == NULL) {
         goto failed;
     }
-    paintBmpBuf_[1] = CreateCompatibleBitmap(hdc, 100, 100);
-    if (paintBmpBuf_[1] == NULL) {
+    scrCaptBuf_[1] = CreateCompatibleBitmap(hdc, 100, 100);
+    if (scrCaptBuf_[1] == NULL) {
         goto failed;
     }
-    bmp_A7BA = CreateCompatibleBitmap(hdc, 100, 100);
-    if (bmp_A7BA == NULL) {
+    pooBmp_ = CreateCompatibleBitmap(hdc, 100, 100);
+    if (pooBmp_ == NULL) {
         goto failed;
     }
     word_CA4C = 0;
@@ -2083,24 +2102,24 @@ failed:
 /* Release bitmaps. */
 void releaseWndBmp()
 {
-    DeleteObject(paintBmpBuf_[0]);
-    DeleteObject(paintBmpBuf_[1]);
-    DeleteObject(bmp_A7BA);
-    if (brush_C0B4 != NULL) {
-        DeleteObject(brush_C0B4);
-        brush_C0B4 = NULL;
+    DeleteObject(scrCaptBuf_[0]);
+    DeleteObject(scrCaptBuf_[1]);
+    DeleteObject(pooBmp_);
+    if (beamOrBrush_ != NULL) {
+        DeleteObject(beamOrBrush_);
+        beamOrBrush_ = NULL;
     }
-    if (brush_CA44 != NULL) {
-        DeleteObject(brush_CA44);
-        brush_CA44 = NULL;
+    if (beamAndBrush_ != NULL) {
+        DeleteObject(beamAndBrush_);
+        beamAndBrush_ = NULL;
     }
-    if (bmp_C0B2 != NULL) {
-        DeleteObject(bmp_C0B2);
-        bmp_C0B2 = NULL;
+    if (beamBufBmp_ != NULL) {
+        DeleteObject(beamBufBmp_);
+        beamBufBmp_ = NULL;
     }
-    if (bmp_C0B8 != NULL) {
-        DeleteObject(bmp_C0B8);
-        bmp_C0B8 = NULL;
+    if (beamRectBmp_ != NULL) {
+        DeleteObject(beamRectBmp_);
+        beamRectBmp_ = NULL;
     }
 }
 
@@ -2120,211 +2139,222 @@ void setSpriteInfo(int x, int y, int sprite)
 /* Clear window. */
 void repaintPoo(HWND hWnd)
 {
-    lastPaintX_ = 0;
-    lastPaintY_ = 0;
-    lastPaintBmpW_ = 0;
-    lastPaintBmpH_ = 0;
+    lastSpriteX_ = 0;
+    lastSpriteY_ = 0;
+    lastSpriteBmpW_ = 0;
+    lastSpriteBmpH_ = 0;
     MoveWindow(hWnd, 0, 0, 0, 0, TRUE);
-    bool_A7D4 = 1;
-    word_C0BA = 1;
-    lastPaintBmp_ = NULL;
+    unused_A7D4 = 1;
+    skipTimerMsgCount_ = 1;
+    lastSpriteBmp_ = NULL;
 }
 
 /* Render sprite with double buffering. */
-void paint_3284(HWND hWnd)
+void renderPooBmp(HWND hWnd)
 {
+    ///TODO: hdc->hdcDest; hdcPooSrc->hdcSrc; maxRectX/Y, rectInterSectW/H->value for intersect calc
     HDC hdcScr;
-    HDC hdc_4;
-    HDC hdc_6;
-    int posy_C;
-    int posx_E;
-    int var_10;
-    int var_12;
-    int posy_14;
-    int posx_16;
-    int height_18;
-    int width_1A;
-    int var_1C;
-    int var_1E;
-    if (bool_A7D2) {
+    HDC hdcPooSrc;
+    HDC hdc;
+    int lastBufY;
+    int lastBufX;
+    int intersectH;
+    int intersectW;
+    int intersectY;
+    int intersectX;
+    int rectIntersectH;
+    int rectIntersectW;
+    int maxRectY;
+    int maxRectX;
+    if (bool_mainA7D2) {
         return;
     }
-    if (lastPaintX_ == curSpriteX_ && lastPaintY_ == curSpriteY_ &&
-        lastPaintBmp_ == curSpriteBmp0_ && lastPaintBmpX_ == curSpriteBmpX_ &&
+    if (lastSpriteX_ == curSpriteX_ && lastSpriteY_ == curSpriteY_ &&
+        lastSpriteBmp_ == curSpriteBmp0_ && lastSpriteBmpX_ == curSpriteBmpX_ &&
         ufoBeamHeight_ == 0) {
         return;
     }
-    iPaintBmp_ ^= 1;
+    iScrCaptBuf_ ^= 1;
     hdcScr = GetDC(NULL);
     SelectPalette(hdcScr, hPalette_, FALSE);
-    hdc_4 = CreateCompatibleDC(hdcScr);
-    hdc_6 = CreateCompatibleDC(hdcScr);
-    SelectPalette(hdc_6, hPalette_, FALSE);
-    SelectPalette(hdc_4, hPalette_, FALSE);
-    posx_16 = max(curSpriteX_, lastPaintX_);
-    posy_14 = max(curSpriteY_, lastPaintY_);
-    var_12 = min(curSpriteBmpW_ + curSpriteX_, lastPaintBmpW_ + lastPaintX_) - posx_16;
-    var_10 = min(curSpriteY_ + curSpriteBmpH_, lastPaintY_ + lastPaintBmpH_) - posy_14;
-    if (var_12 <= 0 || var_10 <= 0) {
-        word_A7FA = 1;
-        if (bool_A7D4) {
-            bool_A7D4 = 0;
+    hdcPooSrc = CreateCompatibleDC(hdcScr);
+    hdc = CreateCompatibleDC(hdcScr);
+    SelectPalette(hdc, hPalette_, FALSE);
+    SelectPalette(hdcPooSrc, hPalette_, FALSE);
+    intersectX = max(curSpriteX_, lastSpriteX_);
+    intersectY = max(curSpriteY_, lastSpriteY_);
+    intersectW = min(curSpriteBmpW_ + curSpriteX_, lastSpriteBmpW_ + lastSpriteX_) - intersectX;
+    intersectH = min(curSpriteY_ + curSpriteBmpH_, lastSpriteY_ + lastSpriteBmpH_) - intersectY;
+    /// is sprite NOT intersected?
+    if (intersectW <= 0 || intersectH <= 0) {
+        unused_A7FA = 1;
+        if (unused_A7D4) {
+            unused_A7D4 = 0;
         }
         paintRectX_ = curSpriteX_;
         paintRectY_ = curSpriteY_;
         paintRectW_ = curSpriteBmpW_;
         paintRectH_ = curSpriteBmpH_;
-        SelectObject(hdc_4, paintBmpBuf_[iPaintBmp_]);
-        BitBlt(hdc_4, 0, 0, paintRectW_, paintRectH_,
+        //screen(rectCur)->buf[cur]
+        SelectObject(hdcPooSrc, scrCaptBuf_[iScrCaptBuf_]);
+        BitBlt(hdcPooSrc, 0, 0, paintRectW_, paintRectH_,
                hdcScr, paintRectX_, paintRectY_, SRCCOPY);
     } else {
-        word_A7FA = 0;
-        paintRectX_ = min(curSpriteX_, lastPaintX_);
-        paintRectY_ = min(curSpriteY_, lastPaintY_);
-        paintRectW_ = max(curSpriteBmpW_ + curSpriteX_, lastPaintBmpW_ + lastPaintX_) - paintRectX_;
-        paintRectH_ = max(curSpriteY_ + curSpriteBmpH_, lastPaintY_ + lastPaintBmpH_) - paintRectY_;
-        SelectObject(hdc_4, paintBmpBuf_[iPaintBmp_]);
-        BitBlt(hdc_4, 0, 0, paintRectW_, paintRectH_,
+        unused_A7FA = 0;
+        paintRectX_ = min(curSpriteX_, lastSpriteX_);
+        paintRectY_ = min(curSpriteY_, lastSpriteY_);
+        paintRectW_ = max(curSpriteBmpW_ + curSpriteX_, lastSpriteBmpW_ + lastSpriteX_) - paintRectX_;
+        paintRectH_ = max(curSpriteY_ + curSpriteBmpH_, lastSpriteY_ + lastSpriteBmpH_) - paintRectY_;
+        //screen(rectCur OR rectLast)->buf[cur]
+        SelectObject(hdcPooSrc, scrCaptBuf_[iScrCaptBuf_]);
+        BitBlt(hdcPooSrc, 0, 0, paintRectW_, paintRectH_,
                hdcScr, paintRectX_, paintRectY_, SRCCOPY);
 
-        var_1E = max(paintRectX_, lastPaintRectX_);
-        var_1C = max(paintRectY_, lastPaintRectY_);
-        width_1A = min(paintRectW_ + paintRectX_, lastPaintRectW_ + lastPaintRectX_) - var_1E;
-        height_18 = min(paintRectY_ + paintRectH_, lastPaintRectY_ + lastPaintRectH_) - var_1C;
-        posx_16 = max(0, var_1E - paintRectX_);
-        posy_14 = max(0, var_1C - paintRectY_);
-        posx_E = max(0, var_1E - lastPaintRectX_);
-        posy_C = max(0, var_1C - lastPaintRectY_);
-        if (width_1A > 0 && height_18 > 0) {
-            SelectObject(hdc_6, paintBmpBuf_[LOBYTE(iPaintBmp_) - 0xFF & 1]);    ///???wtf
-            BitBlt(hdc_4, posx_16, posy_14, width_1A, height_18,
-                   hdc_6, posx_E, posy_C, SRCCOPY);
+        maxRectX = max(paintRectX_, lastPaintRectX_);
+        maxRectY = max(paintRectY_, lastPaintRectY_);
+        rectIntersectW = min(paintRectW_ + paintRectX_, lastPaintRectW_ + lastPaintRectX_) - maxRectX;
+        rectIntersectH = min(paintRectY_ + paintRectH_, lastPaintRectY_ + lastPaintRectH_) - maxRectY;
+        intersectX = max(0, maxRectX - paintRectX_);
+        intersectY = max(0, maxRectY - paintRectY_);
+        lastBufX = max(0, maxRectX - lastPaintRectX_);
+        lastBufY = max(0, maxRectY - lastPaintRectY_);
+        /// is paint region intersected?
+        if (rectIntersectW > 0 && rectIntersectH > 0) {
+            //buf[last]->buf[cur]; (copy intersect region), -> erase poo from bmp region
+            SelectObject(hdc, scrCaptBuf_[iScrCaptBuf_ ^ 1]);
+            BitBlt(hdcPooSrc, intersectX, intersectY, rectIntersectW, rectIntersectH,
+                   hdc, lastBufX, lastBufY, SRCCOPY);
         }
     }
 
     if (curSpriteBmp0_ != NULL) {
-        SelectObject(hdc_6, bmp_A7BA);
-        BitBlt(hdc_6, 0, 0, paintRectW_, paintRectH_, hdc_4, 0, 0, SRCCOPY);
-        posx_16 = max(0, curSpriteX_ - paintRectX_);
-        posy_14 = max(0, curSpriteY_ - paintRectY_);
+        SelectObject(hdc, pooBmp_);
+        BitBlt(hdc, 0, 0, paintRectW_, paintRectH_, hdcPooSrc, 0, 0, SRCCOPY);
+        intersectX = max(0, curSpriteX_ - paintRectX_);
+        intersectY = max(0, curSpriteY_ - paintRectY_);
         if (curSpriteBmp1_ != NULL) {
-            SelectObject(hdc_4, curSpriteBmp1_);
-            BitBlt(hdc_6, posx_16, posy_14, curSpriteBmpW_, curSpriteBmpH_,
-                   hdc_4, curSpriteBmpX_, curSpriteBmpY_, SRCAND);
-            SelectObject(hdc_4, curSpriteBmp0_);
-            BitBlt(hdc_6, posx_16, posy_14, curSpriteBmpW_, curSpriteBmpH_,
-                   hdc_4, curSpriteBmpX_, curSpriteBmpY_, SRCPAINT);
+            //sprite[1]->bmp
+            SelectObject(hdcPooSrc, curSpriteBmp1_);
+            BitBlt(hdc, intersectX, intersectY, curSpriteBmpW_, curSpriteBmpH_,
+                   hdcPooSrc, curSpriteBmpX_, curSpriteBmpY_, SRCAND);
+            //sprite[0]->bmp
+            SelectObject(hdcPooSrc, curSpriteBmp0_);
+            BitBlt(hdc, intersectX, intersectY, curSpriteBmpW_, curSpriteBmpH_,
+                   hdcPooSrc, curSpriteBmpX_, curSpriteBmpY_, SRCPAINT);
         } else {
-            SelectObject(hdc_4, curSpriteBmp0_);
-            BitBlt(hdc_6, posx_16, posy_14, curSpriteBmpW_, curSpriteBmpH_,
-                   hdc_4, curSpriteBmpX_, curSpriteBmpY_, SRCCOPY);
+            //sprite[0]->bmp
+            SelectObject(hdcPooSrc, curSpriteBmp0_);
+            BitBlt(hdc, intersectX, intersectY, curSpriteBmpW_, curSpriteBmpH_,
+                   hdcPooSrc, curSpriteBmpX_, curSpriteBmpY_, SRCCOPY);
         }
-        bool_A7D2 = 1;
-        word_CA5E = 1;
+        bool_mainA7D2 = 1;
+        unused_CA5E = 1;
         MoveWindow(hWnd, paintRectX_, paintRectY_, paintRectW_, paintRectH_ + ufoBeamHeight_, TRUE);
-        word_CA5E = 0;
+        unused_CA5E = 0;
     }
-    DeleteDC(hdc_4);
-    DeleteDC(hdc_6);
+    DeleteDC(hdcPooSrc);
+    DeleteDC(hdc);
     lastPaintRectX_ = paintRectX_;
     lastPaintRectY_ = paintRectY_;
     lastPaintRectW_ = paintRectW_;
     lastPaintRectH_ = paintRectH_;
-    lastPaintX_ = curSpriteX_;
-    lastPaintY_ = curSpriteY_;
-    lastPaintBmpW_ = curSpriteBmpW_;
-    lastPaintBmpH_ = curSpriteBmpH_;
-    lastPaintBmp_ = curSpriteBmp0_;
-    lastPaintBmpX_ = curSpriteBmpX_;
-    lastPaintBmpY_ = curSpriteBmpY_;
+    lastSpriteX_ = curSpriteX_;
+    lastSpriteY_ = curSpriteY_;
+    lastSpriteBmpW_ = curSpriteBmpW_;
+    lastSpriteBmpH_ = curSpriteBmpH_;
+    lastSpriteBmp_ = curSpriteBmp0_;
+    lastSpriteBmpX_ = curSpriteBmpX_;
+    lastSpriteBmpY_ = curSpriteBmpY_;
     ReleaseDC(NULL, hdcScr);
 }
 
 /* Render UFO beam (if any) and present render targets onto window. */
-void paint_3717(HWND hWnd)
+void paintPoo(HWND hWnd)
 {
-    HDC hdc_2;
-    HDC hdc_4;
-    RECT var_C;
-    HDC hdc_E;
+    HDC hdc;
+    HDC hdcSrc;
+    RECT beamRect;
+    HDC hdcBuf;
 #ifdef WIN32
     HDC screen;
 #endif
-    if (bool_A7D2 == 0) {
+    if (!bool_mainA7D2) {
         return;
     }
-    bool_A7D2 = 0;
-    hdc_2 = GetDC(hWnd);
-    SelectPalette(hdc_2, hPalette_, FALSE);
-    RealizePalette(hdc_2);
-    hdc_4 = CreateCompatibleDC(hdc_2);
-    SelectPalette(hdc_4, hPalette_, FALSE);
-    SelectObject(hdc_4, bmp_A7BA);
-    BitBlt(hdc_2, 0, 0, paintRectW_, paintRectH_, hdc_4, 0, 0, SRCCOPY);
+    bool_mainA7D2 = 0;
+    hdc = GetDC(hWnd);
+    SelectPalette(hdc, hPalette_, FALSE);
+    RealizePalette(hdc);
+    hdcSrc = CreateCompatibleDC(hdc);
+    SelectPalette(hdcSrc, hPalette_, FALSE);
+    SelectObject(hdcSrc, pooBmp_);
+    BitBlt(hdc, 0, 0, paintRectW_, paintRectH_, hdcSrc, 0, 0, SRCCOPY);
+    ///need to paint beam?
     if (ufoBeamHeight_ != 0) {
-        if (bmp_C0B8 == NULL) {
-            bmp_C0B8 = CreateCompatibleBitmap(hdc_2, 40, screenHeight_ * 4 / 5);
-            if (bmp_C0B8 == NULL) {
+        if (beamRectBmp_ == NULL) {
+            beamRectBmp_ = CreateCompatibleBitmap(hdc, kPooW, screenHeight_ * 4 / 5);
+            if (beamRectBmp_ == NULL) {
                 goto failed;
             }
         }
-        if (bmp_C0B2 == NULL) {
-            bmp_C0B2 = CreateCompatibleBitmap(hdc_2, 40, screenHeight_ * 4 / 5);
-            if (bmp_C0B2 == NULL) {
+        if (beamBufBmp_ == NULL) {
+            beamBufBmp_ = CreateCompatibleBitmap(hdc, kPooW, screenHeight_ * 4 / 5);
+            if (beamBufBmp_ == NULL) {
                 goto failed;
             }
         }
-        if (brush_CA44 == NULL) {
-            brush_CA44 = CreateSolidBrush(RGB(255, 255, 0));
+        if (beamAndBrush_ == NULL) {
+            beamAndBrush_ = CreateSolidBrush(kBeamMaskColor);
         }
-        if (brush_C0B4 == NULL) {
-            brush_C0B4 = CreateSolidBrush(RGB(128, 128, 0));
+        if (beamOrBrush_ == NULL) {
+            beamOrBrush_ = CreateSolidBrush(kBeamBaseColor);
         }
-        hdc_E = CreateCompatibleDC(hdc_2);
-        SelectObject(hdc_E, bmp_C0B2);
+        hdcBuf = CreateCompatibleDC(hdc);
+        SelectObject(hdcBuf, beamBufBmp_);
 #ifdef _WIN32
         /* Screen contents with height of only 40 pixels can be captured from window device context on Windows 10. Capture directly from screen instead. */
         screen = GetDC(NULL);
-        BitBlt(hdc_E, 0, 0, 40, ufoBeamHeight_, screen, paintRectX_, paintRectY_ + 40, SRCCOPY);
+        BitBlt(hdcBuf, 0, 0, kPooW, ufoBeamHeight_, screen, paintRectX_, paintRectY_ + kPooH, SRCCOPY);
         ReleaseDC(NULL, screen);
 #else
-        BitBlt(var_E, 0, 0, 40, word_CA72, var_2, 0, 40, SRCCOPY);
+        BitBlt(hdcBuf, 0, 0, kPooW, ufoBeamHeight_, hdc, 0, kPooH, SRCCOPY);
 #endif
-        var_C.left = 0;
-        var_C.top = 0;
-        var_C.right = 40;
-        var_C.bottom = ufoBeamHeight_;
-        SelectObject(hdc_4, bmp_C0B8);
-        FillRect(hdc_4, &var_C, brush_CA44);
-        BitBlt(hdc_E, 0, 0, 40, ufoBeamHeight_, hdc_4, 0, 0, SRCAND);
-        FillRect(hdc_4, &var_C, brush_C0B4);
-        BitBlt(hdc_E, 0, 0, 40, ufoBeamHeight_, hdc_4, 0, 0, SRCPAINT);
-        BitBlt(hdc_2, 0, 40, 40, ufoBeamHeight_, hdc_E, 0, 0, SRCCOPY);
-        DeleteDC(hdc_E);
-        DeleteDC(hdc_4);
+        beamRect.left = 0;
+        beamRect.top = 0;
+        beamRect.right = kPooW;
+        beamRect.bottom = ufoBeamHeight_;
+        SelectObject(hdcSrc, beamRectBmp_);
+        FillRect(hdcSrc, &beamRect, beamAndBrush_);
+        BitBlt(hdcBuf, 0, 0, kPooW, ufoBeamHeight_, hdcSrc, 0, 0, SRCAND);
+        FillRect(hdcSrc, &beamRect, beamOrBrush_);
+        BitBlt(hdcBuf, 0, 0, kPooW, ufoBeamHeight_, hdcSrc, 0, 0, SRCPAINT);
+
+        BitBlt(hdc, 0, kPooH, kPooW, ufoBeamHeight_, hdcBuf, 0, 0, SRCCOPY);
+        DeleteDC(hdcBuf);
+        DeleteDC(hdcSrc);
     } else {
-        if (brush_C0B4 != NULL) {
-            DeleteObject(brush_C0B4);
-            brush_C0B4 = NULL;
+        if (beamOrBrush_ != NULL) {
+            DeleteObject(beamOrBrush_);
+            beamOrBrush_ = NULL;
         }
-        if (brush_CA44 != NULL) {
-            DeleteObject(brush_CA44);
-            brush_CA44 = NULL;
+        if (beamAndBrush_ != NULL) {
+            DeleteObject(beamAndBrush_);
+            beamAndBrush_ = NULL;
         }
-        if (bmp_C0B2 != NULL) {
-            DeleteObject(bmp_C0B2);
-            bmp_C0B2 = NULL;
+        if (beamBufBmp_ != NULL) {
+            DeleteObject(beamBufBmp_);
+            beamBufBmp_ = NULL;
         }
-        if (bmp_C0B8 != NULL) {
-            DeleteObject(bmp_C0B8);
-            bmp_C0B8 = NULL;
+        if (beamRectBmp_ != NULL) {
+            DeleteObject(beamRectBmp_);
+            beamRectBmp_ = NULL;
         }
-        DeleteDC(hdc_4);
+        DeleteDC(hdcSrc);
     }
-    ReleaseDC(hWnd, hdc_2);
+    ReleaseDC(hWnd, hdc);
     return;
 failed:
-    ReleaseDC(hWnd, hdc_2);
+    ReleaseDC(hWnd, hdc);
 }
 
 /* Unused. */
@@ -2784,8 +2814,8 @@ void setSprite(int x, int y, int sprite)
     /// xPoo_&A802 almost == x&y
     SetWindowWord(hPooWnd_, 0, (short)xPoo_);
     SetWindowWord(hPooWnd_, 2, (short)yPoo_);
-    if (sprite >= 9 && sprite <= 14) {
-        setSpriteInfo(x, y, sprite);
+    if (sprite >= kSprFrontL && sprite <= kSprBackR) {
+        setSpriteInfo(x, y, sprite);    ///steady direction sprite
     } else if (xDirection_ > 0) {
         setSpriteInfo(x, y, sprite);
     } else {
@@ -4896,10 +4926,10 @@ fallThrough:
     case kStateUFOTakeBeam:
         iSprite_ = kSprLookUp1;
         setSprite(xPoo_, yPoo_, iSprite_);
-        height_CA5C += 40;
-        if (yPoo_ - ySubPoo_ - 40 <= height_CA5C) {
-            height_CA5C = yPoo_ - ySubPoo_ - 40;
-            height_CA5C -= 20;
+        subBeamHeight_ += 40;
+        if (yPoo_ - ySubPoo_ - 40 <= subBeamHeight_) {
+            subBeamHeight_ = yPoo_ - ySubPoo_ - 40;
+            subBeamHeight_ -= 20;
             pooState_ = kStateUFOTaking;
         }
         setSubSprite(xSubPoo_, ySubPoo_, iSubSprite_);
@@ -4914,9 +4944,9 @@ fallThrough:
         }
         break;
     case kStateUFOTaking:
-        height_CA5C -= 20;
-        if (height_CA5C <= 0) {
-            height_CA5C = 0;
+        subBeamHeight_ -= 20;
+        if (subBeamHeight_ <= 0) {
+            subBeamHeight_ = 0;
             yPoo_ = ySubPoo_ + 40;
             pooState_ = kStateUFOTakeLeave;
             iSprite_ = iSprite_ == kSprRun1 ? kSprRun2 : kSprRun1;
@@ -5376,8 +5406,8 @@ BOOL initSubWnd(HWND hWnd)
     if (paintSubBmpBuf_[1] == NULL) {
         goto failed;
     }
-    bmp_A854 = CreateCompatibleBitmap(hdc, 100, 100);
-    if (bmp_A854 == NULL) {
+    subPooBmp_ = CreateCompatibleBitmap(hdc, 100, 100);
+    if (subPooBmp_ == NULL) {
         goto failed;
     }
     bmp_A85A = CreateCompatibleBitmap(hdc, 40, 40);
@@ -5394,7 +5424,7 @@ BOOL initSubWnd(HWND hWnd)
     screenHeight_ = GetSystemMetrics(SM_CYSCREEN);
     ReleaseDC(hWnd, hdc);
     subPooFade_ = 0;
-    height_CA5C = 0;
+    subBeamHeight_ = 0;
     keepSubPoo_ = 0;
     lastSubSpriteX_ = 0;
     lastSubSpriteY_ = 0;
@@ -5413,7 +5443,7 @@ void releaseSubWnd()
     DeleteObject(bmp_A85A);
     DeleteObject(paintSubBmpBuf_[0]);
     DeleteObject(paintSubBmpBuf_[1]);
-    DeleteObject(bmp_A854);
+    DeleteObject(subPooBmp_);
 }
 
 /* Update window position and sprite to be actually used (sub). */
@@ -5441,12 +5471,12 @@ void repaintSubPoo(HWND hWnd)
     lastSubSpriteBmpH_ = 0;
     MoveWindow(hWnd, 0, 0, 0, 0, TRUE);
     bool_A872 = 1;
-    word_C0BA = 1;
+    skipTimerMsgCount_ = 1;
     lastSubSpriteBmp0_ = NULL;
 }
 
 /* Render sprite with double buffering (with fade out effect) (sub). */
-void paint_9438(HWND hWnd)
+void renderSubPooBmp(HWND hWnd)
 {
     HDC hdcScr;
     HDC hdc_4;
@@ -5461,12 +5491,12 @@ void paint_9438(HWND hWnd)
     int width_1A;
     int botY1;
     int rightX1;
-    if (bool_A870) {
+    if (bool_subA870) {
         return;
     }
     if (lastSubSpriteX_ == curSubSpriteX_ && lastSubSpriteY_ == curSubSpriteY_ &&
         lastSubSpriteBmp0_ == curSubSpriteBmp0_ && lastSubSpriteBmpX_ == curSubSpriteBmpX_ &&
-        subPooFade_ == 0 && height_CA5C == 0) {
+        subPooFade_ == 0 && subBeamHeight_ == 0) {
         return;
     }
     iPaintSubBmp_ ^= 1;
@@ -5515,8 +5545,9 @@ void paint_9438(HWND hWnd)
                    hdc_6, posx_E, posy_C, SRCCOPY);
         }
     }
+
     if (curSubSpriteBmp0_ != NULL) {
-        SelectObject(hdc_6, bmp_A854);
+        SelectObject(hdc_6, subPooBmp_);
         BitBlt(hdc_6, 0, 0, paintSubRectW_, paintSubRectH_,
                hdc_4, 0, 0, SRCCOPY);
         posx_16 = max(0, curSubSpriteX_ - paintSubRectX_);
@@ -5534,14 +5565,14 @@ void paint_9438(HWND hWnd)
                            hdc_4, curSubSpriteBmpX_, curSubSpriteBmpY_, SRCCOPY);
                 }
                 SelectObject(hdc_4, bmp_A85C);
-                SelectObject(hdc_6, sprites_[172].bitmaps[0]);
+                SelectObject(hdc_6, sprites_[kSprFadeGrid].bitmaps[0]);
                 BitBlt(hdc_4, subPooFade_ - 1, subPooFade_ - 1, 41 - subPooFade_, 40,
-                       hdc_6, sprites_[172].x, 0, SRCPAINT);
+                       hdc_6, sprites_[kSprFadeGrid].x, 0, SRCPAINT);
                 SelectObject(hdc_4, bmp_A85A);
-                SelectObject(hdc_6, sprites_[172].bitmaps[1]);
+                SelectObject(hdc_6, sprites_[kSprFadeGrid].bitmaps[1]);
                 BitBlt(hdc_4, subPooFade_ - 1, subPooFade_ - 1, 41 - subPooFade_, 40,
-                       hdc_6, sprites_[172].x, 0, SRCAND);
-                SelectObject(hdc_6, bmp_A854);
+                       hdc_6, sprites_[kSprFadeGrid].x, 0, SRCAND);
+                SelectObject(hdc_6, subPooBmp_);
                 SelectObject(hdc_4, bmp_A85C);
                 BitBlt(hdc_6, posx_16, posy_14, curSubSpriteBmpW_, curSubSpriteBmpH_,
                        hdc_4, 0, 0, SRCAND);
@@ -5561,10 +5592,10 @@ void paint_9438(HWND hWnd)
             BitBlt(hdc_6, posx_16, posy_14, curSubSpriteBmpW_, curSubSpriteBmpH_,
                    hdc_4, curSubSpriteBmpX_, curSubSpriteBmpY_, SRCCOPY);
         }
-        bool_A870 = 1;
-        word_CA5E = 1;
-        MoveWindow(hWnd, paintSubRectX_, paintSubRectY_, paintSubRectW_, paintSubRectH_ + height_CA5C, TRUE);
-        word_CA5E = 0;
+        bool_subA870 = 1;
+        unused_CA5E = 1;
+        MoveWindow(hWnd, paintSubRectX_, paintSubRectY_, paintSubRectW_, paintSubRectH_ + subBeamHeight_, TRUE);
+        unused_CA5E = 0;
     }
     DeleteDC(hdc_4);
     DeleteDC(hdc_6);
@@ -5583,90 +5614,93 @@ void paint_9438(HWND hWnd)
 }
 
 /* Render UFO beam (if any) and present render targets onto window (sub). */
-BOOL paint_9A49(HWND hWnd)
+BOOL paintSubPoo(HWND hWnd)
 {
-    HDC hdc_2;
-    HDC hdc_4;
-    RECT rect_C;
-    HDC hdc_E;
+    HDC hdc;
+    HDC hdcSrc;
+    RECT beamRect;
+    HDC hdcBuf;
 #ifdef _WIN32
     HDC screen;
 #endif
-    if (bool_A870 == 0) {
+    if (!bool_subA870) {
         return TRUE;
     }
-    bool_A870 = 0;
-    hdc_2 = GetDC(hWnd);
-    SelectPalette(hdc_2, hPalette_, FALSE);
-    RealizePalette(hdc_2);
-    hdc_4 = CreateCompatibleDC(hdc_2);
-    SelectPalette(hdc_4, hPalette_, FALSE);
-    SelectObject(hdc_4, bmp_A854);
-    BitBlt(hdc_2, 0, 0, paintSubRectW_, paintSubRectH_, hdc_4, 0, 0, SRCCOPY);
-    if (height_CA5C != 0) {
-        if (bmp_C0B8 == NULL) {
-            bmp_C0B8 = CreateCompatibleBitmap(hdc_2, 40, screenHeight_ * 4 / 5);
-            if (bmp_C0B8 == NULL) {
+    bool_subA870 = 0;
+    hdc = GetDC(hWnd);
+    SelectPalette(hdc, hPalette_, FALSE);
+    RealizePalette(hdc);
+    hdcSrc = CreateCompatibleDC(hdc);
+    SelectPalette(hdcSrc, hPalette_, FALSE);
+    SelectObject(hdcSrc, subPooBmp_);
+    BitBlt(hdc, 0, 0, paintSubRectW_, paintSubRectH_, hdcSrc, 0, 0, SRCCOPY);
+    ///need to paint beam?
+    if (subBeamHeight_ != 0) {
+        if (beamRectBmp_ == NULL) {
+            beamRectBmp_ = CreateCompatibleBitmap(hdc, kPooW, screenHeight_ * 4 / 5);
+            if (beamRectBmp_ == NULL) {
                 goto failed;
             }
         }
-        if (bmp_C0B2 == NULL) {
-            bmp_C0B2 = CreateCompatibleBitmap(hdc_2, 40, screenHeight_ * 4 / 5);
-            if (bmp_C0B2 == NULL) {
+        if (beamBufBmp_ == NULL) {
+            beamBufBmp_ = CreateCompatibleBitmap(hdc, kPooW, screenHeight_ * 4 / 5);
+            if (beamBufBmp_ == NULL) {
                 goto failed;
             }
         }
-        if (brush_CA44 == NULL) {
-            brush_CA44 = CreateSolidBrush(RGB(255, 255, 0));
+        if (beamAndBrush_ == NULL) {
+            beamAndBrush_ = CreateSolidBrush(kBeamMaskColor);
         }
-        if (brush_C0B4 == NULL) {
-            brush_C0B4 = CreateSolidBrush(RGB(128, 128, 0));
+        if (beamOrBrush_ == NULL) {
+            beamOrBrush_ = CreateSolidBrush(kBeamBaseColor);
         }
-        hdc_E = CreateCompatibleDC(hdc_2);
-        SelectObject(hdc_E, bmp_C0B2);
+        hdcBuf = CreateCompatibleDC(hdc);
+        SelectObject(hdcBuf, beamBufBmp_);
 #ifdef _WIN32
-        /* Screen contents with height of only 40 pixels can be captured from window device context on Windows 10. Capture directly from screen instead. */
+        /* Screen contents with height of only 40 pixels can be captured from window device
+         * context on Windows 10. Capture directly from screen instead. */
         screen = GetDC(NULL);
-        BitBlt(hdc_E, 0, 0, 40, height_CA5C, screen, paintSubRectX_, paintSubRectY_ + 40, SRCCOPY);
+        BitBlt(hdcBuf, 0, 0, kPooW, subBeamHeight_, screen, paintSubRectX_, paintSubRectY_ + kPooH, SRCCOPY);
         ReleaseDC(NULL, screen);
 #else
-        BitBlt(var_E, 0, 0, 40, height_CA5C, var_2, 0, 40, SRCCOPY);
+        BitBlt(hdcBuf, 0, 0, kPooW, subBeamHeight_, hdc, 0, kPooH, SRCCOPY);
 #endif
-        rect_C.left = 0;
-        rect_C.top = 0;
-        rect_C.right = 40;
-        rect_C.bottom = height_CA5C;
-        SelectObject(hdc_4, bmp_C0B8);
-        FillRect(hdc_4, &rect_C, brush_CA44);
-        BitBlt(hdc_E, 0, 0, 40, height_CA5C, hdc_4, 0, 0, SRCAND);
-        FillRect(hdc_4, &rect_C, brush_C0B4);
-        BitBlt(hdc_E, 0, 0, 40, height_CA5C, hdc_4, 0, 0, SRCPAINT);
-        BitBlt(hdc_2, 0, 40, 40, height_CA5C, hdc_E, 0, 0, SRCCOPY);
-        DeleteDC(hdc_E);
-        DeleteDC(hdc_4);
+        beamRect.left = 0;
+        beamRect.top = 0;
+        beamRect.right = kPooW;
+        beamRect.bottom = subBeamHeight_;
+        SelectObject(hdcSrc, beamRectBmp_);
+        FillRect(hdcSrc, &beamRect, beamAndBrush_);
+        BitBlt(hdcBuf, 0, 0, kPooW, subBeamHeight_, hdcSrc, 0, 0, SRCAND);
+        FillRect(hdcSrc, &beamRect, beamOrBrush_);
+        BitBlt(hdcBuf, 0, 0, kPooW, subBeamHeight_, hdcSrc, 0, 0, SRCPAINT);
+
+        BitBlt(hdc, 0, kPooH, kPooW, subBeamHeight_, hdcBuf, 0, 0, SRCCOPY);
+        DeleteDC(hdcBuf);
+        DeleteDC(hdcSrc);
     } else {
-        if (brush_C0B4 != NULL) {
-            DeleteObject(brush_C0B4);
-            brush_C0B4 = NULL;
+        if (beamOrBrush_ != NULL) {
+            DeleteObject(beamOrBrush_);
+            beamOrBrush_ = NULL;
         }
-        if (brush_CA44 != NULL) {
-            DeleteObject(brush_CA44);
-            brush_CA44 = NULL;
+        if (beamAndBrush_ != NULL) {
+            DeleteObject(beamAndBrush_);
+            beamAndBrush_ = NULL;
         }
-        if (bmp_C0B2 != NULL) {
-            DeleteObject(bmp_C0B2);
-            bmp_C0B2 = NULL;
+        if (beamBufBmp_ != NULL) {
+            DeleteObject(beamBufBmp_);
+            beamBufBmp_ = NULL;
         }
-        if (bmp_C0B8 != NULL) {
-            DeleteObject(bmp_C0B8);
-            bmp_C0B8 = NULL;
+        if (beamRectBmp_ != NULL) {
+            DeleteObject(beamRectBmp_);
+            beamRectBmp_ = NULL;
         }
-        DeleteDC(hdc_4);
+        DeleteDC(hdcSrc);
     }
-    ReleaseDC(hWnd, hdc_2);
+    ReleaseDC(hWnd, hdc);
     return TRUE;
 failed:
-    ReleaseDC(hWnd, hdc_2);
+    ReleaseDC(hWnd, hdc);
     DestroyWindow(hWnd);
     return FALSE;
 }
