@@ -22,7 +22,8 @@
 enum
 {
     kMaxPooCount = 8,
-    kISubPooHwnd = kMaxPooCount,
+    kMaxPeerPooCount = kMaxPooCount - 1,
+    kISubPooHwnd = kMaxPeerPooCount,
 };
 
 enum    ///Paint param
@@ -614,7 +615,7 @@ HINSTANCE hSelfInst_ = NULL; /* Current instance. */
 UINT confSound_ = 0U; /* Configuration: Cry */
 int subBeamHeight_ = 0; /* UFO beam height (sub). */
 WORD unused_CA5E = 0; /* Unused. */
-HWND hOtherPooWnd_[kMaxPooCount+1] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}; /* Known instance list. When no other instance exists, [8] is used to store subwindow handle. */
+HWND hOtherPooWnd_[kMaxPeerPooCount+1] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}; /* Known instance list. When no other instance exists, [8] is used to store subwindow handle. */
 int ufoBeamHeight_ = 0; /* UFO beam height. */
 int otherVWndCount_ = 0; /* Number of currently visible windows. */
 WORD needSleepAfterChime_ = 0; /* Sleeping after timeout? */
@@ -2371,7 +2372,7 @@ BOOL isOtherPoo(HWND hWnd)
     if (otherPooCount_ == 0) {
         return FALSE;
     }
-    for (i = 0; i < kMaxPooCount; i += 1) {
+    for (i = 0; i < kMaxPeerPooCount; i += 1) {
         if (hOtherPooWnd_[i] == hWnd && hOtherPooWnd_[i] != NULL) {
             return TRUE;
         }
@@ -2387,7 +2388,7 @@ int calcPooHitX(int head, int tail, int top, int bot)
     int peerRight;
     int peerTop;
     int peerBot;
-    for (i = 0; i < kMaxPooCount; i += 1) {
+    for (i = 0; i < kMaxPeerPooCount; i += 1) {
         if (hOtherPooWnd_[i] != NULL) {
             peerLeft = (short)GetWindowWord(hOtherPooWnd_[i], 0);
             peerRight = (short)GetWindowWord(hOtherPooWnd_[i], 2);
@@ -2415,15 +2416,15 @@ void checkOtherPoo_3B4C(HWND hWnd)
     HWND hDeskWnd;
     UINT gwCmd;
     int i;
-    int wndCount;
+    int peerWndCount;
     char deskWndTitle[64];
-    for (i = 0; i < kMaxPooCount; i += 1) {
+    for (i = 0; i < kMaxPeerPooCount; i += 1) {
         hOtherPooWnd_[i] = NULL;
     }
     hDeskWnd = GetDesktopWindow();
     gwCmd = GW_CHILD;
     i = 0;
-    wndCount = 0;
+    peerWndCount = 0;
     while ((hDeskWnd = GetWindow(hDeskWnd, gwCmd)) != NULL && i < 64) {
         gwCmd = GW_HWNDNEXT;
         if (hDeskWnd == hWnd) {
@@ -2432,16 +2433,16 @@ void checkOtherPoo_3B4C(HWND hWnd)
         if ((GetWindowLong(hDeskWnd, GWL_STYLE) & WS_VISIBLE) != 0) {
             GetWindowText(hDeskWnd, deskWndTitle, 16);
             if (lstrcmp(deskWndTitle, "Screen Mate") == 0) {
-                hOtherPooWnd_[wndCount] = hDeskWnd;
-                wndCount += 1;
-                if (wndCount >= kMaxPooCount) {
-                    return;
+                hOtherPooWnd_[peerWndCount] = hDeskWnd;
+                peerWndCount += 1;
+                if (peerWndCount >= kMaxPeerPooCount) {
+                    break;
                 }
             }
             i += 1;
         }
     }
-    otherPooCount_ = wndCount;
+    otherPooCount_ = peerWndCount;
 }
 
 /* Populate known instance list by searching for visible windows with name match,
@@ -2451,12 +2452,12 @@ BOOL checkOtherPoo(HWND hWnd)
     HWND hDeskWnd;
     UINT gwCmd;
     int i;
-    int wndCount;
+    int peerWndCount;
     char deskWndTitle[64];
     hDeskWnd = GetDesktopWindow();
     gwCmd = GW_CHILD;
     i = 0;
-    wndCount = 0;
+    peerWndCount = 0;
     while ((hDeskWnd = GetWindow(hDeskWnd, gwCmd)) != NULL && i < 64) {
         gwCmd = GW_HWNDNEXT;
         if (hDeskWnd == hWnd) {
@@ -2465,17 +2466,17 @@ BOOL checkOtherPoo(HWND hWnd)
         if ((GetWindowLong(hDeskWnd, GWL_STYLE) & WS_VISIBLE) != 0) {
             GetWindowText(hDeskWnd, deskWndTitle, 16);
             if (lstrcmp(deskWndTitle, "Screen Mate") == 0) {
-                hOtherPooWnd_[wndCount] = hDeskWnd;
-                wndCount += 1;
-                if (wndCount >= kMaxPooCount) {
+                hOtherPooWnd_[peerWndCount] = hDeskWnd;
+                peerWndCount += 1;
+                if (peerWndCount > kMaxPeerPooCount) {
                     return FALSE;
                 }
             }
             i += 1;
         }
     }
-    otherPooCount_ = wndCount;
-    otherPooCount2_ = wndCount;
+    otherPooCount_ = peerWndCount;
+    otherPooCount2_ = peerWndCount;
     for (i = 0; i < otherPooCount_; i += 1) {
         SendMessage(hOtherPooWnd_[i], kWmPeerPoo, (WPARAM)kPeerPooBorn, (LPARAM)hWnd);
     }
@@ -2486,7 +2487,7 @@ BOOL checkOtherPoo(HWND hWnd)
 void notifyPooDead(HWND hWnd)
 {
     int i;
-    for (i = 0; i < kMaxPooCount; i += 1) {
+    for (i = 0; i < kMaxPeerPooCount; i += 1) {
         if (hOtherPooWnd_[i] != NULL) {
             SendMessage(hOtherPooWnd_[i], kWmPeerPoo, (WPARAM)kPeerPooDead, (LPARAM)hWnd);
         }
@@ -2497,7 +2498,7 @@ void notifyPooDead(HWND hWnd)
 void pushOtherPoo(HWND hWnd)
 {
     int i;
-    for (i = 0; i < kMaxPooCount; i += 1) {
+    for (i = 0; i < kMaxPeerPooCount; i += 1) {
         if (hOtherPooWnd_[i] == NULL) {
             otherPooCount_ += 1;
             hOtherPooWnd_[i] = hWnd;
@@ -2510,7 +2511,7 @@ void pushOtherPoo(HWND hWnd)
 void eraseOtherPoo(HWND hWnd)
 {
     int i;
-    for (i = 0; i < kMaxPooCount; i += 1) {
+    for (i = 0; i < kMaxPeerPooCount; i += 1) {
         if (hOtherPooWnd_[i] == hWnd) {
             otherPooCount_ -= 1;
             hOtherPooWnd_[i] = NULL;
