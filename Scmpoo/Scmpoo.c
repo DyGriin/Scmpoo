@@ -2088,7 +2088,7 @@ void checkOtherPoo_3B4C(HWND hWnd)
             if (lstrcmp(deskWndTitle, "Screen Mate") == 0) {
                 hOtherPooWnd_[wndCount] = hDeskWnd;
                 wndCount += 1;
-                if (wndCount > 8) {
+                if (wndCount >= 8) {
                     return;
                 }
             }
@@ -2121,7 +2121,7 @@ BOOL checkOtherPoo(HWND hWnd)
             if (lstrcmp(deskWndTitle, "Screen Mate") == 0) {
                 hOtherPooWnd_[wndCount] = hDeskWnd;
                 wndCount += 1;
-                if (wndCount > 8) {
+                if (wndCount >= 8) {
                     return FALSE;
                 }
             }
