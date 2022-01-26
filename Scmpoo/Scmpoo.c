@@ -16,6 +16,12 @@
 #define GetActiveWindow GetForegroundWindow
 #endif
 
+enum
+{
+    kMaxPooCount = 8,
+    kISubPooHwnd = kMaxPooCount,
+};
+
 typedef struct spriteinfo {
     HBITMAP bitmaps[2];
     int x;
@@ -293,7 +299,7 @@ HINSTANCE hSelfInst_ = NULL; /* Current instance. */
 UINT confSound_ = 0U; /* Configuration: Cry */
 int word_CA5C = 0; /* UFO beam height (sub). */
 WORD word_CA5E = 0; /* Unused. */
-HWND hOtherPooWnd_[9] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}; /* Known instance list. When no other instance exists, [8] is used to store subwindow handle. */
+HWND hOtherPooWnd_[kMaxPooCount+1] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}; /* Known instance list. When no other instance exists, [8] is used to store subwindow handle. */
 int word_CA72 = 0; /* UFO beam height. */
 int word_CA74 = 0; /* Number of currently visible windows. */
 WORD word_CA76 = 0; /* Sleeping after timeout? */
@@ -1198,7 +1204,7 @@ LRESULT CALLBACK pooWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         SetTimer(hWnd, 1U, 108U, NULL);
         break;
     case WM_DROPFILES:
-        if (hOtherPooWnd_[8] == NULL) {
+        if (hOtherPooWnd_[kISubPooHwnd] == NULL) {
             if (DragQueryFile((HDROP)wParam, 0U, dragPath, 260U) != 0U) {
                 asyncPlaySound(dragPath);
                 event_8FD7(4);
@@ -1211,14 +1217,14 @@ LRESULT CALLBACK pooWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         case 0x202:
         case 0x205:
             if (word_C0AE != 0) {
-                if (hOtherPooWnd_[8] != NULL) {
-                    putWndToTop(hOtherPooWnd_[8]);
+                if (hOtherPooWnd_[kISubPooHwnd] != NULL) {
+                    putWndToTop(hOtherPooWnd_[kISubPooHwnd]);
                 }
                 putWndToTop(hWnd);
             } else {
                 putWndToTop(hWnd);
-                if (hOtherPooWnd_[8] != NULL) {
-                    putWndToTop(hOtherPooWnd_[8]);
+                if (hOtherPooWnd_[kISubPooHwnd] != NULL) {
+                    putWndToTop(hOtherPooWnd_[kISubPooHwnd]);
                 }
             }
             putWndToTop(hWnd);
@@ -1323,7 +1329,7 @@ LRESULT CALLBACK pooWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         break;
     case WM_LBUTTONDOWN:
     case WM_RBUTTONDOWN:
-        if (hOtherPooWnd_[8] != NULL) {
+        if (hOtherPooWnd_[kISubPooHwnd] != NULL) {
             break;
         }
         if (isMouseBtnDown_ != 0) {
@@ -1407,7 +1413,7 @@ LRESULT CALLBACK pooWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         break;
     case WM_DESTROY:
         sub_3D12(hWnd);
-        if (hOtherPooWnd_[8] != NULL) {
+        if (hOtherPooWnd_[kISubPooHwnd] != NULL) {
             destroySubPooWnd();
         }
         KillTimer(hWnd, 1U);
@@ -1548,18 +1554,22 @@ BOOL CALLBACK debugDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 /* Create subwindow. */
 void showSubPoo(void)
 {
-    if (hOtherPooWnd_[8] != NULL) {
+    if (hOtherPooWnd_[kISubPooHwnd] != NULL) {
         return;
     }
 #ifdef _WIN32
     /* Set the visible window to be owned by the hidden top-level window. */
-    hOtherPooWnd_[8] = CreateWindowEx(0L, "ScreenMatePooSub", "ScreenMate Sub", WS_POPUP, 0, 0, 0, 0, hOwnerWnd_, NULL, hSelfInst_, NULL);
+    hOtherPooWnd_[kISubPooHwnd] =
+            CreateWindowEx(0L, "ScreenMatePooSub", "ScreenMate Sub", WS_POPUP,
+                           0, 0, 0, 0, hOwnerWnd_, NULL, hSelfInst_, NULL);
 #else
-    hOtherPooWnd_[8] = CreateWindowEx(0L, "ScreenMatePooSub", "ScreenMate Sub", WS_POPUP, 0, 0, 0, 0, NULL, NULL, hSelfInst_, NULL);
+    hOtherPooWnd_[kISubPooHwnd] =
+            CreateWindowEx(0L, "ScreenMatePooSub", "ScreenMate Sub", WS_POPUP,
+                           0, 0, 0, 0, NULL, NULL, hSelfInst_, NULL);
 #endif
-    if (hOtherPooWnd_[8] != NULL) {
-        ShowWindow(hOtherPooWnd_[8], SW_SHOWNA);
-        UpdateWindow(hOtherPooWnd_[8]);
+    if (hOtherPooWnd_[kISubPooHwnd] != NULL) {
+        ShowWindow(hOtherPooWnd_[kISubPooHwnd], SW_SHOWNA);
+        UpdateWindow(hOtherPooWnd_[kISubPooHwnd]);
     } else {
         hasOtherPoo_ = 1;
         resetState();
@@ -1569,9 +1579,9 @@ void showSubPoo(void)
 /* Destroy subwindow. */
 void destroySubPooWnd(void)
 {
-    if (hOtherPooWnd_[8] != NULL) {
-        DestroyWindow(hOtherPooWnd_[8]);
-        hOtherPooWnd_[8] = NULL;
+    if (hOtherPooWnd_[kISubPooHwnd] != NULL) {
+        DestroyWindow(hOtherPooWnd_[kISubPooHwnd]);
+        hOtherPooWnd_[kISubPooHwnd] = NULL;
     }
 }
 
@@ -2019,14 +2029,14 @@ void sub_399D(HWND arg_0, int arg_2, int arg_4, int arg_6, int arg_8)
 }
 
 /* Find if a window has a match in known instance list. */
-BOOL sub_39D6(HWND arg_0)
+BOOL sub_39D6(HWND hWnd)
 {
     int i;
     if (otherPooCount_ == 0) {
         return FALSE;
     }
-    for (i = 0; i < 8; i += 1) {
-        if (hOtherPooWnd_[i] == arg_0 && hOtherPooWnd_[i] != NULL) {
+    for (i = 0; i < kMaxPooCount; i += 1) {
+        if (hOtherPooWnd_[i] == hWnd && hOtherPooWnd_[i] != NULL) {
             return TRUE;
         }
     }
@@ -2041,7 +2051,7 @@ int sub_3A36(int posx_a0, int posx_a2, int posy_a4, int posy_a6)
     int posx_6;
     int posy_8;
     int posy_A;
-    for (i = 0; i < 8; i += 1) {
+    for (i = 0; i < kMaxPooCount; i += 1) {
         if (hOtherPooWnd_[i] != NULL) {
             posx_4 = (short)GetWindowWord(hOtherPooWnd_[i], 0);
             posy_8 = (short)GetWindowWord(hOtherPooWnd_[i], 2);
@@ -2071,7 +2081,7 @@ void checkOtherPoo_3B4C(HWND hWnd)
     int i;
     int wndCount;
     char deskWndTitle[64];
-    for (i = 0; i < 8; i += 1) {
+    for (i = 0; i < kMaxPooCount; i += 1) {
         hOtherPooWnd_[i] = NULL;
     }
     hDeskWnd = GetDesktopWindow();
@@ -2088,7 +2098,7 @@ void checkOtherPoo_3B4C(HWND hWnd)
             if (lstrcmp(deskWndTitle, "Screen Mate") == 0) {
                 hOtherPooWnd_[wndCount] = hDeskWnd;
                 wndCount += 1;
-                if (wndCount >= 8) {
+                if (wndCount >= kMaxPooCount) {
                     return;
                 }
             }
@@ -2121,7 +2131,7 @@ BOOL checkOtherPoo(HWND hWnd)
             if (lstrcmp(deskWndTitle, "Screen Mate") == 0) {
                 hOtherPooWnd_[wndCount] = hDeskWnd;
                 wndCount += 1;
-                if (wndCount >= 8) {
+                if (wndCount >= kMaxPooCount) {
                     return FALSE;
                 }
             }
@@ -2139,22 +2149,22 @@ BOOL checkOtherPoo(HWND hWnd)
 /* Notify other instances of self destruction. */
 void sub_3D12(HWND arg_0)
 {
-    int var_2;
-    for (var_2 = 0; var_2 < 8; var_2 += 1) {
-        if (hOtherPooWnd_[var_2] != NULL) {
-            SendMessage(hOtherPooWnd_[var_2], WM_USER, (WPARAM)2, (LPARAM)arg_0);
+    int i;
+    for (i = 0; i < kMaxPooCount; i += 1) {
+        if (hOtherPooWnd_[i] != NULL) {
+            SendMessage(hOtherPooWnd_[i], WM_USER, (WPARAM)2, (LPARAM)arg_0);
         }
     }
 }
 
 /* Add window into known instance list. */
-void sub_3D5F(HWND arg_0)
+void sub_3D5F(HWND hWnd)
 {
     int i;
-    for (i = 0; i < 8; i += 1) {
+    for (i = 0; i < kMaxPooCount; i += 1) {
         if (hOtherPooWnd_[i] == NULL) {
             otherPooCount_ += 1;
-            hOtherPooWnd_[i] = arg_0;
+            hOtherPooWnd_[i] = hWnd;
             break;
         }
     }
@@ -2164,7 +2174,7 @@ void sub_3D5F(HWND arg_0)
 void sub_3DA7(HWND hWnd)
 {
     int i;
-    for (i = 0; i < 8; i += 1) {
+    for (i = 0; i < kMaxPooCount; i += 1) {
         if (hOtherPooWnd_[i] == hWnd) {
             otherPooCount_ -= 1;
             hOtherPooWnd_[i] = NULL;
@@ -2708,7 +2718,7 @@ loc_4D33:
                 break;
             }
             word_A81C = GetActiveWindow();
-            if (word_A81C == hPooWnd_ || word_A81C == hOtherPooWnd_[8] || word_A81C == NULL || sub_39D6(word_A81C)) {
+            if (word_A81C == hPooWnd_ || word_A81C == hOtherPooWnd_[kISubPooHwnd] || word_A81C == NULL || sub_39D6(word_A81C)) {
                 state_A8A0 = 3;
                 goto loc_4D33;
             }
@@ -3408,7 +3418,7 @@ loc_4D33:
         }
         sub_488C(word_A80E, word_A810, word_A812);
         word_C0AE = 1;
-        sub_2B01(hOtherPooWnd_[8], hPooWnd_);
+        sub_2B01(hOtherPooWnd_[kISubPooHwnd], hPooWnd_);
         break;
     case 54:
         if (word_A83A++ < 2) {
@@ -3787,7 +3797,7 @@ loc_4D33:
         break;
     case 85:
         word_A81C = GetActiveWindow();
-        if (word_A81C == hPooWnd_ || word_A81C == hOtherPooWnd_[8] || word_A81C == NULL || sub_39D6(word_A81C)) {
+        if (word_A81C == hPooWnd_ || word_A81C == hOtherPooWnd_[kISubPooHwnd] || word_A81C == NULL || sub_39D6(word_A81C)) {
             state_A8A0 = 1;
             break;
         }
@@ -4349,7 +4359,7 @@ loc_4D33:
         state_A8A0 = 119;
         word_C0AE = 0;
         putWndToTop(hPooWnd_);
-        putWndToTop(hOtherPooWnd_[8]);
+        putWndToTop(hOtherPooWnd_[kISubPooHwnd]);
         break;
     case 119:
         if (word_A826 != 0) {
@@ -4409,7 +4419,7 @@ loc_4D33:
         state_A8A0 = 122;
         word_C0AE = 0;
         putWndToTop(hPooWnd_);
-        putWndToTop(hOtherPooWnd_[8]);
+        putWndToTop(hOtherPooWnd_[kISubPooHwnd]);
         break;
     case 122:
         if (word_A83A++ < 1) {
@@ -4482,7 +4492,7 @@ loc_4D33:
         state_A8A0 = 127;
         word_C0AE = 0;
         putWndToTop(hPooWnd_);
-        putWndToTop(hOtherPooWnd_[8]);
+        putWndToTop(hOtherPooWnd_[kISubPooHwnd]);
         break;
     case 127:
         if (word_A83A++ < 1) {
@@ -4531,7 +4541,7 @@ loc_4D33:
         state_A8A0 = 131;
         word_C0AE = 0;
         putWndToTop(hPooWnd_);
-        putWndToTop(hOtherPooWnd_[8]);
+        putWndToTop(hOtherPooWnd_[kISubPooHwnd]);
         break;
     case 131:
         if (word_A826 != 0) {
@@ -4677,7 +4687,7 @@ loc_4D33:
         state_A8A0 = 139;
         word_C0AE = 0;
         putWndToTop(hPooWnd_);
-        putWndToTop(hOtherPooWnd_[8]);
+        putWndToTop(hOtherPooWnd_[kISubPooHwnd]);
         break;
     case 139:
         if (word_CA72 != 0) {
@@ -4739,7 +4749,7 @@ loc_4D33:
         state_A8A0 = 143;
         word_C0AE = 0;
         putWndToTop(hPooWnd_);
-        putWndToTop(hOtherPooWnd_[8]);
+        putWndToTop(hOtherPooWnd_[kISubPooHwnd]);
         break;
     case 143:
         word_A80E -= word_A2AC * 16;
@@ -4810,7 +4820,7 @@ loc_4D33:
         word_A810 = word_A806 * 92 - 20;
         state_A8A0 = 148;
         word_C0AE = 1;
-        putWndToTop(hOtherPooWnd_[8]);
+        putWndToTop(hOtherPooWnd_[kISubPooHwnd]);
         putWndToTop(hPooWnd_);
     case 148:
         if (word_A83A++ < 0) {
