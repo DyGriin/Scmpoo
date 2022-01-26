@@ -3,6 +3,7 @@
 
 #define IDI_ICON1   100
 
+//bitmaps
 #define IDB_SPRITE1 101
 #define IDB_SPRITE2 102
 #define IDB_SPRITE3 103
@@ -15,20 +16,25 @@
 #define IDB_SPRITEA 110
 #define IDB_SPRITEB 111
 
+//cursors
 #define IDC_CURSOR1 106
 
+//dialogs
 #define IDD_CONFIG  107
 #define IDD_DEBUG   108
 
+//waves
 #define IDW_BAA     108
 #define IDW_YAWN    109
 #define IDW_SNEEZE  110
 
+//controls from config dialog
 #define IDC_CONFIG_CHIME    1001
 #define IDC_CONFIG_SOUND    1002
 #define IDC_CONFIG_NOSLEEP  1003
 #define IDC_CONFIG_GFORCE   1004
 
+//controls from debug dialog
 #define IDC_DEBUG_NORMAL    1002
 #define IDC_DEBUG_RUN       1003
 #define IDC_DEBUG_WALK      1004
@@ -63,5 +69,8 @@
 #define IDC_DEBUG_DOWN      1033
 #define IDC_DEBUG_LEFT      1034
 #define IDC_DEBUG_RIGHT     1035
+
+//menu items
+#define IDM_CONFIG  101
 
 #endif // RESOURCE_H

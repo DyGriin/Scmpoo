@@ -13,7 +13,8 @@
 
 #include "resources.h"
 
-/* GetActiveWindow is made local to current thread in 32-bit Windows. The function of global scope is now GetForegroundWindow. */
+/* GetActiveWindow is made local to current thread in 32-bit Windows.
+ * The function of global scope is now GetForegroundWindow. */
 #ifdef _WIN32
 #define GetActiveWindow GetForegroundWindow
 #endif
@@ -56,6 +57,26 @@ enum
     kFallByHit = 3,     //can't set by rand
     kFallSpFront = 0,
     kFallSpSide = 1,
+};
+
+enum
+{
+    kActionUnknown = 0,
+    kActionInfRun,
+    kActionFall,
+    kActionInfSleep,
+    kActionFeed,
+};
+
+enum
+{
+    kWmPeerPoo = WM_USER,
+    kWmUserUnused,
+    kWmConfigCmd,
+
+    ///
+    kPeerPooBorn = 1,
+    kPeerPooDead = 2,
 };
 
 enum SpriteState
@@ -445,16 +466,16 @@ WORD aniRoll_[9] = { /* Roll animation. */
 WORD aniSpin_[8] = { /* Spin animation. 0-3: face, 4-7: back */
     3, 9, 10, 11, 2, 14, 13, 12
 };
-WORD word_A798 = 0; /* Has cursor position changed in current timer period? */
+WORD isCursorMoved_ = 0; /* Has cursor position changed in current timer period? */
 int posx_A79A = 0; /* Cursor position with respect to screen, X-coordinate */
 int posy_A79C = 0; /* Cursor position with respect to screen, Y-coordinate */
 WORD isMouseBtnDown_ = 0; /* Dragging Screen Mate window? */
 WORD isRBtnDbClicked_ = 0; /* Destroy Screen Mate window by right double-click? */
-WORD word_A7A2 = 0; /* Unused. */
+WORD hasTimerMsgEver_ = 0; /* Unused. */
 RECT lastWndRect_ = {0, 0, 0, 0}; /* Screen Mate window rectangle. */
-WORD word_A7AC = 0; /* Not to clear window on WM_PAINT? */
-POINT point_A7B0 = {0, 0}; /* Current cursor position. */
-WORD word_A7B4 = 0; /* Not to clear window on WM_PAINT? (sub) */
+WORD skipNextPaintMsg_ = 0; /* Not to clear window on WM_PAINT? */
+POINT lastCursorPos_ = {0, 0}; /* Current cursor position. */
+WORD skipNextSubPaintMsg_ = 0; /* Not to clear window on WM_PAINT? (sub) */
 HBITMAP paintBmpBuf_[2] = {NULL, NULL}; /* Double buffer. */
 HBITMAP bmp_A7BA = NULL; /* Sprite render target. */
 HBITMAP curSpriteBmp0_ = NULL; /* Sprite colour image for current frame. */
@@ -495,7 +516,7 @@ int yPooStored_ = 0; /* Y-coordinate memory. */
 int xSubPoo_ = 0; /* Current X-coordinate (sub). */
 int ySubPoo_ = 0; /* Current Y-coordinate (sub). */
 int iSubSprite_ = 0; /* Sprite index (sub). */
-HWND hWnd_A81C = NULL; /* Active window or window to land on. */
+HWND hPeerWnd_ = NULL; /* Active window or window to land on. */
 RECT rect_A81E = {0L, 0L, 0L, 0L}; /* Rectangle of active window or window to land on. */
 int iAniFrames_ = 0; /* Animation frame counter. */
 int frameCount_ = 0; /* Random duration period counter. */
@@ -519,8 +540,8 @@ HBITMAP paintSubBmpBuf_[2] = {NULL, NULL}; /* Double buffer (sub). */
 HBITMAP bmp_A854 = NULL; /* Sprite render target (sub). */
 HBITMAP curSubSpriteBmp0_ = NULL; /* Sprite colour image for current frame (sub). */
 HBITMAP curSubSpriteBmp1_ = NULL; /* Sprite mask image for current frame (sub). */
-HBITMAP word_A85A = NULL; /* Fade out processed colour image (sub). */
-HBITMAP word_A85C = NULL; /* Fade out processed mask image (sub). */
+HBITMAP bmp_A85A = NULL; /* Fade out processed colour image (sub). */
+HBITMAP bmp_A85C = NULL; /* Fade out processed mask image (sub). */
 int curSubSpriteBmpX_ = 0; /* Sprite X-coordinate on resource image for current frame (sub). */
 int curSubSpriteBmpY_ = 0; /* Sprite Y-coordinate on resource image for current frame (sub). */
 int lastSubSpriteBmpX_ = 0; /* Sprite X-coordinate on resource image for previous frame (sub). */
@@ -548,21 +569,21 @@ int lastSubSpriteBmpH_ = 0; /* Sprite height for previous frame (sub). */
 WORD word_A898 = 0; /* Current frame rectangle and previous frame rectangle have no intersecion? (sub) (unused) */
 WORD pooState_ = kStateInit; /* State. */
 SpriteInfo sprites_[512] = {{{NULL, NULL}, 0, 0, 0, 0}}; /* Sprite list. First 256 for left-facing sprites, last 256 for right-facing sprites. */
-int word_C0A4 = 0; /* No mouse action consecutive period counter. */
+int cursorIdleCount_ = 0; /* No mouse action consecutive period counter. */
 UINT confChime_ = 0U; /* Configuration: Chime */
 WORD bool_C0AE = 0; /* Screen Mate window on top of subwindow? (unused) */
 HWND hPooWnd_ = NULL; /* Self instance window handle. */
-HBITMAP word_C0B2 = NULL; /* UFO beam render target. */
-HBRUSH word_C0B4 = NULL; /* UFO beam paint colour brush. */
+HBITMAP bmp_C0B2 = NULL; /* UFO beam render target. */
+HBRUSH brush_C0B4 = NULL; /* UFO beam paint colour brush. */
 UINT confNoSleep_ = 0U; /* Configuration: Always moving */
-HBITMAP word_C0B8 = NULL; /* UFO beam colour rectangle image. */
+HBITMAP bmp_C0B8 = NULL; /* UFO beam colour rectangle image. */
 WORD word_C0BA = 0; /* Remaining no-update periods after clearing windows. */
 WindowInfo otherVWnds_[32] = {{NULL, {0, 0, 0, 0}, {0}}}; /* Currently visible window list. */
 WORD hasOtherPoo_ = 0; /* Prevent special actions? */
 WORD confTopMost__ = 0; /* Always on top? (unused) */
 int otherPooCount_ = 0; /* Known instance count. */
 UINT confGForce_ = 0U; /* Configuration: Gravity always on */
-HBRUSH word_CA44 = NULL; /* UFO beam mask colour brush. */
+HBRUSH brush_CA44 = NULL; /* UFO beam mask colour brush. */
 int subPooFade_ = 0; /* Fade out frame counter. */
 int otherPooCount2_ = 0; /* Unused. */
 HPALETTE hPalette_ = NULL; /* Palette being used by window. */
@@ -598,7 +619,7 @@ WORD getBmpColorOfFirstPixel(void FAR *bmpData);
 void FAR * getBmpPixelBegin(void FAR *data);
 void bmpFlipCopy(void FAR *, void FAR *, UINT flags);
 int PASCAL WinMain(HINSTANCE, HINSTANCE, LPSTR, int);
-void sub_1DDC(void);
+void unused_1DDC(void);
 LRESULT CALLBACK pooWndProc(HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK pooSubWndProc(HWND, UINT, WPARAM, LPARAM);
 BOOL CALLBACK configDlgProc(HWND, UINT, WPARAM, LPARAM);
@@ -618,14 +639,14 @@ void setSpriteInfo(int, int, int index);
 void repaintPoo(HWND);
 void paint_3284(HWND hWnd);
 void paint_3717(HWND hWnd);
-void sub_399D(HWND, int, int, int, int);
-BOOL sub_39D6(HWND);
+void unused_399D(HWND, int, int, int, int);
+BOOL isOtherPoo(HWND);
 int calcPooHitX(int, int, int, int);
 void checkOtherPoo_3B4C(HWND hWnd);
 BOOL checkOtherPoo(HWND);
-void sub_3D12(HWND);
-void sub_3D5F(HWND);
-void sub_3DA7(HWND hWnd);
+void notifyPooDead(HWND);
+void pushOtherPoo(HWND);
+void eraseOtherPoo(HWND hWnd);
 void updateVWnds(void);
 int getVWndHitXInfo(HWND *, int, int, int, int);
 int getLandInfo(HWND *, int, int, int, int);
@@ -645,20 +666,20 @@ void setSubSprite(int, int, int);
 BOOL isLandableWnd(HWND);
 void getWndRectSp(HWND, LPRECT);
 void land_496F(int);
-void sub_4B3B(void);
+void checkPtClimbFall(void);
 void procPooTouchX(int, int, int);
 int getPooHitX(int, int);
 void resetState(void);
-void sub_4CF8(void);
-void event_8FD7(int);
+void stateUpdate(void);
+void postAction(int);
 void debugAction(WPARAM);
 void movePooWnd(int, int);
 BOOL initSubWnd(HWND);
 void releaseSubWnd();
 void setSubSpriteInfo(int, int, int);
-void sub_93DF(HWND);
+void repaintSubPoo(HWND);
 void paint_9438(HWND);
-BOOL sub_9A49(HWND);
+BOOL paint_9A49(HWND);
 
 /* Make mask bitmap image out of the first pixel (by simulating x86 assembly). */
 void PASCAL sub_10(void FAR * arg_4, void FAR * arg_0)
@@ -1408,9 +1429,9 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 }
 
 /* Set cursor position changed flag (unused). */
-void sub_1DDC(void)
+void unused_1DDC(void)
 {
-    word_A798 = 1;
+    isCursorMoved_ = 1;
 }
 
 /* Window procedure. */
@@ -1484,12 +1505,12 @@ LRESULT CALLBACK pooWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         if (hOtherPooWnd_[kISubPooHwnd] == NULL) {
             if (DragQueryFile((HDROP)wParam, 0U, dragPath, 260U) != 0U) {
                 asyncPlaySound(dragPath);
-                event_8FD7(4);
+                postAction(kActionFeed);
             }
         }
         DragFinish((HDROP)wParam);
         break;
-    case WM_USER + 1:
+    case kWmUserUnused:       ///unused msg
         switch (lParam) {
         case 0x202:
         case 0x205:
@@ -1506,7 +1527,7 @@ LRESULT CALLBACK pooWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             }
             putWndToTop(hWnd);
             hPopMenu = CreatePopupMenu();
-            AppendMenu(hPopMenu, 0U, 101U, "Screen Mate Settings...");
+            AppendMenu(hPopMenu, 0U, IDM_CONFIG, "Screen Mate Settings...");
             AppendMenu(hPopMenu, 0U, IDCANCEL, "Screen Mate Exit");
             GetCursorPos(&cursorPos);
             TrackPopupMenu(hPopMenu, 0U, cursorPos.x, cursorPos.y, 0, hWnd, NULL);
@@ -1518,11 +1539,11 @@ LRESULT CALLBACK pooWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         return 0;
     case WM_WINDOWPOSCHANGING:
         pWndPos = (LPWINDOWPOS)lParam;
-        if (word_A7A2 != 0) {
+        if (hasTimerMsgEver_) {
             pWndPos = (LPWINDOWPOS)lParam;
         }
         pWndPos->flags |= SWP_NOCOPYBITS;
-        word_A7AC = 1;
+        skipNextPaintMsg_ = 1;
         return 0;
     case WM_WINDOWPOSCHANGED:
         return 0;
@@ -1533,46 +1554,46 @@ LRESULT CALLBACK pooWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         }
         if (confNoSleep_ == 0) {
             GetCursorPos(&cursorPos);
-            if (point_A7B0.x != cursorPos.x || point_A7B0.y != cursorPos.y) {
-                point_A7B0.x = cursorPos.x;
-                point_A7B0.y = cursorPos.y;
-                word_A798 = 1;
+            if (lastCursorPos_.x != cursorPos.x || lastCursorPos_.y != cursorPos.y) {
+                lastCursorPos_.x = cursorPos.x;
+                lastCursorPos_.y = cursorPos.y;
+                isCursorMoved_ = 1;
             }
             if (needSleepAfterChime_) {
-                if (word_A798 != 0) {
+                if (isCursorMoved_) {
                     needSleepAfterChime_ = 0;
-                    word_C0A4 = 0;
-                    event_8FD7(0);
+                    cursorIdleCount_ = 0;
+                    postAction(0);
                 }
             } else {
-                if (word_A798 != 0) {
-                    word_A798 = 0;
-                    word_C0A4 = 0;
+                if (isCursorMoved_) {
+                    isCursorMoved_ = 0;
+                    cursorIdleCount_ = 0;
                 } else {
-                    if (word_C0A4++ > 300) {
-                        event_8FD7(3);
+                    if (cursorIdleCount_++ > 300) {
+                        postAction(kActionInfSleep);
                     }
                 }
             }
         }
-        word_A7AC = 0;
+        skipNextPaintMsg_ = 0;
         hPooWnd_ = hWnd;
-        sub_4CF8();
+        stateUpdate();
         paint_3284(hWnd);
         paint_3717(hWnd);
-        word_A7A2 = 1;
+        hasTimerMsgEver_ = 1;
         return 0;
-    case WM_USER:
-        if (wParam == 1) {
-            sub_3D5F((HWND)lParam);
+    case kWmPeerPoo:
+        if (wParam == kPeerPooBorn) {
+            pushOtherPoo((HWND)lParam);
         }
-        if (wParam == 2) {
-            sub_3DA7((HWND)lParam);
+        if (wParam == kPeerPooDead) {
+            eraseOtherPoo((HWND)lParam);
         }
         return 0;
     case WM_PAINT:
-        if (word_A7AC != 0) {
-            word_A7AC = 0;
+        if (skipNextPaintMsg_) {
+            skipNextPaintMsg_ = 0;
             ValidateRect(hWnd, NULL);
             return 0;
         }
@@ -1593,8 +1614,8 @@ LRESULT CALLBACK pooWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         return 0;
     case WM_COMMAND:
         switch (wParam) {
-        case 101U:
-            SendMessage(hWnd, WM_USER + 2, 0, 0);
+        case IDM_CONFIG:
+            SendMessage(hWnd, kWmConfigCmd, 0, 0);
             break;
         case IDCANCEL:
             DestroyWindow(hWnd);
@@ -1617,7 +1638,7 @@ LRESULT CALLBACK pooWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         posx_A79A = (short)LOWORD(lParam) + rect.left;
         posy_A79C = (short)HIWORD(lParam) + rect.top;
         isMouseBtnDown_ = 1;
-        event_8FD7(1);
+        postAction(1);
         paint_3284(hWnd);
         paint_3717(hWnd);
         break;
@@ -1649,9 +1670,9 @@ LRESULT CALLBACK pooWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             posx_10 = (short)LOWORD(lParam) + rect.left;
             posy_12 = (short)HIWORD(lParam) + rect.top;
             movePooWnd(posx_10 - posx_A79A, posy_12 - posy_A79C);
-            event_8FD7(0);
+            postAction(0);
             if (uMsg == WM_RBUTTONUP) {
-                event_8FD7(2);
+                postAction(2);
             }
             paint_3284(hWnd);
             paint_3717(hWnd);
@@ -1663,7 +1684,7 @@ LRESULT CALLBACK pooWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         isRBtnDbClicked_ = 1;
         break;
     case WM_LBUTTONDBLCLK:
-    case WM_USER + 2:
+    case kWmConfigCmd:
         oldTopMostConf = confTopMost__;
         oldGForceConf = confGForce_;
         hPooWnd_ = hWnd;
@@ -1685,11 +1706,11 @@ LRESULT CALLBACK pooWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             }
         }
         if (oldGForceConf != confGForce_ && confGForce_) {
-            event_8FD7(2);
+            postAction(2);
         }
         break;
     case WM_DESTROY:
-        sub_3D12(hWnd);
+        notifyPooDead(hWnd);
         if (hOtherPooWnd_[kISubPooHwnd] != NULL) {
             destroySubPooWnd();
         }
@@ -1722,25 +1743,25 @@ LRESULT CALLBACK pooSubWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
     case WM_WINDOWPOSCHANGING:
         wndPos = (LPWINDOWPOS)lParam;
         wndPos->flags |= SWP_NOCOPYBITS;
-        word_A7B4 = 1;
+        skipNextSubPaintMsg_ = 1;
         return 0;
     case WM_WINDOWPOSCHANGED:
         return 0;
     case WM_TIMER:
-        word_A7B4 = 0;
+        skipNextSubPaintMsg_ = 0;
         paint_9438(hWnd);
-        if (!sub_9A49(hWnd)) {
+        if (!paint_9A49(hWnd)) {
             hasOtherPoo_ = 1;
             resetState();
         }
         return 0;
     case WM_PAINT:
-        if (word_A7B4 != 0) {
-            word_A7B4 = 0;
+        if (skipNextSubPaintMsg_) {
+            skipNextSubPaintMsg_ = 0;
             ValidateRect(hWnd, NULL);
             return 0;
         }
-        sub_93DF(hWnd);
+        repaintSubPoo(hWnd);
         ValidateRect(hWnd, NULL);
         return 0;
     case WM_ERASEBKGND:
@@ -2065,21 +2086,21 @@ void releaseWndBmp()
     DeleteObject(paintBmpBuf_[0]);
     DeleteObject(paintBmpBuf_[1]);
     DeleteObject(bmp_A7BA);
-    if (word_C0B4 != NULL) {
-        DeleteObject(word_C0B4);
-        word_C0B4 = NULL;
+    if (brush_C0B4 != NULL) {
+        DeleteObject(brush_C0B4);
+        brush_C0B4 = NULL;
     }
-    if (word_CA44 != NULL) {
-        DeleteObject(word_CA44);
-        word_CA44 = NULL;
+    if (brush_CA44 != NULL) {
+        DeleteObject(brush_CA44);
+        brush_CA44 = NULL;
     }
-    if (word_C0B2 != NULL) {
-        DeleteObject(word_C0B2);
-        word_C0B2 = NULL;
+    if (bmp_C0B2 != NULL) {
+        DeleteObject(bmp_C0B2);
+        bmp_C0B2 = NULL;
     }
-    if (word_C0B8 != NULL) {
-        DeleteObject(word_C0B8);
-        word_C0B8 = NULL;
+    if (bmp_C0B8 != NULL) {
+        DeleteObject(bmp_C0B8);
+        bmp_C0B8 = NULL;
     }
 }
 
@@ -2241,26 +2262,26 @@ void paint_3717(HWND hWnd)
     SelectObject(hdc_4, bmp_A7BA);
     BitBlt(hdc_2, 0, 0, paintRectW_, paintRectH_, hdc_4, 0, 0, SRCCOPY);
     if (ufoBeamHeight_ != 0) {
-        if (word_C0B8 == NULL) {
-            word_C0B8 = CreateCompatibleBitmap(hdc_2, 40, screenHeight_ * 4 / 5);
-            if (word_C0B8 == NULL) {
+        if (bmp_C0B8 == NULL) {
+            bmp_C0B8 = CreateCompatibleBitmap(hdc_2, 40, screenHeight_ * 4 / 5);
+            if (bmp_C0B8 == NULL) {
                 goto failed;
             }
         }
-        if (word_C0B2 == NULL) {
-            word_C0B2 = CreateCompatibleBitmap(hdc_2, 40, screenHeight_ * 4 / 5);
-            if (word_C0B2 == NULL) {
+        if (bmp_C0B2 == NULL) {
+            bmp_C0B2 = CreateCompatibleBitmap(hdc_2, 40, screenHeight_ * 4 / 5);
+            if (bmp_C0B2 == NULL) {
                 goto failed;
             }
         }
-        if (word_CA44 == NULL) {
-            word_CA44 = CreateSolidBrush(RGB(255, 255, 0));
+        if (brush_CA44 == NULL) {
+            brush_CA44 = CreateSolidBrush(RGB(255, 255, 0));
         }
-        if (word_C0B4 == NULL) {
-            word_C0B4 = CreateSolidBrush(RGB(128, 128, 0));
+        if (brush_C0B4 == NULL) {
+            brush_C0B4 = CreateSolidBrush(RGB(128, 128, 0));
         }
         hdc_E = CreateCompatibleDC(hdc_2);
-        SelectObject(hdc_E, word_C0B2);
+        SelectObject(hdc_E, bmp_C0B2);
 #ifdef _WIN32
         /* Screen contents with height of only 40 pixels can be captured from window device context on Windows 10. Capture directly from screen instead. */
         screen = GetDC(NULL);
@@ -2273,30 +2294,30 @@ void paint_3717(HWND hWnd)
         var_C.top = 0;
         var_C.right = 40;
         var_C.bottom = ufoBeamHeight_;
-        SelectObject(hdc_4, word_C0B8);
-        FillRect(hdc_4, &var_C, word_CA44);
+        SelectObject(hdc_4, bmp_C0B8);
+        FillRect(hdc_4, &var_C, brush_CA44);
         BitBlt(hdc_E, 0, 0, 40, ufoBeamHeight_, hdc_4, 0, 0, SRCAND);
-        FillRect(hdc_4, &var_C, word_C0B4);
+        FillRect(hdc_4, &var_C, brush_C0B4);
         BitBlt(hdc_E, 0, 0, 40, ufoBeamHeight_, hdc_4, 0, 0, SRCPAINT);
         BitBlt(hdc_2, 0, 40, 40, ufoBeamHeight_, hdc_E, 0, 0, SRCCOPY);
         DeleteDC(hdc_E);
         DeleteDC(hdc_4);
     } else {
-        if (word_C0B4 != NULL) {
-            DeleteObject(word_C0B4);
-            word_C0B4 = NULL;
+        if (brush_C0B4 != NULL) {
+            DeleteObject(brush_C0B4);
+            brush_C0B4 = NULL;
         }
-        if (word_CA44 != NULL) {
-            DeleteObject(word_CA44);
-            word_CA44 = NULL;
+        if (brush_CA44 != NULL) {
+            DeleteObject(brush_CA44);
+            brush_CA44 = NULL;
         }
-        if (word_C0B2 != NULL) {
-            DeleteObject(word_C0B2);
-            word_C0B2 = NULL;
+        if (bmp_C0B2 != NULL) {
+            DeleteObject(bmp_C0B2);
+            bmp_C0B2 = NULL;
         }
-        if (word_C0B8 != NULL) {
-            DeleteObject(word_C0B8);
-            word_C0B8 = NULL;
+        if (bmp_C0B8 != NULL) {
+            DeleteObject(bmp_C0B8);
+            bmp_C0B8 = NULL;
         }
         DeleteDC(hdc_4);
     }
@@ -2307,14 +2328,14 @@ failed:
 }
 
 /* Unused. */
-void sub_399D(HWND arg_0, int arg_2, int arg_4, int arg_6, int arg_8)
+void unused_399D(HWND hWnd, int x, int y, int w, int h)
 {
-    MoveWindow(arg_0, arg_2, arg_4, arg_6, arg_8, FALSE);
-    MoveWindow(arg_0, 0, 0, 0, 0, TRUE);
+    MoveWindow(hWnd, x, y, w, h, FALSE);
+    MoveWindow(hWnd, 0, 0, 0, 0, TRUE);
 }
 
 /* Find if a window has a match in known instance list. */
-BOOL sub_39D6(HWND hWnd)
+BOOL isOtherPoo(HWND hWnd)
 {
     int i;
     if (otherPooCount_ == 0) {
@@ -2426,24 +2447,24 @@ BOOL checkOtherPoo(HWND hWnd)
     otherPooCount_ = wndCount;
     otherPooCount2_ = wndCount;
     for (i = 0; i < otherPooCount_; i += 1) {
-        SendMessage(hOtherPooWnd_[i], WM_USER, (WPARAM)1, (LPARAM)hWnd);
+        SendMessage(hOtherPooWnd_[i], kWmPeerPoo, (WPARAM)kPeerPooBorn, (LPARAM)hWnd);
     }
     return TRUE;
 }
 
 /* Notify other instances of self destruction. */
-void sub_3D12(HWND arg_0)
+void notifyPooDead(HWND hWnd)
 {
     int i;
     for (i = 0; i < kMaxPooCount; i += 1) {
         if (hOtherPooWnd_[i] != NULL) {
-            SendMessage(hOtherPooWnd_[i], WM_USER, (WPARAM)2, (LPARAM)arg_0);
+            SendMessage(hOtherPooWnd_[i], kWmPeerPoo, (WPARAM)kPeerPooDead, (LPARAM)hWnd);
         }
     }
 }
 
 /* Add window into known instance list. */
-void sub_3D5F(HWND hWnd)
+void pushOtherPoo(HWND hWnd)
 {
     int i;
     for (i = 0; i < kMaxPooCount; i += 1) {
@@ -2456,7 +2477,7 @@ void sub_3D5F(HWND hWnd)
 }
 
 /* Remove window from known instance list. */
-void sub_3DA7(HWND hWnd)
+void eraseOtherPoo(HWND hWnd)
 {
     int i;
     for (i = 0; i < kMaxPooCount; i += 1) {
@@ -2808,24 +2829,24 @@ void getWndRectSp(HWND hWnd, LPRECT pRect)
 }
 
 /* Process when out of screen view or at different positions on top of visible window. */
-void land_496F(int arg_0)
+void land_496F(int fall)
 {
     RECT rect;
     if (!bool_A7FC) {
         return;
     }
-    if (hWnd_A81C != NULL) {
-        if (!isLandableWnd(hWnd_A81C)) {
-            if (arg_0 == 2) {
+    if (hPeerWnd_ != NULL) {
+        if (!isLandableWnd(hPeerWnd_)) {
+            if (fall == 2) {
                 pooState_ = kStateHRunFallIntro;
             } else {
                 pooState_ = kStateInsituFallIntro;
             }
             return;
         }
-        getWndRectSp(hWnd_A81C, &rect);
+        getWndRectSp(hPeerWnd_, &rect);
         if (rect.top > rect_A81E.top || xPoo_ + 40 < rect.left || rect.right < xPoo_) {
-            if (arg_0 == 2) {
+            if (fall == 2) {
                 pooState_ = kStateHRunFallIntro;
             } else {
                 pooState_ = kStateInsituFallIntro;
@@ -2841,7 +2862,7 @@ void land_496F(int arg_0)
             setSprite(xPoo_, yPoo_, iSprite_);
             return;
         }
-        if (arg_0 == 1) {
+        if (fall == 1) {
             if (xPoo_ + 8 < rect.left && xDirection_ > 0) {
                 pooState_ = kStateSideSpFallIntro;
                 xPoo_ = rect.left - 10;
@@ -2857,7 +2878,7 @@ void land_496F(int arg_0)
                 return;
             }
         }
-        if (arg_0 == 2) {
+        if (fall == 2) {
             if (xPoo_ + 32 < rect.left || xPoo_ + 8 > rect.right) {
                 pooState_ = kStateHRunFallIntro;
                 return;
@@ -2871,27 +2892,27 @@ void land_496F(int arg_0)
 }
 
 /* Process when climbing up side of a window. */
-void sub_4B3B(void)
+void checkPtClimbFall(void)
 {
-    RECT var_8;
+    RECT rect;
     if (bool_A7FC == 0) {
         return;
     }
-    if (hWnd_A81C != NULL) {
-        if (!isLandableWnd(hWnd_A81C)) {
+    if (hPeerWnd_ != NULL) {
+        if (!isLandableWnd(hPeerWnd_)) {
             pooState_ = kStateInsituFallIntro;
             return;
         }
-        getWndRectSp(hWnd_A81C, &var_8);
-        if (var_8.right < rect_A81E.right && xDirection_ > 0 || var_8.left > rect_A81E.left && xDirection_ < 0) {
+        getWndRectSp(hPeerWnd_, &rect);
+        if (rect.right < rect_A81E.right && xDirection_ > 0 || rect.left > rect_A81E.left && xDirection_ < 0) {
             pooState_ = kStateInsituFallIntro;
             return;
         }
-        if (var_8.right > rect_A81E.right && xDirection_ > 0 || var_8.left < rect_A81E.left && xDirection_ < 0) {
+        if (rect.right > rect_A81E.right && xDirection_ > 0 || rect.left < rect_A81E.left && xDirection_ < 0) {
             if (xDirection_ > 0) {
-                xPoo_ = var_8.right + 10;
+                xPoo_ = rect.right + 10;
             } else {
-                xPoo_ = var_8.left - 50;
+                xPoo_ = rect.left - 50;
             }
             setSprite(xPoo_, yPoo_, iSprite_);
             pooState_ = kStateInsituFallIntro;
@@ -2939,7 +2960,7 @@ void resetState(void)
 }
 
 /* Process state change on each timer expiration. */
-void sub_4CF8(void)
+void stateUpdate(void)
 {
     int wndHitX;
     int landY;
@@ -3012,13 +3033,13 @@ fallThrough:
                 pooState_ = kStateToLongAni;
                 break;
             }
-            hWnd_A81C = GetActiveWindow();
-            if (hWnd_A81C == hPooWnd_ || hWnd_A81C == hOtherPooWnd_[kISubPooHwnd] ||
-                hWnd_A81C == NULL || sub_39D6(hWnd_A81C)) {
+            hPeerWnd_ = GetActiveWindow();
+            if (hPeerWnd_ == hPooWnd_ || hPeerWnd_ == hOtherPooWnd_[kISubPooHwnd] ||
+                hPeerWnd_ == NULL || isOtherPoo(hPeerWnd_)) {
                 pooState_ = kStateGForceVFallIntro;
                 goto fallThrough;
             }
-            getWndRectSp(hWnd_A81C, &rect_A81E);
+            getWndRectSp(hPeerWnd_, &rect_A81E);
             if (rect_A81E.top < 10) {
                 pooState_ = kStateGForceVFallIntro;
                 goto fallThrough;
@@ -3183,13 +3204,13 @@ fallThrough:
                 } else {
                     xPoo_ = wndHitX - 40;
                 }
-                hWnd_A81C = hHitWnd;
-                getWndRectSp(hWnd_A81C, &rect_A81E);
+                hPeerWnd_ = hHitWnd;
+                getWndRectSp(hPeerWnd_, &rect_A81E);
                 targetY_ = rect_A81E.top - 12;
                 bool_A7FC = 1;
                 targetX_ = xPoo_;
                 iSprite_ = kSprJumpUp;
-                setWndOnto(hPooWnd_, hWnd_A81C);
+                setWndOnto(hPooWnd_, hPeerWnd_);
                 pooState_ = kStateWndPtClimb;
                 break;
             }
@@ -4092,12 +4113,12 @@ fallThrough:
         pooState_ = kStateInit;
         break;
     case kStateWndRunIntro:
-        hWnd_A81C = GetActiveWindow();
-        if (hWnd_A81C == hPooWnd_ || hWnd_A81C == hOtherPooWnd_[kISubPooHwnd] || hWnd_A81C == NULL || sub_39D6(hWnd_A81C)) {
+        hPeerWnd_ = GetActiveWindow();
+        if (hPeerWnd_ == hPooWnd_ || hPeerWnd_ == hOtherPooWnd_[kISubPooHwnd] || hPeerWnd_ == NULL || isOtherPoo(hPeerWnd_)) {
             pooState_ = kStateNormalIntro;
             break;
         }
-        getWndRectSp(hWnd_A81C, &rect_A81E);
+        getWndRectSp(hPeerWnd_, &rect_A81E);
         if (rect_A81E.top < 10) {
             pooState_ = kStateNormalIntro;
             break;
@@ -4127,7 +4148,7 @@ fallThrough:
         iSprite_ = iSprite_ == kSprRun1 ? kSprRun2 : kSprRun1;
         setSprite(xPoo_, yPoo_, iSprite_);
         if (xPoo_ < -40 || xPoo_ > screenWidth_) {
-            if (!isLandableWnd(hWnd_A81C)) {
+            if (!isLandableWnd(hPeerWnd_)) {
                 pooState_ = kStateNormalIntro;
                 break;
             }
@@ -4146,11 +4167,11 @@ fallThrough:
             if (fallType_ != 0) {
                 dxPoo_ = -(xDirection_ * 3);
             }
-            setWndOnto(hPooWnd_, hWnd_A81C);
+            setWndOnto(hPooWnd_, hPeerWnd_);
         }
         break;
     case kStateWndPtRunIntro:
-        setWndOnto(hPooWnd_, hWnd_A81C);
+        setWndOnto(hPooWnd_, hPeerWnd_);
         if (xDirection_ > 0) {
             targetX_ = rect_A81E.right;
             targetY_ = rect_A81E.top;
@@ -4168,11 +4189,11 @@ fallThrough:
         iSprite_ = iSprite_ == kSprRun1 ? kSprRun2 : kSprRun1;
         if (targetX_ >= xPoo_ && xDirection_ > 0 ||
             targetX_ <= xPoo_ && xDirection_ < 0) {
-            if (!isLandableWnd(hWnd_A81C)) {
+            if (!isLandableWnd(hPeerWnd_)) {
                 pooState_ = kStateNormalIntro;
                 break;
             }
-            getWndRectSp(hWnd_A81C, &rect_10);
+            getWndRectSp(hPeerWnd_, &rect_10);
             if (rect_10.left == rect_A81E.left && rect_10.right == rect_A81E.right &&
                 rect_10.top < yPoo_ && yPoo_ + 40 < rect_10.bottom) {
                 targetY_ = rect_10.top - 12;
@@ -4200,7 +4221,7 @@ fallThrough:
             pooState_ = kStateWndPtTurn;
             break;
         }
-        sub_4B3B();
+        checkPtClimbFall();
         break;
     case kStateWndPtTurn:
         if (counter_A83A++ < 2) {
@@ -4229,7 +4250,7 @@ fallThrough:
         yPooStored_ = yPoo_;
         xPoo_ += dxPoo_;
         yPoo_ += dyPoo_;
-        if ((landY = getWndLandY(hWnd_A81C, sprites_[iSprite_].height + yPoo_, sprites_[iSprite_].height + yPooStored_,
+        if ((landY = getWndLandY(hPeerWnd_, sprites_[iSprite_].height + yPoo_, sprites_[iSprite_].height + yPooStored_,
                               xPoo_, sprites_[iSprite_].width + xPoo_)) != 0) {
             if (landY == -1) {
                 setSprite(xPoo_, yPoo_, iSprite_);
@@ -4238,7 +4259,7 @@ fallThrough:
             }
             yPoo_ = landY - sprites_[iSprite_].height;
             if (dyPoo_ < 64 && !hasBounce_ || dyPoo_ < 8) {
-                SetWindowPos(hPooWnd_, hWnd_A81C, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
+                SetWindowPos(hPooWnd_, hPeerWnd_, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
                 hasBounce_ = 0;
                 iAniFrames_ = 0;
                 pooState_ = kStateFreeFallLand;
@@ -4339,14 +4360,14 @@ fallThrough:
             pooState_ = kStateInit;
             break;
         }
-        if ((landY = getLandInfo(&hWnd_A81C, sprites_[iSprite_].height + yPoo_, sprites_[iSprite_].height + yPooStored_,
+        if ((landY = getLandInfo(&hPeerWnd_, sprites_[iSprite_].height + yPoo_, sprites_[iSprite_].height + yPooStored_,
                               xPoo_, sprites_[iSprite_].width + xPoo_)) != 0) {
-            if (!isLandableWnd(hWnd_A81C)) {
+            if (!isLandableWnd(hPeerWnd_)) {
                 setSprite(xPoo_, yPoo_, iSprite_);
                 pooState_ = kStateInit;
                 break;
             }
-            getWndRectSp(hWnd_A81C, &rect_A81E);
+            getWndRectSp(hPeerWnd_, &rect_A81E);
             yPoo_ = landY - sprites_[iSprite_].height;
             if (fallType_ == kFallByHit) {
                 iSprite_ = kSprHitFallen;
@@ -4355,8 +4376,8 @@ fallThrough:
                 break;
             }
             if (dyPoo_ < 64 && !hasBounce_ || dyPoo_ < 8) {
-                if (hWnd_A81C != NULL) {
-                    SetWindowPos(hPooWnd_, hWnd_A81C, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
+                if (hPeerWnd_ != NULL) {
+                    SetWindowPos(hPooWnd_, hPeerWnd_, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
                 }
                 hasBounce_ = 0;
                 iAniFrames_ = 0;
@@ -5206,25 +5227,25 @@ fallThrough:
 }
 
 /* Environment-affected action change, controlled by a flag. */
-void event_8FD7(int arg_0)
+void postAction(int action)
 {
-    switch (arg_0) {
-    case 0:
+    switch (action) {
+    case kActionUnknown:
         pooState_ = kStateNormalIntro;
         if (bool_A7FC != 0) {
             pooState_ = kStateVRunFallIntro;
         }
         break;
-    case 1:
+    case kActionInfRun:
         pooState_ = kStateInfRunIntro;
         break;
-    case 2:
+    case kActionFall:
         pooState_ = kStateVRunFallIntro;
         break;
-    case 3:
+    case kActionInfSleep:
         pooSleepState_ = kStateInfSleepIntro;
         break;
-    case 4:
+    case kActionFeed:
         pooState_ = kStateFeedIntro;
         break;
     default:
@@ -5359,12 +5380,12 @@ BOOL initSubWnd(HWND hWnd)
     if (bmp_A854 == NULL) {
         goto failed;
     }
-    word_A85A = CreateCompatibleBitmap(hdc, 40, 40);
-    if (word_A85A == NULL) {
+    bmp_A85A = CreateCompatibleBitmap(hdc, 40, 40);
+    if (bmp_A85A == NULL) {
         goto failed;
     }
-    word_A85C = CreateCompatibleBitmap(hdc, 40, 40);
-    if (word_A85C == NULL) {
+    bmp_A85C = CreateCompatibleBitmap(hdc, 40, 40);
+    if (bmp_A85C == NULL) {
         goto failed;
     }
     word_CA4C = 0;
@@ -5388,8 +5409,8 @@ failed:
 /* Release bitmaps (sub). */
 void releaseSubWnd()
 {
-    DeleteObject(word_A85C);
-    DeleteObject(word_A85A);
+    DeleteObject(bmp_A85C);
+    DeleteObject(bmp_A85A);
     DeleteObject(paintSubBmpBuf_[0]);
     DeleteObject(paintSubBmpBuf_[1]);
     DeleteObject(bmp_A854);
@@ -5409,7 +5430,7 @@ void setSubSpriteInfo(int x, int y, int sprite)
 }
 
 /* Clear window (sub). */
-void sub_93DF(HWND hWnd)
+void repaintSubPoo(HWND hWnd)
 {
     if (keepSubPoo_) {
         return;
@@ -5504,27 +5525,27 @@ void paint_9438(HWND hWnd)
             if (subPooFade_ != 0) {
                 if (subPooFade_ == 1) {
                     SelectObject(hdc_4, curSubSpriteBmp1_);
-                    SelectObject(hdc_6, word_A85C);
+                    SelectObject(hdc_6, bmp_A85C);
                     BitBlt(hdc_6, 0, 0, 40, 40,
                            hdc_4, curSubSpriteBmpX_, curSubSpriteBmpY_, SRCCOPY);
                     SelectObject(hdc_4, curSubSpriteBmp0_);
-                    SelectObject(hdc_6, word_A85A);
+                    SelectObject(hdc_6, bmp_A85A);
                     BitBlt(hdc_6, 0, 0, 40, 40,
                            hdc_4, curSubSpriteBmpX_, curSubSpriteBmpY_, SRCCOPY);
                 }
-                SelectObject(hdc_4, word_A85C);
+                SelectObject(hdc_4, bmp_A85C);
                 SelectObject(hdc_6, sprites_[172].bitmaps[0]);
                 BitBlt(hdc_4, subPooFade_ - 1, subPooFade_ - 1, 41 - subPooFade_, 40,
                        hdc_6, sprites_[172].x, 0, SRCPAINT);
-                SelectObject(hdc_4, word_A85A);
+                SelectObject(hdc_4, bmp_A85A);
                 SelectObject(hdc_6, sprites_[172].bitmaps[1]);
                 BitBlt(hdc_4, subPooFade_ - 1, subPooFade_ - 1, 41 - subPooFade_, 40,
                        hdc_6, sprites_[172].x, 0, SRCAND);
                 SelectObject(hdc_6, bmp_A854);
-                SelectObject(hdc_4, word_A85C);
+                SelectObject(hdc_4, bmp_A85C);
                 BitBlt(hdc_6, posx_16, posy_14, curSubSpriteBmpW_, curSubSpriteBmpH_,
                        hdc_4, 0, 0, SRCAND);
-                SelectObject(hdc_4, word_A85A);
+                SelectObject(hdc_4, bmp_A85A);
                 BitBlt(hdc_6, posx_16, posy_14, curSubSpriteBmpW_, curSubSpriteBmpH_,
                        hdc_4, 0, 0, SRCPAINT);
             } else {
@@ -5562,12 +5583,12 @@ void paint_9438(HWND hWnd)
 }
 
 /* Render UFO beam (if any) and present render targets onto window (sub). */
-BOOL sub_9A49(HWND arg_0)
+BOOL paint_9A49(HWND hWnd)
 {
-    HDC var_2;
-    HDC var_4;
-    RECT var_C;
-    HDC var_E;
+    HDC hdc_2;
+    HDC hdc_4;
+    RECT rect_C;
+    HDC hdc_E;
 #ifdef _WIN32
     HDC screen;
 #endif
@@ -5575,77 +5596,77 @@ BOOL sub_9A49(HWND arg_0)
         return TRUE;
     }
     bool_A870 = 0;
-    var_2 = GetDC(arg_0);
-    SelectPalette(var_2, hPalette_, FALSE);
-    RealizePalette(var_2);
-    var_4 = CreateCompatibleDC(var_2);
-    SelectPalette(var_4, hPalette_, FALSE);
-    SelectObject(var_4, bmp_A854);
-    BitBlt(var_2, 0, 0, paintSubRectW_, paintSubRectH_, var_4, 0, 0, SRCCOPY);
+    hdc_2 = GetDC(hWnd);
+    SelectPalette(hdc_2, hPalette_, FALSE);
+    RealizePalette(hdc_2);
+    hdc_4 = CreateCompatibleDC(hdc_2);
+    SelectPalette(hdc_4, hPalette_, FALSE);
+    SelectObject(hdc_4, bmp_A854);
+    BitBlt(hdc_2, 0, 0, paintSubRectW_, paintSubRectH_, hdc_4, 0, 0, SRCCOPY);
     if (height_CA5C != 0) {
-        if (word_C0B8 == NULL) {
-            word_C0B8 = CreateCompatibleBitmap(var_2, 40, screenHeight_ * 4 / 5);
-            if (word_C0B8 == NULL) {
-                goto loc_9CC3;
+        if (bmp_C0B8 == NULL) {
+            bmp_C0B8 = CreateCompatibleBitmap(hdc_2, 40, screenHeight_ * 4 / 5);
+            if (bmp_C0B8 == NULL) {
+                goto failed;
             }
         }
-        if (word_C0B2 == NULL) {
-            word_C0B2 = CreateCompatibleBitmap(var_2, 40, screenHeight_ * 4 / 5);
-            if (word_C0B2 == NULL) {
-                goto loc_9CC3;
+        if (bmp_C0B2 == NULL) {
+            bmp_C0B2 = CreateCompatibleBitmap(hdc_2, 40, screenHeight_ * 4 / 5);
+            if (bmp_C0B2 == NULL) {
+                goto failed;
             }
         }
-        if (word_CA44 == NULL) {
-            word_CA44 = CreateSolidBrush(RGB(255, 255, 0));
+        if (brush_CA44 == NULL) {
+            brush_CA44 = CreateSolidBrush(RGB(255, 255, 0));
         }
-        if (word_C0B4 == NULL) {
-            word_C0B4 = CreateSolidBrush(RGB(128, 128, 0));
+        if (brush_C0B4 == NULL) {
+            brush_C0B4 = CreateSolidBrush(RGB(128, 128, 0));
         }
-        var_E = CreateCompatibleDC(var_2);
-        SelectObject(var_E, word_C0B2);
+        hdc_E = CreateCompatibleDC(hdc_2);
+        SelectObject(hdc_E, bmp_C0B2);
 #ifdef _WIN32
         /* Screen contents with height of only 40 pixels can be captured from window device context on Windows 10. Capture directly from screen instead. */
         screen = GetDC(NULL);
-        BitBlt(var_E, 0, 0, 40, height_CA5C, screen, paintSubRectX_, paintSubRectY_ + 40, SRCCOPY);
+        BitBlt(hdc_E, 0, 0, 40, height_CA5C, screen, paintSubRectX_, paintSubRectY_ + 40, SRCCOPY);
         ReleaseDC(NULL, screen);
 #else
         BitBlt(var_E, 0, 0, 40, height_CA5C, var_2, 0, 40, SRCCOPY);
 #endif
-        var_C.left = 0;
-        var_C.top = 0;
-        var_C.right = 40;
-        var_C.bottom = height_CA5C;
-        SelectObject(var_4, word_C0B8);
-        FillRect(var_4, &var_C, word_CA44);
-        BitBlt(var_E, 0, 0, 40, height_CA5C, var_4, 0, 0, SRCAND);
-        FillRect(var_4, &var_C, word_C0B4);
-        BitBlt(var_E, 0, 0, 40, height_CA5C, var_4, 0, 0, SRCPAINT);
-        BitBlt(var_2, 0, 40, 40, height_CA5C, var_E, 0, 0, SRCCOPY);
-        DeleteDC(var_E);
-        DeleteDC(var_4);
+        rect_C.left = 0;
+        rect_C.top = 0;
+        rect_C.right = 40;
+        rect_C.bottom = height_CA5C;
+        SelectObject(hdc_4, bmp_C0B8);
+        FillRect(hdc_4, &rect_C, brush_CA44);
+        BitBlt(hdc_E, 0, 0, 40, height_CA5C, hdc_4, 0, 0, SRCAND);
+        FillRect(hdc_4, &rect_C, brush_C0B4);
+        BitBlt(hdc_E, 0, 0, 40, height_CA5C, hdc_4, 0, 0, SRCPAINT);
+        BitBlt(hdc_2, 0, 40, 40, height_CA5C, hdc_E, 0, 0, SRCCOPY);
+        DeleteDC(hdc_E);
+        DeleteDC(hdc_4);
     } else {
-        if (word_C0B4 != NULL) {
-            DeleteObject(word_C0B4);
-            word_C0B4 = NULL;
+        if (brush_C0B4 != NULL) {
+            DeleteObject(brush_C0B4);
+            brush_C0B4 = NULL;
         }
-        if (word_CA44 != NULL) {
-            DeleteObject(word_CA44);
-            word_CA44 = NULL;
+        if (brush_CA44 != NULL) {
+            DeleteObject(brush_CA44);
+            brush_CA44 = NULL;
         }
-        if (word_C0B2 != NULL) {
-            DeleteObject(word_C0B2);
-            word_C0B2 = NULL;
+        if (bmp_C0B2 != NULL) {
+            DeleteObject(bmp_C0B2);
+            bmp_C0B2 = NULL;
         }
-        if (word_C0B8 != NULL) {
-            DeleteObject(word_C0B8);
-            word_C0B8 = NULL;
+        if (bmp_C0B8 != NULL) {
+            DeleteObject(bmp_C0B8);
+            bmp_C0B8 = NULL;
         }
-        DeleteDC(var_4);
+        DeleteDC(hdc_4);
     }
-    ReleaseDC(arg_0, var_2);
+    ReleaseDC(hWnd, hdc_2);
     return TRUE;
-loc_9CC3:
-    ReleaseDC(arg_0, var_2);
-    DestroyWindow(arg_0);
+failed:
+    ReleaseDC(hWnd, hdc_2);
+    DestroyWindow(hWnd);
     return FALSE;
 }
